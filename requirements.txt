@@ -1,0 +1,29 @@
+# requirements.txt - Multiple PDF Generation Options
+
+# Core Django
+Django>=4.0.0
+djangorestframework>=3.14.0
+
+# PDF Generation Libraries (choose one or install all)
+
+# Option 1: ReportLab (RECOMMENDED - Pure Python, most reliable)
+reportlab>=4.0.0
+
+# Option 2: xhtml2pdf (Lightweight, good HTML/CSS support)
+xhtml2pdf>=0.2.5
+
+# Option 3: pdfkit (Requires system wkhtmltopdf installation)
+pdfkit>=1.0.0
+# For pdfkit, also install system package:
+#   Ubuntu/Debian: sudo apt-get install wkhtmltopdf
+#   macOS: brew install wkhtmltopdf
+#   Windows: Download from https://wkhtmltopdf.org/downloads.html
+
+# Optional: Enhanced libraries
+Pillow>=9.0.0  # For image handling
+Jinja2>=3.0.0  # For advanced templating
+
+# Option 4: WeasyPrint (Windows needs GTK runtime installed)
+# Uncomment only after installing GTK 3 runtime from:
+# https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases
+# weasyprint>=59.0
