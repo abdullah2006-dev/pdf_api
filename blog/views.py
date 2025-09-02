@@ -58,11 +58,24 @@ def volt_consulting_presentation(request):
                 else:
                     chart_title = "Évolution des Prix"  # default fallback
 
-                # Plot
+                # Plot configuration
                 plt.xlabel("")
                 plt.ylabel("Prix €/MWh")
                 plt.title(chart_title)
-                plt.legend(loc="lower center", ncol=2, frameon=False)
+
+                # Update legend labels to use proper French
+                legend_labels = []
+                for series in data["series"]:
+                    original_label = series.get("label", "")
+                    # Fix common French text issues
+                    if "prix marche anni" in original_label.lower():
+                        corrected_label = original_label.replace("prix marche anni", "Prix marché année")
+                        legend_labels.append(corrected_label)
+                    else:
+                        legend_labels.append(original_label)
+
+                plt.legend(legend_labels, loc="upper right", frameon=False)
+
                 ax = plt.gca()
                 ax.xaxis.set_major_locator(mdates.MonthLocator(bymonth=[1, 4, 7, 10], bymonthday=1))
                 ax.xaxis.set_major_formatter(mdates.DateFormatter("%d-%m-%Y"))
@@ -124,29 +137,31 @@ def volt_consulting_presentation(request):
             "clientLastName": data["clientLastName"],
             "clientEmail": data["clientEmail"],
             "clientPhoneNumber": data["clientPhoneNumber"],
-            # "black": data["black"],
+            "black": data["black"],
+            "black1": data["black1"],
+            "black3": data["black3"],
              "image": {
                 **data.get("images", {}),
                 "chart": chart_base64  # fully dynamic
             },
             "images": data.get("images", {
-                # "left": build_static_url(request, "image/side2-removebg-preview.png"),
-                # "right": build_static_url(request, "image/side-removebg-preview.png"),
-                # "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
-                # "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
-                # "volt_image1": build_static_url(request, "image/volt_image1.png"),
-                # "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-                # "Screenshot1": data.get("Screenshot1", build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-                # "Screenshot2": data.get("Screenshot2", build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-                # "black": data.get("black", build_static_url(request, "image/black-removebg-preview.png")),
-                # "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
-                # "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
-                # "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
-                # "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
-                # "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
-                # "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
+                "left": build_static_url(request, "image/side2-removebg-preview.png"),
+                "right": build_static_url(request, "image/side-removebg-preview.png"),
+                "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
+                "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
+                "volt_image1": build_static_url(request, "image/volt_image1.png"),
+                "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
+                "Screenshot1": data.get("Screenshot1", build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+                "Screenshot2": data.get("Screenshot2", build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+                "black": data.get("black", build_static_url(request, "image/black-removebg-preview.png")),
+                "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
+                "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
+                "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
+                "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
+                "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
+                "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
                 "last": data.get("last",build_static_url(request, "image/circle-black-removebg-preview.png")),
-                # "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
+                "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
             }),
             "company_presentation": {
                 "title": data.get("company_title", "L'ÉNERGIE DE VOTRE<br> ENTREPRISE, NOTRE EXPERTISE"),

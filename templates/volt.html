@@ -805,6 +805,38 @@
             object-fit: contain;
             margin-top: -190px;
         }
+     .black2 {
+            position: absolute;
+            left: 1850px;
+            top: 50px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 35px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+         .black3 {
+            position: absolute;
+            left: 1835px;
+            top: 90px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 35px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+         .black4 {
+            position: absolute;
+            left: 1820px;
+            top: 130px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 25px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+
+
      .text-heading1 {
             font-size: 5.0rem;       /* thoda chhota */
             margin-top: 40px;
@@ -1360,7 +1392,7 @@
         }
         .volt-text {
          font-size: 2.0rem;
-          margin-top: 550px;
+          margin-top: 545px;
           margin-left: -400px;
         }
     </style>
@@ -1579,10 +1611,12 @@
                     <div class="text-heading1"><p>{{ data.tender_results.title }}</p></div>
                     <div><img src="{{ data.images.black }}" class="blacky-image"></div>
                     <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-<!--                    <div class="">{{ data.black }}</div>-->
                 </div>
 
                 <div class="last-text">{{ data.comparison_table.last_text }}</div>
+               <div class="black2">{{ data.black }}</div>
+              <div class="black3">{{ data.black1 }}</div>
+              <div class="black4">{{ data.black3 }}</div>
 
                 <div class="reference-boxes">
                     {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
