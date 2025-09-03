@@ -199,18 +199,18 @@ def build_comparatif_dto(comparatif, request, data):
                 raise ValueError(f"Missing required GAS field: {field}")
 
         # Agar ELECTRICITY ke fields mistakenly bhej diye gaye hain toh error
-        forbidden_electricity_fields = ["pdl", "segmantation", "fourelectricity"]
+        forbidden_electricity_fields = ["pdl", "segmentation", "fourelectricity"]
         for field in forbidden_electricity_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for GAS energyType")
 
     elif energy_type == "ELECTRICITY":
-        required_electricity_fields = ["pdl", "segmantation", "fourelectricity"]
+        required_electricity_fields = ["pdl", "segmentation", "fourelectricity"]
 
         # ELECTRICITY ke fields update karna
         dto.update({
             "pdl": comparatif.get("pdl"),
-            "segmantation": comparatif.get("segmantation"),
+            "segmentation": comparatif.get("segmentation"),
             "fourelectricity": comparatif.get("fourelectricity"),
         })
 
