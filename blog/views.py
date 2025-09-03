@@ -164,6 +164,7 @@ def generate_chart(data):
 
 def build_comparatif_dto(comparatif, request, data):
 
+    print("comparatif:", comparatif)
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
