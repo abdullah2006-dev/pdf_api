@@ -226,6 +226,7 @@ def build_comparatif_dto(comparatif, request, data):
         # forbidden_gas_fields = ["pce", "gasProfile", "routingRate", "fourgas"]
         forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
         for field in forbidden_gas_fields:
+        for field in forbidden_gas_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for ELECTRICITY energyType")
 
@@ -299,7 +300,7 @@ def build_static_url(request, path):
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "document_type": data["document_type"],
+        "document_type": data["energy_type"],
         "clientSociety": data["clientSociety"],
         "clientSiret": data["clientSiret"],
         "clientFirstName": data["clientFirstName"],
