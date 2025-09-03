@@ -39,6 +39,7 @@ def volt_consulting_presentation(request):
 
         # 3️⃣ Build Comparatif DTO
         comparatif = data.get("comparatifClientHistoryPdfDto", {})
+        print("comparatif:", comparatif)
         comparatif_dto = build_comparatif_dto(comparatif, request, data)
 
         # 4️⃣ Build Presentation Data
