@@ -48,11 +48,14 @@ def volt_consulting_presentation(request):
         html_content = render_html(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url = generate_pdf(html_content, request)
+        pdf_url, pdf_filename = generate_pdf(html_content, request)
 
         return JsonResponse({
             "status": "success",
-            "pdf_url": pdf_url,
+            "path": pdf_url,
+            "name": pdf_filename,
+            "title": pdf_filename,
+            "mime_type": "application/pdf",
             "message": "PDF generated successfully"
         })
 
@@ -251,9 +254,11 @@ def render_html(presentation_data):
 
 def generate_pdf(html_content, request):
     """Generate PDF and return its URL."""
+
+    host = request.get_host().split(":")[0] 
     pdf_dir = os.path.join(settings.MEDIA_ROOT, "pdfs")
     os.makedirs(pdf_dir, exist_ok=True)
-    pdf_filename = f"volt_{uuid.uuid4().hex}.pdf"
+    pdf_filename = f"Comparatif_{uuid.uuid4().hex}.pdf"
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
     css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
@@ -267,7 +272,14 @@ def generate_pdf(html_content, request):
         font_config=None
     )
 
-    return request.build_absolute_uri(os.path.join(settings.MEDIA_URL, "pdfs", pdf_filename))
+    pdf_dir = settings.MEDIA_ROOT
+    if host == "volt-crm.caansoft.com":
+        pdf_dir += settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        pdf_dir += settings.PRODUCTION_MEDIA_URL
+
+    pdf_url = request.build_absolute_uri(os.path.join(pdf_dir, "comparatif/", pdf_filename))
+    return pdf_url, pdf_filename
 
 
 def build_static_url(request, path):

@@ -130,8 +130,9 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (user uploads)
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/media/'
+MEDIA_ROOT = '/home/file_upload/fileuploadutility/uploads/volt'
+STAGING_MEDIA_URL = '/staging/'
+PRODUCTION_MEDIA_URL = '/production/'
 
 
 # Default primary key field type
