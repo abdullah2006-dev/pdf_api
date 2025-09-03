@@ -300,7 +300,7 @@ def build_static_url(request, path):
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "document_type": data["energy_type"],
+        "document_type": data["energyType"],
         "clientSociety": data["clientSociety"],
         "clientSiret": data["clientSiret"],
         "clientFirstName": data["clientFirstName"],
