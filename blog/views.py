@@ -76,28 +76,34 @@ def parse_request_data(request):
 
 
 def generate_chart(data):
-    """Generate base64 chart image from input data with strict validation."""
+    """Generate base64 chart image from input data with chartDataDto wrapper."""
 
-    # 🔹 Validate top-level keys
-    if "xAxis" not in data or not data["xAxis"]:
+    # 🔹 Ensure chartDataDto exists
+    if "chartDataDto" not in data or not data["chartDataDto"]:
+        raise ValueError("Missing or empty field: chartDataDto")
+
+    chart_data = data["chartDataDto"]
+
+    # 🔹 Validate xAxis and series
+    if "xAxis" not in chart_data or not chart_data["xAxis"]:
         raise ValueError("Missing or empty field: xAxis")
 
-    if "series" not in data or not data["series"]:
+    if "series" not in chart_data or not chart_data["series"]:
         raise ValueError("Missing or empty field: series")
 
     # 🔹 Validate xAxis data
-    if "data" not in data["xAxis"][0] or not data["xAxis"][0]["data"]:
+    if "data" not in chart_data["xAxis"][0] or not chart_data["xAxis"][0]["data"]:
         raise ValueError("Missing or empty field: xAxis[0].data")
 
     try:
-        dates = pd.to_datetime(data["xAxis"][0]["data"], format="%d/%m/%Y")
+        dates = pd.to_datetime(chart_data["xAxis"][0]["data"], format="%d/%m/%Y")
     except Exception as e:
         raise ValueError(f"Invalid date format in xAxis data: {e}")
 
     plt.figure(figsize=(12, 7))
     colors = ["black", "royalblue", "green", "red"]
 
-    for idx, series in enumerate(data["series"]):
+    for idx, series in enumerate(chart_data["series"]):
         if "data" not in series or not series["data"]:
             raise ValueError(f"Missing or empty field: series[{idx}].data")
 
@@ -112,7 +118,7 @@ def generate_chart(data):
             color=colors[idx % len(colors)], linewidth=2
         )
 
-    # 🔹 Energy type check
+    # 🔹 Energy type check (kept outside chartDataDto)
     energy_type = data.get("comparatifClientHistoryPdfDto", {}).get("energyType", "").upper()
     chart_title = "Évolution Gaz" if energy_type == "GAS" else \
                   "Évolution Électricité" if energy_type == "ELECTRICITY" else \
@@ -135,7 +141,7 @@ def generate_chart(data):
                       markerfacecolor=colors[idx % len(colors)],
                       markersize=10,
                       label=series.get("label", f"Series {idx + 1}"))
-        for idx, series in enumerate(data["series"])
+        for idx, series in enumerate(chart_data["series"])
     ]
     plt.legend(handles=legend_elements,
                loc='upper center',
