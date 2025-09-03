@@ -225,7 +225,7 @@ def build_comparatif_dto(comparatif, request, data):
         # Agar GAS ke fields mistakenly bhej diye gaye hain toh error
         # forbidden_gas_fields = ["pce", "gasProfile", "routingRate", "fourgas"]
         forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
-        for field in forbidden_gas_fields:
+        
         for field in forbidden_gas_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for ELECTRICITY energyType")
