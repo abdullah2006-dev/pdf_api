@@ -280,7 +280,7 @@ def generate_pdf(html_content, request):
         media_subdir = settings.MEDIA_URL  # default fallback
 
     # Final directory = MEDIA_ROOT + comparatif/
-    pdf_dir = os.path.join(settings.MEDIA_ROOT, "comparatif")
+    pdf_dir = os.path.join(settings.MEDIA_ROOT, media_subdir, "comparatif")
     os.makedirs(pdf_dir, exist_ok=True)
 
     # Generate filename and full path
