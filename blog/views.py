@@ -267,43 +267,29 @@ def render_html(presentation_data):
 
 def generate_pdf(html_content, request):
     """Generate PDF and return its URL."""
-
-    print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
 
-    # Decide base path based on host
     if host == "volt-crm.caansoft.com":
-        media_subdir = settings.STAGING_MEDIA_URL
+        pdf_dir = settings.STAGING_MEDIA_ROOT
     elif host == "crm.volt-consulting.com":
-        media_subdir = settings.PRODUCTION_MEDIA_URL
+        pdf_dir = settings.PRODUCTION_MEDIA_ROOT
     else:
-        media_subdir = settings.MEDIA_URL  # default fallback
+        pdf_dir = settings.DEFAULT_MEDIA_ROOT
 
-    # Final directory = MEDIA_ROOT + comparatif/
-    pdf_dir = os.path.join(settings.MEDIA_ROOT, media_subdir, "comparatif")
     os.makedirs(pdf_dir, exist_ok=True)
 
-    # Generate filename and full path
+    # Generate filename and path
     pdf_filename = f"Comparatif_{uuid.uuid4().hex}.pdf"
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
-    # Generate PDF
+    # Write the PDF
     css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
-    HTML(string=html_content).write_pdf(
-        pdf_path,
-        stylesheets=[css],
-        zoom=0.8,
-        optimize_images=True,
-        presentational_hints=True,
-    )
+    HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
 
-    # Generate public URL for the saved file
-    pdf_url = request.build_absolute_uri(
-        os.path.join(media_subdir, "comparatif/", pdf_filename)
-    )
+    # ✅ Return path same as URL (since you want them identical)
+    pdf_url = os.path.join(pdf_dir, pdf_filename)
 
     return pdf_url, pdf_filename
-
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
