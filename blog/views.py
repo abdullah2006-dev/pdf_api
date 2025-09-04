@@ -48,7 +48,7 @@ def volt_consulting_presentation(request):
         html_content = render_html(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
 
         return JsonResponse({
             "status": "success",
@@ -265,31 +265,65 @@ def render_html(presentation_data):
     return render_to_string("volt.html", {"data": presentation_data})
 
 
-def generate_pdf(html_content, request):
+def generate_pdf(html_content, request, data):
     """Generate PDF and return its URL."""
-    host = request.get_host().split(":")[0]
+    print("Inside GeneratePDF")
+    host = request.get_host().split(":")[0] 
 
+    # Choose base root
     if host == "volt-crm.caansoft.com":
-        pdf_dir = settings.STAGING_MEDIA_ROOT
+        base_dir = settings.STAGING_MEDIA_ROOT
     elif host == "crm.volt-consulting.com":
-        pdf_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_dir = settings.PRODUCTION_MEDIA_ROOT
     else:
-        pdf_dir = settings.DEFAULT_MEDIA_ROOT
+        base_dir = settings.MEDIA_ROOT  # fallback
 
+    # Dynamic path: client/<id>/comparatif/
+    pdf_dir = os.path.join(base_dir, "client", str(data.get("clientId")), "comparatif")
     os.makedirs(pdf_dir, exist_ok=True)
 
-    # Generate filename and path
-    pdf_filename = f"Comparatif_{uuid.uuid4().hex}.pdf"
+    # Generate filename
+    pdf_filename = create_comparatif_filename(data.get("clientSociety"), data.get("clientTradeName"), data.get("comparatifClientHistoryPdfDto", {}).get("energyType"))
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
-    # Write the PDF
     css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
-    HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
+    HTML(string=html_content).write_pdf(
+        pdf_path,
+        stylesheets=[css],
+        zoom=0.8,
+        optimize_images=True,
+        presentational_hints=True,
+        font_config=None
+    )
 
-    # ✅ Return path same as URL (since you want them identical)
-    pdf_url = os.path.join(pdf_dir, pdf_filename)
+    # Build URL (mirroring the same structure)
+    base_url = (
+        settings.STAGING_MEDIA_URL if host == "volt-crm.caansoft.com"
+        else settings.PRODUCTION_MEDIA_URL if host == "crm.volt-consulting.com"
+        else settings.MEDIA_URL
+    )
+    pdf_url = request.build_absolute_uri(
+        os.path.join(base_url, "client", str(client_id), "comparatif", pdf_filename)
+    )
 
     return pdf_url, pdf_filename
+
+def create_comparatif_filename(society: str, trade_name: str, energy_type: str) -> str:
+    # 1️⃣ Clean society or fallback to trade_name
+    if society:
+        clean_society = re.sub(r"\s+", "", str(society))
+    else:
+        clean_society = re.sub(r"\s+", "", str(trade_name))
+
+    # 2️⃣ Energy type suffix
+    additional_text = "_elec" if energy_type.upper() == "ELECTRICITY" else "_gaz"
+
+    # 3️⃣ Date part (YYYY-MM-DD)
+    date_str = datetime.now().strftime("%Y-%m-%d")
+
+    # 4️⃣ Final filename
+    filename = f"Comparatif_{clean_society}{additional_text}_{date_str}.pdf"
+    return filename
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")

@@ -131,8 +131,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files (user uploads)
 BASE_UPLOAD_DIR = "/home/file_upload/fileuploadutility/uploads/volt"
-STAGING_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "staging", "comparatif")
-PRODUCTION_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "production", "comparatif")
+STAGING_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "staging")
+PRODUCTION_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "production")
 
 
 # Default primary key field type
