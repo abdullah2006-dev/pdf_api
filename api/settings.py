@@ -136,9 +136,9 @@ STAGING_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "staging")
 PRODUCTION_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "production")
 
 # URL should start from `/uploads/volt/...`
-STAGING_MEDIA_URL = "/uploads/volt/staging"
-PRODUCTION_MEDIA_URL = "/uploads/volt/production"
-MEDIA_URL = "/uploads/volt"
+STAGING_MEDIA_URL = "/uploads/volt/staging/"
+PRODUCTION_MEDIA_URL = "/uploads/volt/production/"
+MEDIA_URL = "/uploads/volt/"
 
 
 
