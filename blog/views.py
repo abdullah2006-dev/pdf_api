@@ -297,13 +297,13 @@ def generate_pdf(html_content, request, data):
     )
 
     # Build URL (mirroring the same structure)
-    base_url = (
-        settings.STAGING_MEDIA_URL if host == "volt-crm.caansoft.com"
-        else settings.PRODUCTION_MEDIA_URL if host == "crm.volt-consulting.com"
-        else settings.MEDIA_URL
-    )
+    # base_url = (
+    #     settings.STAGING_MEDIA_URL if host == "volt-crm.caansoft.com"
+    #     else settings.PRODUCTION_MEDIA_URL if host == "crm.volt-consulting.com"
+    #     else settings.MEDIA_URL
+    # )
     pdf_url = request.build_absolute_uri(
-        os.path.join(base_url, "client", str(client_id), "comparatif", pdf_filename)
+        os.path.join(base_dir, "client", str(data.get("clientId")), "comparatif", pdf_filename)
     )
 
     return pdf_url, pdf_filename
