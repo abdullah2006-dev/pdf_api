@@ -39,7 +39,6 @@ def volt_consulting_presentation(request):
 
         # 3️⃣ Build Comparatif DTO
         comparatif = data.get("comparatifClientHistoryPdfDto", {})
-        print("comparatif:", comparatif)
         comparatif_dto = build_comparatif_dto(comparatif, request, data)
 
         # 4️⃣ Build Presentation Data
@@ -165,7 +164,6 @@ def generate_chart(data):
 
 def build_comparatif_dto(comparatif, request, data):
 
-    print("comparatif:", comparatif)
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
