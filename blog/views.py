@@ -267,31 +267,41 @@ def render_html(presentation_data):
 
 def generate_pdf(html_content, request):
     """Generate PDF and return its URL."""
+
     print("Inside GeneratePDF")
-    host = request.get_host().split(":")[0] 
-    pdf_dir = os.path.join(settings.MEDIA_ROOT, "pdfs")
+    host = request.get_host().split(":")[0]
+
+    # Decide base path based on host
+    if host == "volt-crm.caansoft.com":
+        media_subdir = settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        media_subdir = settings.PRODUCTION_MEDIA_URL
+    else:
+        media_subdir = settings.MEDIA_URL  # default fallback
+
+    # Final directory = MEDIA_ROOT + comparatif/
+    pdf_dir = os.path.join(settings.MEDIA_ROOT, "comparatif")
     os.makedirs(pdf_dir, exist_ok=True)
+
+    # Generate filename and full path
     pdf_filename = f"Comparatif_{uuid.uuid4().hex}.pdf"
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
+    # Generate PDF
     css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
-
     HTML(string=html_content).write_pdf(
         pdf_path,
         stylesheets=[css],
         zoom=0.8,
         optimize_images=True,
         presentational_hints=True,
-        font_config=None
     )
 
-    pdf_dir = settings.MEDIA_ROOT
-    if host == "volt-crm.caansoft.com":
-        pdf_dir += settings.STAGING_MEDIA_URL
-    elif host == "crm.volt-consulting.com":
-        pdf_dir += settings.PRODUCTION_MEDIA_URL
+    # Generate public URL for the saved file
+    pdf_url = request.build_absolute_uri(
+        os.path.join(media_subdir, "comparatif/", pdf_filename)
+    )
 
-    pdf_url = request.build_absolute_uri(os.path.join(pdf_dir, "comparatif/", pdf_filename))
     return pdf_url, pdf_filename
 
 
