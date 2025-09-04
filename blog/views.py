@@ -268,24 +268,33 @@ def render_html(presentation_data):
 def generate_pdf(html_content, request, data):
     """Generate PDF and return its URL."""
     print("Inside GeneratePDF")
-    host = request.get_host().split(":")[0] 
+    host = request.get_host().split(":")[0]
 
-    # Choose base root
+    # Choose base dirs (filesystem vs URL)
     if host == "volt-crm.caansoft.com":
         base_dir = settings.STAGING_MEDIA_ROOT
+        base_url = settings.STAGING_MEDIA_URL
     elif host == "crm.volt-consulting.com":
         base_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_url = settings.PRODUCTION_MEDIA_URL
     else:
-        base_dir = settings.MEDIA_ROOT  # fallback
+        base_dir = settings.MEDIA_ROOT
+        base_url = settings.MEDIA_URL
 
     # Dynamic path: client/<id>/comparatif/
-    pdf_dir = os.path.join(base_dir, "client", str(data.get("clientId")), "comparatif")
+    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif")
+    pdf_dir = os.path.join(base_dir, relative_path)
     os.makedirs(pdf_dir, exist_ok=True)
 
     # Generate filename
-    pdf_filename = create_comparatif_filename(data.get("clientSociety"), data.get("clientTradeName"), data.get("comparatifClientHistoryPdfDto", {}).get("energyType"))
+    pdf_filename = create_comparatif_filename(
+        data.get("clientSociety"),
+        data.get("clientTradeName"),
+        data.get("comparatifClientHistoryPdfDto", {}).get("energyType")
+    )
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
+    # Save PDF
     css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
     HTML(string=html_content).write_pdf(
         pdf_path,
@@ -296,14 +305,9 @@ def generate_pdf(html_content, request, data):
         font_config=None
     )
 
-    # Build URL (mirroring the same structure)
-    # base_url = (
-    #     settings.STAGING_MEDIA_URL if host == "volt-crm.caansoft.com"
-    #     else settings.PRODUCTION_MEDIA_URL if host == "crm.volt-consulting.com"
-    #     else settings.MEDIA_URL
-    # )
+    # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
-        os.path.join(base_dir, "client", str(data.get("clientId")), "comparatif", pdf_filename)
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
     )
 
     return pdf_url, pdf_filename
