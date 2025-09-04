@@ -70,6 +70,7 @@ def volt_consulting_presentation(request):
 
 def parse_request_data(request):
     """Parse incoming request data (JSON or Form)."""
+    print("Inside ParseRequestData")
     if request.content_type == 'application/json':
         return json.loads(request.body)
     return request.POST.dict()
@@ -77,7 +78,7 @@ def parse_request_data(request):
 
 def generate_chart(data):
     """Generate base64 chart image from input data with chartDataDto wrapper."""
-
+    print("Inside GenerateChart")
     # 🔹 Ensure chartDataDto exists
     if "chartDataDto" not in data or not data["chartDataDto"]:
         raise ValueError("Missing or empty field: chartDataDto")
@@ -163,7 +164,7 @@ def generate_chart(data):
 
 
 def build_comparatif_dto(comparatif, request, data):
-
+    print("Inside BuildComparatifDTO")
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
@@ -260,12 +261,13 @@ def build_comparatif_dto(comparatif, request, data):
 
 
 def render_html(presentation_data):
+    print("Inside RenderHTML")
     return render_to_string("volt.html", {"data": presentation_data})
 
 
 def generate_pdf(html_content, request):
     """Generate PDF and return its URL."""
-
+    print("Inside GeneratePDF")
     host = request.get_host().split(":")[0] 
     pdf_dir = os.path.join(settings.MEDIA_ROOT, "pdfs")
     os.makedirs(pdf_dir, exist_ok=True)
@@ -294,10 +296,12 @@ def generate_pdf(html_content, request):
 
 
 def build_static_url(request, path):
+    print("Inside BuildStaticURL")
     return request.build_absolute_uri(settings.STATIC_URL + path)
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
+    print("Inside BuildPresentationData")
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
         "document_type": data["energyType"],
@@ -330,6 +334,7 @@ def build_image_section(data, chart_base64):
 
 def build_images(data, request):
     """Build static & dynamic image paths."""
+    print("Inside BuildImages")
     return data.get("images", {
         "left": build_static_url(request, "image/side2-removebg-preview.png"),
         "right": build_static_url(request, "image/side-removebg-preview.png"),
@@ -353,6 +358,7 @@ def build_images(data, request):
 
 def build_company_presentation(data):
     """Company presentation section."""
+    print("Inside BuildCompanyPresentation")
     return {
         "title": data.get("company_title", "L'ÉNERGIE DE VOTRE<br> ENTREPRISE, NOTRE EXPERTISE"),
         "description": data.get("description",
@@ -366,6 +372,7 @@ def build_company_presentation(data):
 
 def build_budget_section(data):
     """Budget global section."""
+    print("Inside BuildBudgetSection")
     return {
         "title": data.get("budget_title", "BUDGET GLOBAL"),
         "subtitle": data.get("budget_subtitle", "La synthèse")
@@ -374,6 +381,7 @@ def build_budget_section(data):
 
 def build_tender_results(data):
     """Tender results section."""
+    print("Inside BuildTenderResults")
     return {
         "title": data.get("tender_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
         "introduction": data.get("introduction",
@@ -394,6 +402,7 @@ def build_tender_results(data):
 
 def build_comparison_table(data):
     """Comparison table section."""
+    print("Inside BuildComparisionTable")
     return {
         "last_text": data.get("comparison_note",
                               "Ce comparatif tient compte de votre consommation au cours des douze derniers mois. "
@@ -409,6 +418,7 @@ def build_comparison_table(data):
 
 def build_tender_table(data):
     """Tender table section."""
+    print("Inside BuildTenderTable")
     return {
         "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
         "columns": data.get("columns", [
@@ -420,6 +430,7 @@ def build_tender_table(data):
 
 def build_change_section(data):
     """Change section."""
+    print("Inside BuildChangeSection")
     return {
         "title": data.get("change_title", "LE CHANGEMENT SANS CONTRAINTE"),
         "text": data.get("change_text",
@@ -434,6 +445,7 @@ def build_change_section(data):
 
 def build_contact_info(data):
     """Contact info section."""
+    print("Inside BuildContactInfo")
     return {
         "company_name": data.get("company_name", "VOLT CONSULTING"),
         "phone": data.get("phone", "01 87 66 70 43"),
