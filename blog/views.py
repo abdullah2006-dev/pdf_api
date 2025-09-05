@@ -251,10 +251,10 @@ def build_comparatif_dto(comparatif, request, data):
         # "rate7",
     ]
 
-    for idx, item in enumerate(comparatif_rate, start=1):
-        for field in required_rate_fields:
-            if field not in item or item[field] in [None, ""]:
-                raise ValueError(f"Missing or empty field '{field}' in comparatifRates item {idx}")
+    # for idx, item in enumerate(comparatif_rate, start=1):
+    #     for field in required_rate_fields:
+    #         if field not in item or item[field] in [None, ""]:
+    #             raise ValueError(f"Missing or empty field '{field}' in comparatifRates item {idx}")
 
     dto["comparatifRates"] = comparatif_rate
     return dto
