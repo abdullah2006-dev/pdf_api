@@ -417,4 +417,3 @@ def build_contact_info(data):
         "email": data.get("email", "contact@volt-consulting.fr"),
         "address": data.get("address", "8 Place Hoche - 78000 Versailles")
     }
-
