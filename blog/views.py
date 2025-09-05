@@ -239,16 +239,16 @@ def build_comparatif_dto(comparatif, request, data):
 
     required_rate_fields = [
         "partnerPhoto",
-        "rate2",
+        # "rate2",
         "abonnement",
         "partCee",
         "cta",
         "ticgn",
-        "rate3",
-        "rate4",
-        "rate5",
-        "rate6",
-        "rate7",
+        # "rate3",
+        # "rate4",
+        # "rate5",
+        # "rate6",
+        # "rate7",
     ]
 
     for idx, item in enumerate(comparatif_rate, start=1):
