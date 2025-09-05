@@ -235,7 +235,7 @@ def build_comparatif_dto(comparatif, request, data):
         raise ValueError("Invalid or missing energyType. Must be 'GAS' or 'ELECTRICITY'.")
 
     # Comparatif rate validation
-    comparatif_rate = comparatif.get("comparatifRate", [])
+    comparatif_rate = comparatif.get("comparatifRates", [])
 
     required_rate_fields = [
         "partnerPhoto",
@@ -254,9 +254,9 @@ def build_comparatif_dto(comparatif, request, data):
     for idx, item in enumerate(comparatif_rate, start=1):
         for field in required_rate_fields:
             if field not in item or item[field] in [None, ""]:
-                raise ValueError(f"Missing or empty field '{field}' in comparatifRate item {idx}")
+                raise ValueError(f"Missing or empty field '{field}' in comparatifRates item {idx}")
 
-    dto["comparatifRate"] = comparatif_rate
+    dto["comparatifRates"] = comparatif_rate
     return dto
 
 
