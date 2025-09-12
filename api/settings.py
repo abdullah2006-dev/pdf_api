@@ -138,9 +138,8 @@ PRODUCTION_MEDIA_ROOT = os.path.join(BASE_UPLOAD_DIR, "production")
 # URL should start from `/uploads/volt/...`
 STAGING_MEDIA_URL = "/uploads/volt/staging/"
 PRODUCTION_MEDIA_URL = "/uploads/volt/production/"
-MEDIA_URL = "/uploads/volt/"
-
-
+# MEDIA_URL = "/uploads/volt/
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

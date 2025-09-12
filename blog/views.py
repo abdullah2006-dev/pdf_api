@@ -1,11 +1,7 @@
-from django.shortcuts import render
-from django.conf import settings
-import json, re, io, base64
-from django.http import HttpResponse, JsonResponse
+import re, io, base64
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -14,13 +10,12 @@ import pandas as pd
 import numpy as np
 import json
 import os
-import uuid
-import pdfkit
 from django.conf import settings
 from django.http import JsonResponse
 from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
+from PyPDF2 import PdfReader, PdfWriter
 
 
 @csrf_exempt
@@ -122,8 +117,8 @@ def generate_chart(data):
     # 🔹 Energy type check (kept outside chartDataDto)
     energy_type = data.get("comparatifClientHistoryPdfDto", {}).get("energyType", "").upper()
     chart_title = "Évolution Gaz" if energy_type == "GAS" else \
-                  "Évolution Électricité" if energy_type == "ELECTRICITY" else \
-                  "Évolution des Prix"
+        "Évolution Électricité" if energy_type == "ELECTRICITY" else \
+            "Évolution des Prix"
 
     plt.xlabel("")
     plt.ylabel("Prix €/MWh")
@@ -226,7 +221,7 @@ def build_comparatif_dto(comparatif, request, data):
         # Agar GAS ke fields mistakenly bhej diye gaye hain toh error
         # forbidden_gas_fields = ["pce", "gasProfile", "routingRate", "fourgas"]
         forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
-        
+
         for field in forbidden_gas_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for ELECTRICITY energyType")
@@ -235,28 +230,28 @@ def build_comparatif_dto(comparatif, request, data):
         raise ValueError("Invalid or missing energyType. Must be 'GAS' or 'ELECTRICITY'.")
 
     # Comparatif rate validation
-    comparatif_rate = comparatif.get("comparatifRate", [])
+    comparatif_rate = comparatif.get("comparatifRates", [])
 
     required_rate_fields = [
         "partnerPhoto",
-        "rate2",
+        # "rate2",
         "abonnement",
         "partCee",
         "cta",
         "ticgn",
-        "rate3",
-        "rate4",
-        "rate5",
-        "rate6",
-        "rate7",
+        # "rate3",
+        # "rate4",
+        # "rate5",
+        # "rate6",
+        # "rate7",
     ]
 
-    for idx, item in enumerate(comparatif_rate, start=1):
-        for field in required_rate_fields:
-            if field not in item or item[field] in [None, ""]:
-                raise ValueError(f"Missing or empty field '{field}' in comparatifRate item {idx}")
+    # for idx, item in enumerate(comparatif_rate, start=1):
+    #     for field in required_rate_fields:
+    #         if field not in item or item[field] in [None, ""]:
+    #             raise ValueError(f"Missing or empty field '{field}' in comparatifRates item {idx}")
 
-    dto["comparatifRate"] = comparatif_rate
+    dto["comparatifRates"] = comparatif_rate
     return dto
 
 
@@ -266,7 +261,7 @@ def render_html(presentation_data):
 
 
 def generate_pdf(html_content, request, data):
-    """Generate PDF and return its URL."""
+    """Generate PDF and return its URL without unwanted pages."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
 
@@ -294,8 +289,8 @@ def generate_pdf(html_content, request, data):
     )
     pdf_path = os.path.join(pdf_dir, pdf_filename)
 
-    # Save PDF
-    css = CSS(string="""@page { size: A1 landscape; margin: 0.0cm; }""")
+    # Save PDF using WeasyPrint
+    css = CSS(string="""@page { size: 530mm 265mm; margin: 0.0cm; }""")
     HTML(string=html_content).write_pdf(
         pdf_path,
         stylesheets=[css],
@@ -305,12 +300,28 @@ def generate_pdf(html_content, request, data):
         font_config=None
     )
 
+    # ---- Remove unwanted pages (4,6,8,10,12) ----
+    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
+    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
+
+    reader = PdfReader(pdf_path)
+    writer = PdfWriter()
+
+    for i in range(len(reader.pages)):
+        if i not in remove_pages:
+            writer.add_page(reader.pages[i])
+
+    with open(pdf_path, "wb") as f:
+        writer.write(f)
+    # ---------------------------------------------
+
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
         os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
     )
 
     return pdf_url, pdf_filename
+
 
 def create_comparatif_filename(society: str, trade_name: str, energy_type: str) -> str:
     # 1️⃣ Clean society or fallback to trade_name
@@ -329,9 +340,12 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
     filename = f"Comparatif_{clean_society}{additional_text}_{date_str}.pdf"
     return filename
 
+
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    return request.build_absolute_uri(settings.STATIC_URL + path)
+    return request.build_absolute_uri(static(path))
+    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    # return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -376,9 +390,11 @@ def build_images(data, request):
         "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
         "volt_image1": build_static_url(request, "image/volt_image1.png"),
         "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-        "Screenshot1": data.get("Screenshot1", build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-        "Screenshot2": data.get("Screenshot2", build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-        "black": data.get("black", build_static_url(request, "image/black-removebg-preview.png")),
+        "Screenshot1": data.get("Screenshot1",
+                                build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+        "Screenshot2": data.get("Screenshot2",
+                                build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+        "black": build_static_url(request, "image/black-removebg-preview.png"),
         "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
         "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
         "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
@@ -396,10 +412,10 @@ def build_company_presentation(data):
     return {
         "title": data.get("company_title", "L'ÉNERGIE DE VOTRE<br> ENTREPRISE, NOTRE EXPERTISE"),
         "description": data.get("description",
-            "<b>Volt Consulting</b> est votre partenaire de confiance dans la <b>gestion énergétique B2B</b>. "
-            "Notre proximité et notre engagement nous permettent de comprendre vos besoins <b>spécifiques</b>. "
-            "Nous vous accompagnons dans le choix du fournisseur d'énergie optimal, tout en maximisant l'efficacité énergétique. "
-            "Nos réussites parlent d'elles-mêmes, avec des <b>économies mesurables</b> pour nos clients."),
+                                "<b>Volt Consulting</b> est votre partenaire de confiance dans la <b>gestion énergétique B2B</b>. "
+                                "Notre proximité et notre engagement nous permettent de comprendre vos besoins <b>spécifiques</b>. "
+                                "Nous vous accompagnons dans le choix du fournisseur d'énergie optimal, tout en maximisant l'efficacité énergétique. "
+                                "Nos réussites parlent d'elles-mêmes, avec des <b>économies mesurables</b> pour nos clients."),
         "quote": data.get("quote", "Faites équipe avec nous pour un avenir énergétique plus efficace.")
     }
 
@@ -473,7 +489,8 @@ def build_change_section(data):
                          "même numéro de dépannage en cas de problème. "
                          "C'est <br> toujours GRDF & ENEDIS qui s'occupe de la relève du<br> compteur. "
                          "Changer de fournisseur, c'est gratuit!"),
-        "quote": data.get("change_quote", "Les équipes de VOLT CONSULTING <br> peuvent vous accompagner sur toute<br> cette partie administrative")
+        "quote": data.get("change_quote",
+                          "Les équipes de VOLT CONSULTING <br> peuvent vous accompagner sur toute<br> cette partie administrative")
     }
 
 
