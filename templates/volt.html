@@ -187,16 +187,17 @@
             z-index: 2;
         }
       .main-title1 {
-        font-size: 3.8rem;       /* thoda chhota */
-        font-weight: 450;         /* halka bold feel */
-        color: #000;
-        line-height: 1.2;         /* zyada airy, vertical space */
-        margin-bottom: 30px;
-        margin-left: -230px;
-        letter-spacing: 4px;      /* letters thode spread */
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        text-align: left;         /* left aligned */
+            font-size: 3.8rem;       /* size same */
+            font-weight: 400;        /* bilkul normal, bold effect hat gaya */
+            color: #000;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            margin-left: -300px;
+            letter-spacing: 6px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: left;
         }
+
         .title-highlight1 {
             color: #000;
             font-weight: 500;
@@ -443,18 +444,19 @@
             position: relative;
             z-index: 2;
         }
-       .main-title2 {
-            font-size: 3.0rem;       /* thoda chhota */
-            font-weight: 350;         /* halka bold feel */
+           .main-title2 {
+            font-size: 3.6rem;       /* size thoda bada kar diya */
+            font-weight: 400;        /* normal rakha, bold hat gaya */
             color: #000;
-            line-height: 1.8;         /* zyada airy, vertical space */
+            line-height: 1.8;
             margin-bottom: 30px;
-            letter-spacing: 5px;      /* letters thode spread */
+            letter-spacing: 5px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: left;         /* left aligned */
-            width: 100%;              /* pura container occupy kare */
-            margin-left: -500px;           /* left edge se chipka de */
+            text-align: left;
+            width: 100%;
+            margin-left: -500px;
         }
+
 
 
         .side4-image-container {
@@ -467,12 +469,14 @@
        .chart-image {
             position: absolute;
             left: 330px;
-            bottom: -140px;       /* image ko niche align karega */
-            height: 650px;   /* container height ke hisaab se adjust karo */
+            bottom: -140px;
+            height: 680px;     /* bada kar diya */
+           width: auto; proportion maintain rahe */
             max-width: none;
             max-height: none;
             object-fit: contain;
         }
+
 
        .side4-image {
             position: absolute;
@@ -608,7 +612,7 @@
         }
 
          .container4 {
-                max-width: 2000px;
+            max-width: 2000px;
             height: 1000px;
             margin: 0 auto;
             background: #F0F0F5;
@@ -693,6 +697,17 @@
     text-align: left;
     display: block;
     letter-spacing: 3px;
+}
+.offer-text-line {
+    font-size: 2.3rem;
+    line-height: 1.3;
+    color: #000;
+    margin-left: 20px;
+    padding: 0 60px;            /* Left-right padding use karo */
+    margin-bottom: 40px;
+    text-align: left;
+    display: block;
+    letter-spacing: 0px;
 }
 
 .offer-quote {
@@ -1451,7 +1466,7 @@
           <div class="company-text1">
             <p class="description-text1">
               {{ data.company_presentation.description|safe }}
-              <br><span class="bold-text1">"{{ data.company_presentation.quote }}"</span>
+              <span class="bold-text1">"{{ data.company_presentation.quote }}"</span>
             </p>
           </div>
         </div>
@@ -1554,7 +1569,7 @@
     {{ data.tender_results.pricing_explanation|safe }}
   </p>
 
-  <p class="offer-text">
+  <p class="offer-text-line">
     {{ data.tender_results.stability_benefits|safe }}
   </p>
       </h1>
