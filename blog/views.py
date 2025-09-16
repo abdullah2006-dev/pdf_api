@@ -16,7 +16,7 @@ from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
 from PyPDF2 import PdfReader, PdfWriter
-from weasyprint import FontConfiguration
+from weasyprint.fonts import FontConfiguration
 
 @csrf_exempt
 @require_http_methods(["POST"])
