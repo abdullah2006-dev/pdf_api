@@ -16,7 +16,7 @@ from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
 from PyPDF2 import PdfReader, PdfWriter
-
+from weasyprint import FontConfiguration
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -291,13 +291,22 @@ def generate_pdf(html_content, request, data):
 
     # Save PDF using WeasyPrint
     css = CSS(string="""@page { size: 530mm 265mm; margin: 0.0cm; }""")
+    # HTML(string=html_content).write_pdf(
+    #     pdf_path,
+    #     stylesheets=[css],
+    #     zoom=0.8,
+    #     optimize_images=True,
+    #     presentational_hints=True,
+    #     font_config=None
+    # )
+    font_config = FontConfiguration()
     HTML(string=html_content).write_pdf(
         pdf_path,
         stylesheets=[css],
         zoom=0.8,
         optimize_images=True,
         presentational_hints=True,
-        font_config=None
+        font_config=font_config
     )
 
     # ---- Remove unwanted pages (4,6,8,10,12) ----
@@ -343,9 +352,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    # return request.build_absolute_uri(static(path))
-    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    return f"file://{abs_path}"
+    return request.build_absolute_uri(static(path))
+    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    # return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
