@@ -343,9 +343,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    return request.build_absolute_uri(static(path))
-    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    # return f"file://{abs_path}"
+    # return request.build_absolute_uri(static(path))
+    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
