@@ -11,14 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-        font-family: 'MyCustomFont';
-            src: url('file:///path/to/font.ttf') format('truetype');
-        }
-        body {
-            font-family: 'MyCustomFont', sans-serif;
-        }
-
+         }
         .container {
              max-width: 2000px;
             height: 1000px;
@@ -43,7 +36,7 @@
         .right-design {
             position: absolute;
             right: -10px;
-            bottom: 0px;
+            bottom: -5px;
             transform: scale(0.75); /* 85% size par chhota */
             transform-origin: bottom right; /* niche right se scale karega */
         }
@@ -57,7 +50,7 @@
 
         .logo {
             position: absolute;
-            top: -10px;
+            top: 0px;
             right: 60px;
             font-size: 100px;
             font-weight: 800;
@@ -70,7 +63,7 @@
             left: 51%;
             top: 55%;
             transform: translate(-50%, -50%);
-            background: #f5f5f5;
+            background: none;
             border: 2px solid #333;
             padding: 20px 50px;
             width: 1250px;
@@ -192,7 +185,7 @@
             line-height: 1.2;
             margin-bottom: 30px;
             margin-left: -300px;
-            letter-spacing: 6px;
+            letter-spacing: 2px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: left;
         }
@@ -224,15 +217,15 @@
 .icon-wrapper1 {
     position: relative;
     flex-shrink: 0;
-    width: 110px;    /* mota aur bada wrapper */
-    height: 110px;   /* mota aur bada wrapper */
+    width: 150px;    /* mota aur bada wrapper */
+    height: 150px;   /* mota aur bada wrapper */
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .icon-wrapper1 img {
-    width: 120%;     /* wrapper ke size ke hisaab se full */
+    width: 90%;     /* wrapper ke size ke hisaab se full */
     height: auto;
     object-fit: contain; /* image distort na ho */
     margin-top: 50px;
@@ -443,20 +436,19 @@
             position: relative;
             z-index: 2;
         }
-           .main-title2 {
-            font-size: 3.6rem;       /* size thoda bada kar diya */
-            font-weight: 400;        /* normal rakha, bold hat gaya */
+        .main-title2 {
+            font-size: 3.6rem;
+            font-weight: 400;
             color: #000;
             line-height: 1.8;
-            margin-bottom: 30px;
+            margin-top: -50px;    /* upar kheenchne ke liye */
+            margin-bottom: 20px;  /* neeche normal space */
             letter-spacing: 5px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: left;
             width: 100%;
-            margin-left: -500px;
+            margin-left: -500px; /* agar text left shift karna hai */
         }
-
-
 
         .side4-image-container {
             position: relative;
@@ -468,8 +460,8 @@
        .chart-image {
             position: absolute;
             left: 330px;
-            bottom: -140px;
-            height: 680px;     /* bada kar diya */
+            bottom: -90px;
+            height: 670px;     /* bada kar diya */
            width: auto; proportion maintain rahe */
             max-width: none;
             max-height: none;
@@ -542,7 +534,7 @@
             font-size: 7.0rem;       /* thoda chhota */
             font-weight: 400;         /* halka bold feel */
             color: #000;
-            line-height: 1.0;         /* zyada airy, vertical space */
+            line-height: 0.7;         /* zyada airy, vertical space */
             margin-bottom: -550px;
             letter-spacing: 4px;      /* letters thode spread */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -572,7 +564,7 @@
             font-size: 3.0rem;   /* default se chhota */
             font-weight: 400;    /* normal weight */
             margin: 0;           /* extra space hata diya */
-            margin-left: 560px
+            margin-left: 470px
         }
 
 
@@ -677,11 +669,11 @@
 
        .side7-image {
             position: absolute;
-            left: -135px;
+            left: -160px;
             bottom: -2px;       /* image ko niche align karega */
-            top: -1305px;
+            top: -1350px;
             width: auto;
-            height: 350px;   /* container height ke hisaab se adjust karo */
+            height: 450px;   /* container height ke hisaab se adjust karo */
             max-width: none;
             max-height: none;
             object-fit: contain;
@@ -695,7 +687,7 @@
     margin-bottom: 40px;
     text-align: left;
     display: block;
-    letter-spacing: 3px;
+    letter-spacing: 1px;
 }
 .offer-text-line {
     font-size: 2.3rem;
@@ -706,7 +698,7 @@
     margin-bottom: 40px;
     text-align: left;
     display: block;
-    letter-spacing: 0px;
+    letter-spacing: -2px;
 }
 
 .offer-quote {
@@ -828,7 +820,7 @@
 
      .text-heading1 {
             font-size: 5.0rem;       /* thoda chhota */
-            margin-top: 40px;
+            margin-top: 60px;
             font-weight: 400;         /* halka bold feel */
             color: #000;
             line-height: 1.0;         /* zyada airy, vertical space */
@@ -836,15 +828,15 @@
             letter-spacing: 2px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             width: 110%;              /* pura container occupy kare */
-            margin-left: 420px;           /* left edge se chipka de */
+            margin-left: 350px;           /* left edge se chipka de */
             white-space: nowrap; /* Title hamesha ek line me hi rahega */
         }
          .last-text {
-            font-size: 10px;
-            transform: scale(2.2);      /* 2x zoom ho jayega */
+            font-size: 9px;
+            transform: scale(2.1);      /* 2x zoom ho jayega */
             transform-origin: left top; /* position stable rahe */
             position: relative;
-            bottom: 290px;
+            bottom: 300px;
             max-width: 820px;
             left: 50px;
             letter-spacing: 1.0px;
@@ -855,7 +847,7 @@
             gap: 200px;
             margin-bottom: 40px;
             flex-wrap: wrap;
-            margin-left: -690px;
+            margin-left: -635px;
             margin-top: -230px;
         }
 
@@ -870,6 +862,18 @@
             min-width: 80px;
             text-align: center;
         }
+          .reference-box1 {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 10px 50px;
+            font-weight: bold;
+            color: #333;
+            font-size: 20px;
+             margin-left: -595px;
+            min-width: 80px;
+            text-align: center;
+        }
 
         /* Section title */
         .section-title {
@@ -877,7 +881,7 @@
             font-size: 22px;
             color: #000;
             margin-bottom: 55px;
-            margin-left: -1520px;
+            margin-left: -1510px;
             margin-top: -12px;
         }
 
@@ -1003,7 +1007,7 @@
         .label-text {
             font-size: 20px;
             margin-top: -80px;
-            margin-left: -110px;
+            margin-left: -140px;
             color: #000;
             font-weight: 600;
             line-height: 1.3;
@@ -1084,7 +1088,7 @@
         }
      .text-heading {
             font-size: 5.0rem;       /* thoda chhota */
-            margin-top: 40px;
+            margin-top: 70px;
             font-weight: 400;         /* halka bold feel */
             color: #000;
             line-height: 1.0;         /* zyada airy, vertical space */
@@ -1092,7 +1096,7 @@
             letter-spacing: 2px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             width: 110%;              /* pura container occupy kare */
-            margin-left: 500px;           /* left edge se chipka de */
+            margin-left: 370px;           /* left edge se chipka de */
             white-space: nowrap; /* Title hamesha ek line me hi rahega */
         }
         .table-container {
@@ -1360,7 +1364,7 @@
         }
      .icon-image {
             position: absolute;
-            left: 750px;
+            left: 745px;
             bottom: -2px;       /* image ko niche align karega */
             top: 230px;
             width: auto;
@@ -1378,7 +1382,7 @@
         .volt-text {
          font-size: 2.0rem;
           margin-top: 410px;
-          margin-left: -400px;
+          margin-left: -390px;
         }
     </style>
 
@@ -1396,44 +1400,52 @@
         </div>
 
         <div class="logo">
-            <img src="{{ data.images.logo }}" alt="logo" width="450" height="300">
+            <img src="{{ data.images.logo }}" alt="logo" width="450" height="240">
         </div>
 
         <!-- Main Content Box -->
-    <div class="main-content">
+   <div class="main-content">
   <div class="header">
     <div class="title">{{ data.document_type }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
   </div>
   <div class="info-grid">
-    <div class="info-row">
+
+    <div class="info-row" style="margin-bottom:11px;">
       <div class="label">Raison Sociale:</div>
-      <div class="value" style=" margin-left:120px;">{{ data.clientSociety }}</div>
+      <div class="value" style="margin-left:120px;">{{ data.clientSociety }}</div>
     </div>
-    <div class="info-row">
+
+    <div class="info-row" style="margin-bottom:11px;">
       <div class="label">SIRET:</div>
       <div class="value" style="margin-left:120px;">{{ data.clientSiret }}</div>
     </div>
-    <div class="info-row">
+
+    <div class="info-row" style="margin-bottom:11px;">
       <div class="label">Interlocuteur:</div>
     </div>
-    <div class="info-row" style="display:flex; align-items:center;">
+
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
       <div class="label" style="width:110px; text-align:right; margin-left:70px;">Prenom:</div>
       <div class="value" style="color:#333; margin-left:60px;">{{ data.clientFirstName }}</div>
     </div>
-    <div class="info-row" style="display:flex; align-items:center;">
+
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
       <div class="label" style="width:110px; text-align:right; margin-left:70px;">Nom:</div>
       <div class="value" style="color:#333; margin-left:60px;">{{ data.clientLastName }}</div>
     </div>
-    <div class="info-row" style="display:flex; align-items:center;">
+
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
       <div class="label" style="width:110px; text-align:right; margin-left:70px;">Email:</div>
       <div class="value" style="color:#333; margin-left:60px;">
         <a href="mailto:{{ data.email }}" class="email-link">{{ data.clientEmail }}</a>
       </div>
     </div>
-    <div class="info-row" style="display:flex; align-items:center;">
+
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:12px;">
       <div class="label" style="width:110px; text-align:right; margin-left:40px;">Telephone:</div>
       <div class="value" style="color:#333; margin-left:90px;">{{ data.clientPhoneNumber }}</div>
     </div>
+
   </div>
 </div>
 
@@ -1610,9 +1622,9 @@
                         {% if data.comparatifClientHistoryPdfDto.routingRate %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>{% endif %}
                         {% if data.comparatifClientHistoryPdfDto.fourgas %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.fourgas }}</div>{% endif %}
                     {% elif data.comparatifClientHistoryPdfDto.energyType|upper == "ELECTRICITY" %}
-                        {% if data.comparatifClientHistoryPdfDto.pdl %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>{% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.segmentation %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>{% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.fourelectricity %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.fourelectricity }}</div>{% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.pdl %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>{% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.segmentation %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>{% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.fourelectricity %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.fourelectricity }}</div>{% endif %}
                     {% endif %}
                 </div>
 

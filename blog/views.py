@@ -16,7 +16,6 @@ from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
 from PyPDF2 import PdfReader, PdfWriter
-from weasyprint.fonts import FontConfiguration
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -207,11 +206,11 @@ def build_comparatif_dto(comparatif, request, data):
         required_electricity_fields = ["pdl", "segmentation"]
 
         # ELECTRICITY ke fields update karna
-        dto.update({
-            "pdl": comparatif.get("pdl"),
-            "segmentation": comparatif.get("segmentation"),
-            # "fourelectricity": comparatif.get("fourelectricity"),
-        })
+        # dto.update({
+        #     "pdl": comparatif.get("pdl"),
+        #     "segmentation": comparatif.get("segmentation"),
+        #     "fourelectricity": comparatif.get("fourelectricity"),
+        # })
 
         # Validation: ELECTRICITY ke saare required fields hone chahiye
         for field in required_electricity_fields:
@@ -291,22 +290,13 @@ def generate_pdf(html_content, request, data):
 
     # Save PDF using WeasyPrint
     css = CSS(string="""@page { size: 530mm 265mm; margin: 0.0cm; }""")
-    # HTML(string=html_content).write_pdf(
-    #     pdf_path,
-    #     stylesheets=[css],
-    #     zoom=0.8,
-    #     optimize_images=True,
-    #     presentational_hints=True,
-    #     font_config=None
-    # )
-    font_config = FontConfiguration()
     HTML(string=html_content).write_pdf(
         pdf_path,
         stylesheets=[css],
         zoom=0.8,
         optimize_images=True,
         presentational_hints=True,
-        font_config=font_config
+        font_config=None
     )
 
     # ---- Remove unwanted pages (4,6,8,10,12) ----
