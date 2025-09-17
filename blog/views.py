@@ -206,11 +206,11 @@ def build_comparatif_dto(comparatif, request, data):
         required_electricity_fields = ["pdl", "segmentation"]
 
         # ELECTRICITY ke fields update karna
-        # dto.update({
-        #     "pdl": comparatif.get("pdl"),
-        #     "segmentation": comparatif.get("segmentation"),
-        #     "fourelectricity": comparatif.get("fourelectricity"),
-        # })
+        dto.update({
+            "pdl": comparatif.get("pdl"),
+            "segmentation": comparatif.get("segmentation"),
+            # "fourelectricity": comparatif.get("fourelectricity"),
+        })
 
         # Validation: ELECTRICITY ke saare required fields hone chahiye
         for field in required_electricity_fields:
