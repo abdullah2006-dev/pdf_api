@@ -1406,7 +1406,7 @@
         <!-- Main Content Box -->
    <div class="main-content">
   <div class="header">
-    <div class="title">{{ data.document_type }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
+    <div class="title">{{ data.energyType }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
   </div>
   <div class="info-grid">
 
@@ -1642,7 +1642,11 @@
             <div class="rates-container">
                 <div class="rate-boximage">
                     <div class="partner-logo">
-                        <img src="{{ provider.partnerPhoto.path }}" alt="" class="partner-image">
+                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                          <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                        {% else %}
+                          <img src="/images/default-logo.png" class="partner-image">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="rate-box"><div class="rate-value">{{ provider.rate4 }}</div></div>

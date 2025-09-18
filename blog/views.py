@@ -351,7 +351,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
     print("Inside BuildPresentationData")
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "document_type": comparatif_dto["energyType"],
+        "energyType": comparatif_dto["energyType"],
         "clientSociety": data["clientSociety"],
         "clientSiret": data["clientSiret"],
         "clientFirstName": data["clientFirstName"],
