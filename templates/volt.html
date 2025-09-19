@@ -77,10 +77,10 @@
         }
 
         .title {
-            font-size: 45px;
+            font-size: 40px;
             color: #333;
             margin-bottom: 10px;
-            letter-spacing: 1px;
+
         }
 
         .subtitle {
@@ -1406,7 +1406,7 @@
         <!-- Main Content Box -->
    <div class="main-content">
   <div class="header">
-    <div class="title">{{ data.energyType }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
+    <div class="title">{{ data.headingone }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
   </div>
   <div class="info-grid">
 
@@ -1620,11 +1620,11 @@
                         {% if data.comparatifClientHistoryPdfDto.pce %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pce }}</div>{% endif %}
                         {% if data.comparatifClientHistoryPdfDto.gasProfile %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.gasProfile }}</div>{% endif %}
                         {% if data.comparatifClientHistoryPdfDto.routingRate %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>{% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.fourgas %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.fourgas }}</div>{% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}<div class="reference-box">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>{% endif %}
                     {% elif data.comparatifClientHistoryPdfDto.energyType|upper == "ELECTRICITY" %}
                         {% if data.comparatifClientHistoryPdfDto.pdl %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>{% endif %}
                         {% if data.comparatifClientHistoryPdfDto.segmentation %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>{% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.fourelectricity %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.fourelectricity }}</div>{% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}<div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>{% endif %}
                     {% endif %}
                 </div>
 

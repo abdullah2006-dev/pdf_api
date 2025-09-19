@@ -186,7 +186,7 @@ def build_comparatif_dto(comparatif, request, data):
             "pce": comparatif.get("pce"),
             "gasProfile": comparatif.get("gasProfile"),
             "routingRate": comparatif.get("routingRate"),
-            # "fourgas": comparatif.get("fourgas"),
+            "volumeAnnual": comparatif.get("volumeAnnual"),
         })
 
         # Validation: GAS ke saare required fields hone chahiye
@@ -195,21 +195,21 @@ def build_comparatif_dto(comparatif, request, data):
                 raise ValueError(f"Missing required GAS field: {field}")
 
         # Agar ELECTRICITY ke fields mistakenly bhej diye gaye hain toh error
-        # forbidden_electricity_fields = ["pdl", "segmentation", "fourelectricity"]
         forbidden_electricity_fields = ["pdl", "segmentation"]
+        # forbidden_electricity_fields = ["pdl", "segmentation"]
         for field in forbidden_electricity_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for GAS energyType")
 
     elif energy_type == "ELECTRICITY":
-        # required_electricity_fields = ["pdl", "segmentation", "fourelectricity"]
-        required_electricity_fields = ["pdl", "segmentation"]
-
+        required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
+        # required_electricity_fields = ["pdl", "segmentation"]
+        #
         # ELECTRICITY ke fields update karna
         dto.update({
             "pdl": comparatif.get("pdl"),
             "segmentation": comparatif.get("segmentation"),
-            # "fourelectricity": comparatif.get("fourelectricity"),
+            "volumeAnnual": comparatif.get("volumeAnnual"),
         })
 
         # Validation: ELECTRICITY ke saare required fields hone chahiye
@@ -218,8 +218,8 @@ def build_comparatif_dto(comparatif, request, data):
                 raise ValueError(f"Missing required ELECTRICITY field: {field}")
 
         # Agar GAS ke fields mistakenly bhej diye gaye hain toh error
-        # forbidden_gas_fields = ["pce", "gasProfile", "routingRate", "fourgas"]
         forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
+        # forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
 
         for field in forbidden_gas_fields:
             if comparatif.get(field):
@@ -351,7 +351,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
     print("Inside BuildPresentationData")
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "energyType": comparatif_dto["energyType"],
+        "headingone": "APPEL D’OFFRE",
         "clientSociety": data["clientSociety"],
         "clientSiret": data["clientSiret"],
         "clientFirstName": data["clientFirstName"],
