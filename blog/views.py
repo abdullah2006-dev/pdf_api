@@ -360,7 +360,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "clientPhoneNumber": data["clientPhoneNumber"],
         "black": "-36%",
         "black1": "21087&",
-        "black3": "econmece&en",
+        "black3": "économisé/an",
         "image": build_image_section(data, chart_base64),
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
