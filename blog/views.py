@@ -233,12 +233,12 @@ def build_comparatif_dto(comparatif, request, data):
 
     required_rate_fields = [
         "partnerPhoto",
-        # "rate2",
+        "prixMolecule",
         "abonnement",
         "partCee",
         "cta",
         "ticgn",
-        # "rate3",
+        "coutHTVA",
         # "rate4",
         # "rate5",
         # "rate6",

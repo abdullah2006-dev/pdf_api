@@ -841,39 +841,41 @@
             left: 50px;
             letter-spacing: 1.0px;
          }
-        .reference-boxes {
-            display: flex;
-            justify-content: center;
-            gap: 200px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-            margin-left: -635px;
-            margin-top: -230px;
-        }
+         .reference-boxes {
+    display: flex;
+    justify-content: flex-start;
+    gap: 200px;
+    margin-bottom: 40px;
+    flex-wrap: nowrap;
+    margin-left: 50px;
+    margin-top: -230px;
+    overflow: hidden;
+}
 
-        .reference-box {
-            background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 20px;
-            padding: 10px 50px;
-            font-weight: bold;
-            color: #333;
-            font-size: 20px;
-            min-width: 80px;
-            text-align: center;
-        }
-          .reference-box1 {
-            background: white;
-            border: 3px solid #e0e0e0;
-            border-radius: 20px;
-            padding: 10px 50px;
-            font-weight: bold;
-            color: #333;
-            font-size: 20px;
-             margin-left: -595px;
-            min-width: 80px;
-            text-align: center;
-        }
+.reference-box {
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 10px 50px;
+    font-weight: bold;
+    color: #333;
+    font-size: 20px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.reference-box1 {
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 10px 50px;
+    font-weight: bold;
+    color: #333;
+    font-size: 20px;
+    margin-left: 5px;
+    min-width: 80px;
+    text-align: center;
+}
 
         /* Section title */
         .section-title {
@@ -952,18 +954,19 @@
         }
 
         .partner-logo {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 5px;
+          width: 30px;   /* fix size */
+          height: 30px;  /* fix size */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 5px;
+          overflow: hidden; /* image bahar na nikle */
         }
 
         .partner-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain; /* image proportion maintain karegi */
         }
 
         .rate-value {
@@ -1655,7 +1658,7 @@
                 <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.partCee }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.rate7 }}</div></div>
+                <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
             </div>
         </div>
 
@@ -1699,7 +1702,7 @@
       {% endif %}
 
                 <tr>
-                  <td><img src="{{ rate.partnerPhoto.path }}" alt="Partner Photo" class="partner-logo1"></td>
+                  <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
                   <td>{{ rate.prixMolecule }}</td>
                   <td>{{ rate.abonnement }}</td>
                   <td>{{ rate.partCee }}</td>
