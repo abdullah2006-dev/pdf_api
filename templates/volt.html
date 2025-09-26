@@ -855,26 +855,36 @@
 .reference-box {
     background: white;
     border: 3px solid #e0e0e0;
-    border-radius: 30px;
-    padding: 10px 50px;
+    border-radius: 35px;
+    padding: 20px 50px;
     font-weight: bold;
     color: #333;
     font-size: 20px;
     min-width: 80px;
+   min-height: 65px;
     text-align: center;
+
+    display: flex;              /* flexbox on */
+    justify-content: center;    /* horizontally center */
+
 }
 
 .reference-box1 {
     background: white;
     border: 3px solid #e0e0e0;
-    border-radius: 20px;
-    padding: 10px 50px;
+    border-radius: 35px;
+    padding: 20px 50px;
     font-weight: bold;
     color: #333;
     font-size: 20px;
     margin-left: 5px;
     min-width: 80px;
+    min-height: 65px;
     text-align: center;
+
+    display: flex;              /* flexbox on */
+    justify-content: center;    /* horizontally center */
+
 }
 
         /* Section title */
@@ -913,9 +923,9 @@
         .rate-box {
             background: #ffffff;
             border: 3px solid #e0e0e0;
-            border-radius: 30px;
+            border-radius: 35px;
             min-width: 180px;
-            min-height: 55px;
+            min-height: 68px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             display: flex;
@@ -1396,7 +1406,7 @@
 
     <div class="info-row" style="margin-bottom:11px;">
       <div class="label">Raison Sociale:</div>
-      <div class="value" style="margin-left:120px;">{{ data.clientSociety }}</div>
+      <div class="value" style="margin-left:120px;">{{ data.clientSociety  }}</div>
     </div>
 
     <div class="info-row" style="margin-bottom:11px;">

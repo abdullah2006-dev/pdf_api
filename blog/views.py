@@ -349,15 +349,25 @@ def build_static_url(request, path):
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
     print("Inside BuildPresentationData")
+
+    # Updated helper function
+    def safe_value(value):
+        if value is None:
+            return ""
+        str_val = str(value).strip().lower()
+        if str_val == "" or str_val == "none":
+            return ""
+        return value
+
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
         "headingone": "APPEL D’OFFRE",
-        "clientSociety": data["clientSociety"],
-        "clientSiret": data["clientSiret"],
-        "clientFirstName": data["clientFirstName"],
-        "clientLastName": data["clientLastName"],
-        "clientEmail": data["clientEmail"],
-        "clientPhoneNumber": data["clientPhoneNumber"],
+        "clientSociety": safe_value(data.get("clientSociety")),
+        "clientSiret": safe_value(data.get("clientSiret")),
+        "clientFirstName": safe_value(data.get("clientFirstName")),
+        "clientLastName": safe_value(data.get("clientLastName")),
+        "clientEmail": safe_value(data.get("clientEmail")),
+        "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
         "black": "-36%",
         "black1": "21087&",
         "black3": "économisé/an",
