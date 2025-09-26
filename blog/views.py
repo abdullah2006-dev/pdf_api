@@ -376,7 +376,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             else ""
         ),
         "black1": (
-            safe_value(comparatif_dto.get("differenceHTVA")) + "%" 
+            safe_value(comparatif_dto.get("differenceHTVA")) + "&" 
             if safe_value(comparatif_dto.get("differenceHTVA")) != "" 
             else ""
         ),
