@@ -357,7 +357,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         str_val = str(value).strip().lower()
         if str_val == "" or str_val == "none":
             return ""
-        return value
+        return str(value)
 
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
