@@ -237,12 +237,12 @@ def build_comparatif_dto(comparatif, request, data):
         "abonnement",
         "partCee",
         "cta",
-        "ticgn",
+        "resultTICGN",
         "coutHTVA",
-        # "rate4",
-        # "rate5",
-        # "rate6",
-        # "rate7",
+        "budgetEnergie",
+        "distribution",
+        "resultCEE",
+        "abonnementMonthly",
     ]
 
     # for idx, item in enumerate(comparatif_rate, start=1):
