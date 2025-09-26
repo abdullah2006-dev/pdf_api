@@ -1654,7 +1654,7 @@
                 </div>
                 <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.rate6 }}</div></div>
+                <div class="rate-box"><div class="rate-value">{{ provider.tva }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
@@ -1708,7 +1708,7 @@
                   <td>{{ rate.partCee }}</td>
                   <td>{{ rate.cta }}</td>
                   <td>{{ rate.resultTICGN }}</td>
-                  <td>{{ rate.rate3 }}</td>
+                  <td>{{ rate.coutHTVA }}</td>
                 </tr>
 
       {% if forloop.counter|divisibleby:4 or forloop.last %}
