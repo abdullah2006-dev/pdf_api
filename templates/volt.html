@@ -1652,11 +1652,11 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="rate-box"><div class="rate-value">{{ provider.rate4 }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.rate5 }}</div></div>
+                <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
+                <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.rate6 }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.partCee }}</div></div>
+                <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
                 <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
             </div>
@@ -1704,10 +1704,10 @@
                 <tr>
                   <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
                   <td>{{ rate.prixMolecule }}</td>
-                  <td>{{ rate.abonnement }}</td>
+                  <td>{{ rate.abonnementMonthly }}</td>
                   <td>{{ rate.partCee }}</td>
                   <td>{{ rate.cta }}</td>
-                  <td>{{ rate.ticgn }}</td>
+                  <td>{{ rate.resultTICGN }}</td>
                   <td>{{ rate.rate3 }}</td>
                 </tr>
 
