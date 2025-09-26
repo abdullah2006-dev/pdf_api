@@ -855,7 +855,7 @@
 .reference-box {
     background: white;
     border: 3px solid #e0e0e0;
-    border-radius: 20px;
+    border-radius: 30px;
     padding: 10px 50px;
     font-weight: bold;
     color: #333;
@@ -897,26 +897,25 @@
         }
 
 .provider-row {
-
     align-items: flex-start;
-    margin-top: -50;   /* 👈 row ko upar chipka diya */
-    margin-bottom: 30px; /* neeche thoda space */
+    margin-top: -30px;   /* 👈 row ko upar chipka diya */
+    margin-bottom: 100px; /* neeche thoda space */
     margin-left: 50px; /* neeche thoda space */
     padding: 0;
 }
 
 .rates-container {
     display: flex;
-    gap: 60px;                   /* 👈 boxes ke beech gap */
+    gap: 20px;                   /* 👈 boxes ke beech gap */
     justify-content: flex-start;
 }
 
         .rate-box {
             background: #ffffff;
             border: 3px solid #e0e0e0;
-            border-radius: 25px;
-            min-width: 150px;
-            min-height: 45px;
+            border-radius: 30px;
+            min-width: 180px;
+            min-height: 55px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             display: flex;
@@ -926,27 +925,9 @@
             padding: 0px 6px;
             text-align: center;
         }
-
-        .rate-boximage {
-            background: #ffffff;
-            border: 3px solid #e0e0e0;
-            border-radius: 25px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;   /* text center */
-            justify-content: center;
-            text-align: center;
-            width: 160px;           /* box की width कम कर दी */
-            padding: 10px;          /* अंदर का space adjust */
-            box-sizing: border-box; /* border और padding width में शामिल हो जाए */
-        }
         .rate-box * {
             line-height: 1.1;
         }
-
-
-
         .rate-box:hover {
             border-color: #3b82f6;
             transform: translateY(-3px);
@@ -993,9 +974,9 @@
 
        .labels-row {
             display: flex;
-            gap: 95px;
-            margin-top: 90px;
-            padding-left: 350px; /* Offset for logo width */
+            gap: 85px;
+            margin-top: 10px;
+            padding-left: 365px; /* Offset for logo width */
         }
 
         .label-item {
@@ -1008,7 +989,7 @@
         }
 
         .label-text {
-            font-size: 20px;
+            font-size: 17px;
             margin-top: -80px;
             margin-left: -140px;
             color: #000;
@@ -1633,34 +1614,38 @@
 
                 <div class="section-title">{{ data.comparison_table.section_title }}</div>
 
-                <div class="labels-row">
-                    {% for label in data.comparison_table.labels %}
-                        <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
-                    {% endfor %}
-                </div>
         {% endif %}  {# End of container start block #}
 
-        <!-- Provider row -->
-        <div class="provider-row">
-            <div class="rates-container">
-                <div class="rate-boximage">
-                    <div class="partner-logo">
-                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                          <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
-                        {% else %}
-                          <img src="/images/default-logo.png" class="partner-image">
-                        {% endif %}
-                    </div>
+          <!-- PROVIDER ROW - HAR PROVIDER KE LIYE -->
+    <div class="provider-row">
+        <div class="rates-container">
+            <div class="rate-box">
+                <div class="partner-logo">
+                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                      <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    {% else %}
+                      <img src="/images/default-logo.png" class="partner-image">
+                    {% endif %}
                 </div>
-                <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.rate6 }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
-                <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
             </div>
+            <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.rate6 }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
         </div>
+    </div>
+    <!-- LABELS SIRF FIRST PROVIDER KE BAAD - END MEIN -->
+    {% if forloop.first %}
+        <div class="labels-row">
+            {% for label in data.comparison_table.labels %}
+                <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <br>
 
         {% if forloop.counter|divisibleby:4 or forloop.last %}
             </div> <!-- container8 close -->
