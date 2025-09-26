@@ -187,6 +187,8 @@ def build_comparatif_dto(comparatif, request, data):
             "gasProfile": comparatif.get("gasProfile"),
             "routingRate": comparatif.get("routingRate"),
             "volumeAnnual": comparatif.get("volumeAnnual"),
+            "ratioHTVA": comparatif.get("ratioHTVA"),  # <-- add this line
+            "differenceHTVA": comparatif.get("differenceHTVA"),
         })
 
         # Validation: GAS ke saare required fields hone chahiye
@@ -368,8 +370,16 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
-        "black": safe_value(comparatif_dto.get("ratioHTVA")) + "%",
-        "black1": safe_value(comparatif_dto.get("differenceHTVA")) + "&",
+        "black": (
+            safe_value(comparatif_dto.get("ratioHTVA")) + "%" 
+            if safe_value(comparatif_dto.get("ratioHTVA")) != "" 
+            else ""
+        ),
+        "black1": (
+            safe_value(comparatif_dto.get("differenceHTVA")) + "%" 
+            if safe_value(comparatif_dto.get("differenceHTVA")) != "" 
+            else ""
+        ),
         "black3": "économisé/an",
         "image": build_image_section(data, chart_base64),
         "images": build_images(data, request),
