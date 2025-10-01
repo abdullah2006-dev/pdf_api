@@ -212,6 +212,8 @@ def build_comparatif_dto(comparatif, request, data):
             "pdl": comparatif.get("pdl"),
             "segmentation": comparatif.get("segmentation"),
             "volumeAnnual": comparatif.get("volumeAnnual"),
+            "ratioHTVA": comparatif.get("ratioHTVA"),  # <-- add this line
+            "differenceHTVA": comparatif.get("differenceHTVA"),
         })
 
         # Validation: ELECTRICITY ke saare required fields hone chahiye
@@ -344,9 +346,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    # return request.build_absolute_uri(static(path))
-    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    return f"file://{abs_path}"
+    return request.build_absolute_uri(static(path))
+    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    # return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -376,7 +378,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             else ""
         ),
         "black1": (
-            safe_value(comparatif_dto.get("differenceHTVA")) + "&" 
+            safe_value(comparatif_dto.get("differenceHTVA")) + "€" 
             if safe_value(comparatif_dto.get("differenceHTVA")) != "" 
             else ""
         ),
@@ -524,3 +526,285 @@ def build_contact_info(data):
     }
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def volt_consulting_presentation_Electricitry(request):
+    """
+    POST API endpoint that accepts and processes Volt Consulting presentation data
+    and renders HTML with the data.
+    """
+    try:
+        # 1️⃣ Parse incoming data
+        data = parse_request_data(request)
+
+        # 2️⃣ Generate Chart (if available)
+        chart_base64 = generate_chart(data)
+        enedis_chart_base64 = generate_enedis_chart(data)
+
+        # 3️⃣ Build Comparatif DTO
+        comparatif = data.get("comparatifClientHistoryPdfDto", {})
+        comparatif_dto = build_comparatif_dto_Electricity(comparatif, request, data)
+
+        # 4️⃣ Build Presentation Data
+        presentation_data = build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request)
+
+        # 5️⃣ Render HTML
+        html_content = render_html_Elecricity(presentation_data)
+
+        # 6️⃣ Generate PDF
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+
+        return JsonResponse({
+            "status": "success",
+            "path": pdf_url,
+            "name": pdf_filename,
+            "title": pdf_filename,
+            "mime_type": "application/pdf",
+            "message": "PDF generated successfully"
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": f"An error occurred: {str(e)}",
+        }, status=500)
+
+
+def render_html_Elecricity(presentation_data):
+    print("Inside RenderHTML")
+    return render_to_string("volt_Electricity.html", {"data": presentation_data})
+
+
+def generate_enedis_chart(data):
+    """Generate Enedis-style stacked bar chart from chartDataDto data."""
+    print("Inside GenerateChart - Enedis Style")
+
+    # 🔹 Extract chartDataDto
+    if "chartDataDto" not in data or not data["chartDataDto"]:
+        raise ValueError("Missing or empty field: chartDataDto")
+    chart_data = data["chartDataDto"]
+
+    # 🔹 Parse dates from xAxis
+    try:
+        dates = chart_data["xAxis"][0]["data"]
+        date_labels = []
+        for d in dates:
+            try:
+                date_labels.append(datetime.strptime(str(d), "%d/%m/%Y").strftime("%d/%m/%Y"))
+            except Exception:
+                date_labels.append(str(d))
+    except Exception as e:
+        print(f"Error parsing dates: {e}")
+        date_labels = [f"Period {i + 1}" for i in range(12)]
+
+    # 🔹 Prepare figure with Enedis style
+    fig, ax = plt.subplots(figsize=(14, 7))
+    fig.patch.set_facecolor('#f5f5f5')
+    ax.set_facecolor('white')
+
+    # 🔹 Define Enedis colors (cycle if series > 4)
+    enedis_colors = ['#b8c5d6', '#1e4d7b', '#d4c34a', '#f5a623']
+
+    # 🔹 Series data from chartDataDto
+    series_data = chart_data["series"]
+
+    x = np.arange(len(date_labels))
+    width = 0.6
+    bottom = np.zeros(len(date_labels))
+
+    # 🔹 Plot each series as stacked bars
+    for idx, series in enumerate(series_data):
+        y = np.array(series["data"], dtype=np.float64)
+
+        # Ensure correct length
+        if len(y) != len(date_labels):
+            print(f"Warning: Series {idx} length mismatch. Padding/truncating.")
+            if len(y) < len(date_labels):
+                y = np.pad(y, (0, len(date_labels) - len(y)), 'constant')
+            else:
+                y = y[:len(date_labels)]
+
+        label = series.get("label", f"Series {idx + 1}")
+        color = enedis_colors[idx % len(enedis_colors)]
+
+        ax.bar(x, y, width, label=label, bottom=bottom, color=color)
+        bottom += y
+
+    # 🔹 Customize axes
+    ax.set_xlabel('')
+    ax.set_ylabel('€ consommation', fontsize=10, color='#666')
+    ax.set_xticks(x)
+    ax.set_xticklabels(date_labels, rotation=0, ha='center', fontsize=9)
+
+    ax.yaxis.grid(True, linestyle='-', alpha=0.3, color='#ddd')
+    ax.set_axisbelow(True)
+
+    # 🔹 Remove spines
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_color('#ddd')
+    ax.spines['bottom'].set_color('#ddd')
+
+    # 🔹 Y-axis formatting
+    y_max = bottom.max()
+    if y_max > 0:
+        ax.set_ylim(0, y_max * 1.1)
+        ax.set_yticks(np.linspace(0, y_max * 1.1, 5))
+    else:
+        ax.set_ylim(0, 10)
+
+    # 🔹 Legend styling
+    ax.legend(
+        loc='upper center',
+        bbox_to_anchor=(0.5, -0.08),
+        ncol=len(series_data),
+        frameon=False,
+        fontsize=9,
+        columnspacing=2,
+        handlelength=1.5,
+        handleheight=1.5
+    )
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.15)
+
+    # 🔹 Convert to base64
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", dpi=300, bbox_inches='tight', facecolor='#f5f5f5')
+    plt.close()
+    buf.seek(0)
+
+    return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
+
+
+def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request):
+    print("Inside BuildPresentationData")
+
+    # Updated helper function
+    def safe_value(value):
+        if value is None:
+            return ""
+        str_val = str(value).strip().lower()
+        if str_val == "" or str_val == "none":
+            return ""
+        return str(value)
+
+    return {
+        "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
+        "headingone": "APPEL D’OFFRE",
+        "clientSociety": safe_value(data.get("clientSociety")),
+        "clientSiret": safe_value(data.get("clientSiret")),
+        "clientFirstName": safe_value(data.get("clientFirstName")),
+        "clientLastName": safe_value(data.get("clientLastName")),
+        "clientEmail": safe_value(data.get("clientEmail")),
+        "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
+        "black": (
+            safe_value(comparatif_dto.get("ratioHTVA")) + "%"
+            if safe_value(comparatif_dto.get("ratioHTVA")) != ""
+            else ""
+        ),
+        "black1": (
+            safe_value(comparatif_dto.get("differenceHTVA")) + "€"
+            if safe_value(comparatif_dto.get("differenceHTVA")) != ""
+            else ""
+        ),
+        "black3": "économisé/an",
+        "image": build_image_section(data, chart_base64),
+        "imageOne": {
+                        "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
+                    },
+        "images": build_images(data, request),
+        "company_presentation": build_company_presentation(data),
+        "comparatifClientHistoryPdfDto": comparatif_dto,
+        "budget_global": build_budget_section(data),
+        "tender_results": build_tender_results(data),
+        "comparison_table": build_comparison_table_Electricity(data),
+        "tender_table": build_tender_table_Electricity(data),
+        "change_section": build_change_section(data),
+        "contact_info": build_contact_info(data),
+    }
+
+
+def build_comparatif_dto_Electricity(comparatif, request, data):
+    print("Inside BuildComparatifDTO")
+    created_on_raw = comparatif.get("createdOn")
+    if not created_on_raw:
+        raise ValueError("Missing required field: createdOn")
+
+    try:
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0)  # convert ms → seconds
+        created_on = dt.strftime("%d/%m/%Y")  # format date
+    except Exception as e:
+        raise ValueError(f"Invalid createdOn value: {e}")
+
+    dto = {
+        "title": data.get("contexte_title", "Contexte global"),
+        "createdOn": created_on,
+        "energyType": comparatif.get("energyType"),
+    }
+
+    energy_type = dto.get("energyType")
+
+    if energy_type == "ELECTRICITY":
+        required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
+
+        dto.update({
+            "pdl": comparatif.get("pdl"),
+            "segmentation": comparatif.get("segmentation"),
+            "volumeAnnual": comparatif.get("volumeAnnual"),
+            "ratioHTVA": comparatif.get("ratioHTVA"),
+            "differenceHTVA": comparatif.get("differenceHTVA"),
+        })
+
+        for field in required_electricity_fields:
+            if not dto.get(field):
+                raise ValueError(f"Missing required ELECTRICITY field: {field}")
+
+    else:
+        raise ValueError("Invalid or missing energyType. Must be 'ELECTRICITY'.")
+
+    comparatif_rate = comparatif.get("comparatifRates", [])
+
+    dto["comparatifRates"] = comparatif_rate
+    return dto
+
+
+def build_comparison_table_Electricity(data):
+    """Comparison table section."""
+    print("Inside BuildComparisionTable")
+    return {
+        "last_text": data.get("comparison_note",
+                              "Ce comparatif tient compte de votre consommation au cours des douze derniers mois. "
+                              "Les prix mentionnés sont variables au jour de la consultation, étant donné qu'ils sont sujets à la fluctuation des prix sur le marché de l'énergie. "
+                              "Ils sont non contractuels. Il est important de noter que ce comparatif se base uniquement sur votre historique de consommation et ne prend pas en considération vos besoins énergétiques futurs."),
+        "section_title": data.get("section_title", "Offre Actuelle / de renouvellement"),
+        "labels": data.get("labels", [
+            "Fourniture <br>en €/an", "Acheminement <br>en €/an", "Taxes <br>en €/an", "Budget HTVA <br>en €/an"
+        ])
+    }
+
+
+def build_tender_table_Electricity(data):
+    """Tender table section."""
+    print("Inside BuildTenderTable")
+    return {
+        "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
+        "columns": data.get("columns", [
+            "Fournisseur", "HPH <br> €/MWh", "HCH <br> €/MWh",
+            "HPE <br> €/MWh", "HCE <br> €/MWh"
+        ]),
+
+        "columns1": data.get("columns", [
+           "HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"
+        ]),
+
+        "columns2": data.get("columns", [
+           "CEE <br> €/MWh"
+        ]),
+
+        "columns3": data.get("columns", [
+            "TABO <br> €/an"
+        ]),
+    }

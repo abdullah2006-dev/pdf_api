@@ -1595,7 +1595,7 @@
     <br>
 
     {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        {% if forloop.counter0|divisibleby:4 %}
+        {% if forloop.counter0|divisibleby:3 %}
           <div class="container8">
                 <div class="content-wrapper8">
                     <div><img src="{{ data.images.double }}" class="double-image"></div>
@@ -1657,7 +1657,7 @@
     {% endif %}
     <br>
 
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
             </div> <!-- container8 close -->
     <br>
     <br>
