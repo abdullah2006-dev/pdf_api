@@ -178,7 +178,6 @@ def build_comparatif_dto(comparatif, request, data):
     energy_type = dto.get("energyType")
 
     if energy_type == "GAS":
-        # required_gas_fields = ["pce", "gasProfile", "routingRate", "fourgas"]
         required_gas_fields = ["pce", "gasProfile", "routingRate"]
 
         # GAS ke fields update karna
@@ -187,7 +186,7 @@ def build_comparatif_dto(comparatif, request, data):
             "gasProfile": comparatif.get("gasProfile"),
             "routingRate": comparatif.get("routingRate"),
             "volumeAnnual": comparatif.get("volumeAnnual"),
-            "ratioHTVA": comparatif.get("ratioHTVA"),  # <-- add this line
+            "ratioHTVA": comparatif.get("ratioHTVA"),
             "differenceHTVA": comparatif.get("differenceHTVA"),
         })
 
@@ -198,61 +197,15 @@ def build_comparatif_dto(comparatif, request, data):
 
         # Agar ELECTRICITY ke fields mistakenly bhej diye gaye hain toh error
         forbidden_electricity_fields = ["pdl", "segmentation"]
-        # forbidden_electricity_fields = ["pdl", "segmentation"]
         for field in forbidden_electricity_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for GAS energyType")
 
-    elif energy_type == "ELECTRICITY":
-        required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
-        # required_electricity_fields = ["pdl", "segmentation"]
-        #
-        # ELECTRICITY ke fields update karna
-        dto.update({
-            "pdl": comparatif.get("pdl"),
-            "segmentation": comparatif.get("segmentation"),
-            "volumeAnnual": comparatif.get("volumeAnnual"),
-            "ratioHTVA": comparatif.get("ratioHTVA"),  # <-- add this line
-            "differenceHTVA": comparatif.get("differenceHTVA"),
-        })
-
-        # Validation: ELECTRICITY ke saare required fields hone chahiye
-        for field in required_electricity_fields:
-            if not dto.get(field):
-                raise ValueError(f"Missing required ELECTRICITY field: {field}")
-
-        # Agar GAS ke fields mistakenly bhej diye gaye hain toh error
-        forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
-        # forbidden_gas_fields = ["pce", "gasProfile", "routingRate"]
-
-        for field in forbidden_gas_fields:
-            if comparatif.get(field):
-                raise ValueError(f"Field '{field}' is not allowed for ELECTRICITY energyType")
-
     else:
-        raise ValueError("Invalid or missing energyType. Must be 'GAS' or 'ELECTRICITY'.")
+        raise ValueError("Invalid or missing energyType. Must be 'GAS'.")
 
     # Comparatif rate validation
     comparatif_rate = comparatif.get("comparatifRates", [])
-
-    required_rate_fields = [
-        "partnerPhoto",
-        "prixMolecule",
-        "abonnement",
-        "partCee",
-        "cta",
-        "resultTICGN",
-        "coutHTVA",
-        "budgetEnergie",
-        "distribution",
-        "resultCEE",
-        "abonnementMonthly",
-    ]
-
-    # for idx, item in enumerate(comparatif_rate, start=1):
-    #     for field in required_rate_fields:
-    #         if field not in item or item[field] in [None, ""]:
-    #             raise ValueError(f"Missing or empty field '{field}' in comparatifRates item {idx}")
 
     dto["comparatifRates"] = comparatif_rate
     return dto
@@ -424,6 +377,7 @@ def build_images(data, request):
         "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
         "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
         "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
+        "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
     })
 
 
@@ -600,7 +554,7 @@ def generate_enedis_chart(data):
         date_labels = [f"Period {i + 1}" for i in range(12)]
 
     # 🔹 Prepare figure with Enedis style
-    fig, ax = plt.subplots(figsize=(14, 7))
+    fig, ax = plt.subplots(figsize=(13, 7))
     fig.patch.set_facecolor('#f5f5f5')
     ax.set_facecolor('white')
 
@@ -724,6 +678,7 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "tender_table": build_tender_table_Electricity(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
+        "enedis_info": enedis_Chart(data)
     }
 
 
@@ -741,6 +696,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
 
     dto = {
         "title": data.get("contexte_title", "Contexte global"),
+        "title2": data.get("enedis_title2", "Votre Consommation relevée par"),
         "createdOn": created_on,
         "energyType": comparatif.get("energyType"),
     }
@@ -807,4 +763,30 @@ def build_tender_table_Electricity(data):
         "columns3": data.get("columns", [
             "TABO <br> €/an"
         ]),
+
+        "columns4": data.get("columns", [
+            "Puissances souscrites KV", "Consommation MWh", "Total"
+        ]),
+
+        "columns5": data.get("columns", [
+            "Compteu", "Déb.contrat"
+        ]),
+
+        "columns6": data.get("columns", [
+            "HPH", "HCH", "HPE", "HCE"
+        ]),
+
+        "columns7": data.get("columns", [
+            "MWh / an"
+        ]),
     }
+
+
+def enedis_Chart(data):
+        return {
+            "enedis_rate_On": data.get("enedis_rate_On", "30 001 790 006 259"),
+            "enedis_rate_date": data.get("enedis_rate_date", "24/12/2025"),
+            "enedis_rate": data.get("enedis_rate", "100"),
+        }
+
+

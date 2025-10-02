@@ -503,6 +503,212 @@
             box-sizing: border-box;
         }
 
+         .container2-enedis-chart {
+                max-width: 2000px;
+            height: 1000px;
+            margin: 0 auto;
+            background: #F0F0F5;
+            background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .content-wrapper2-enedis-chart {
+            display: flex;
+            align-items: stretch;
+            min-height: 500px;
+            position: relative;
+        }
+
+       .left-section2-enedis-chart {
+            flex: 0.8;   /* pehle 1.2 tha, ab chhota ho gaya */
+            padding: 40px 30px; /* padding bhi thodi kam kar di */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+        .main-title2-enedis-chart {
+            font-size: 3.6rem;
+            font-weight: 400;
+            color: #000;
+            line-height: 1.8;
+            margin-top: -10px;    /* upar kheenchne ke liye */
+            margin-bottom: 20px;  /* neeche normal space */
+            letter-spacing: 3px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: left;
+            width: 100%;
+            margin-left: -140px; /* agar text left shift karna hai */
+        }
+        .enedis-image {
+            font-weight: 400;
+            color: #000;
+            line-height: 1.8;
+            margin-top: -350px;    /* upar kheenchne ke liye */
+             transform: translateY(-35px); /* jitna upar le jana ho utna value do */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: left;
+            width: 13%;
+            margin-left: 1350px; /* agar text left shift karna hai */
+        }
+
+        .side4-image-container-enedis-chart {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            overflow: visible;
+          }
+
+       .chart-image-enedis-chart {
+            position: absolute;
+            left: 330px;
+            bottom: -120px;
+            height: 670px;     /* bada kar diya */
+            width: auto; proportion maintain rahe */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+        }
+
+
+       .side4-image-enedis-chart {
+            position: absolute;
+            left: 1420px;
+            bottom: -220px;       /* image ko niche align karega */
+            width: auto;
+            height: 400px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+        }
+.provider-row-enedis{
+    align-items: flex-start;
+    margin-top: -50px;   /* 👈 row ko upar chipka diya */
+    margin-bottom: 100px; /* neeche thoda space */
+    margin-left: 190px; /* neeche thoda space */
+    padding: 0;
+}
+
+.rates-container-enedis {
+    display: flex;
+    gap: 30px;                   /* 👈 boxes ke beech gap */
+    justify-content: flex-start;
+}
+
+        .rate-box-enedis {
+            background: #F8C954;
+            border: 0px solid #e0e0e0;
+            border-radius: 0px;
+            min-width: 100px;
+            min-height: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;   /* text center */
+            justify-content: center;
+            padding: 0px 6px;
+            text-align: center;
+        }
+        .rate-box-enedis * {
+            line-height: 1.1;
+        }
+        .rate-box-enedis:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+        .rate-value-enedis {
+            font-size: 12px;
+            font-weight: 800;
+            color: #103A5E;
+            line-height: 1.2;
+            margin: 2px 0;
+            margin-top: 5px;
+        }
+
+       .labels-row-enedis {
+            display: flex;
+            gap: 70px;
+            margin-top: 10px;
+            padding-left: 590px; /* Offset for logo width */
+        }
+
+        .label-item-enedis {
+            text-align: center;
+            min-width: 115px;
+            max-width: 160px;
+            padding: 0 16px;
+        }
+
+        .label-text-enedis {
+            font-size: 15px;
+            margin-top: -80px;
+            margin-left: 0px;
+            color: #103A5E;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+         .label-text-enedis1 {
+            font-size: 15px;
+            margin-top: -80px;
+            margin-left: -150px;
+            color: #103A5E;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+         .label-text-enedis2 {
+            font-size: 15px;
+            margin-top: -80px;
+            margin-left: -100px;
+            color: #103A5E;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+         .label-text-enedis3 {
+            font-size: 15px;
+            margin-top: -80px;
+            margin-left: 50px;
+            color: #103A5E;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+         .label-text-enedis4 {
+            font-size: 15px;
+            margin-top: -80px;
+            margin-left: 100px;
+            color: #103A5E;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper2-enedis-chart {
+                flex-direction: column;
+            }
+
+            .left-section2-enedis-chart {
+                padding: 40px 30px;
+            }
+
+            .main-title2-enedis-chart {
+                font-size: 2.2rem;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
          .container3 {
                 max-width: 2000px;
             height: 1000px;
@@ -1136,7 +1342,7 @@
             height: 22px;
             display: flex;
             align-items: center;
-            margin-left: 40px;
+            margin-left: 65px;
             justify-content: center;
             margin-bottom: 5px;
         }
@@ -1524,21 +1730,84 @@
     <br>
     <br>
 
-     <div class="container2">
-    <div class="content-wrapper2">
+    <div class="container2-enedis-chart">
+    <div class="content-wrapper2-enedis-chart">
 
     <!-- Left Section -->
-    <div class="left-section2">
-      <h1 class="main-title2">
+    <div class="left-section2-enedis-chart">
+      <h1 class="main-title2-enedis-chart">
         <div style="text-align:center;">
-          {{ data.comparatifClientHistoryPdfDto.title }}
+          {{ data.comparatifClientHistoryPdfDto.title2 }}
         </div>
       </h1>
-        <div class="chart-image-container">
-            <img src="{{ data.imageOne.enedis_chart }}" alt="Gaz Evolution Chart" class="chart-image">
+         <div class="enedis-image-container">
+            <img src="{{ data.images.enedis }}" alt="Enedis Chart" class="enedis-image">
         </div>
-          <div class="side4-image-container">
-            <img src="{{ data.images.side333 }}" alt="Side Image" class="side4-image">
+<br>
+    <!-- Pehli Row: Columns4 upar -->
+<div class="labels-row-enedis"
+     style="display:flex; flex-wrap:nowrap; gap:300px; justify-content:center; font-size:12px; overflow-x:auto; white-space:nowrap; padding:5px 0; margin-left:450px;">
+    {% for col in data.tender_table.columns4 %}
+        <div class="label-item-enedis"
+             style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
+            <div class="label-text-enedis">{{ col|safe }}</div>
+        </div>
+    {% endfor %}
+</div>
+<!-- Dusri Row: Columns5, 6, 7 niche -->
+<div class="labels-row-enedis"
+     style="display:flex; flex-wrap:nowrap; gap:10px; justify-content:center; font-size:12px; overflow-x:auto; white-space:nowrap; padding:5px 0;">
+    {% for col in data.tender_table.columns5 %}
+        <div class="label-item-enedis"
+             style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
+            <div class="label-text-enedis1">{{ col|safe }}</div>
+        </div>
+    {% endfor %}
+    {% for col in data.tender_table.columns6 %}
+        <div class="label-item-enedis"
+             style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
+            <div class="label-text-enedis"2>{{ col|safe }}</div>
+        </div>
+    {% endfor %}
+     {% for col in data.tender_table.columns6 %}
+        <div class="label-item-enedis"
+             style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
+            <div class="label-text-enedis3">{{ col|safe }}</div>
+        </div>
+    {% endfor %}
+    {% for col in data.tender_table.columns7 %}
+        <div class="label-item-enedis"
+             style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
+            <div class="label-text-enedis4">{{ col|safe }}</div>
+        </div>
+    {% endfor %}
+</div>
+
+        <div class="provider-row-enedis">
+            <div class="rates-container-enedis">
+                <div class="rate-box-enedis"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_On }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-17px;">
+                  <div class="rate-value-enedis">
+                    {{ data.enedis_info.enedis_rate_date }}
+                  </div>
+                </div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:80px;"><div class="rate-value-enedis" >{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-4px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-4px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-6px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:20px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-6px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:-6px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+                <div class="rate-box-enedis" style="display:flex; margin-left:50px;"><div class="rate-value-enedis">{{ data.enedis_info.enedis_rate  }}</div></div>
+            </div>
+        </div>
+
+        <div class="chart-image-container-enedis-chart">
+            <img src="{{ data.imageOne.enedis_chart }}" alt="Enedis Chart" class="chart-image-enedis-chart">
+        </div>
+          <div class="side4-image-container-enedis-chart">
+            <img src="{{ data.images.Hmm }}" alt="Side Image" class="side4-image-enedis-chart">
         </div>
     </div>
 
@@ -1693,7 +1962,7 @@
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-      {% if forloop.first or forloop.counter0|divisibleby:4 %}
+      {% if forloop.first or forloop.counter0|divisibleby:5 %}
         <div class="container7">
           <div class="content-wrapper7">
             <div>
@@ -1707,49 +1976,51 @@
             </div>
           </div>
           <!-- 👇 Flex container for 4 tables with plus signs -->
-          <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
-<!--           <p style="font-weight:bold; text-align:center; margin-bottom:50px;">FOURNITURE</p>-->
-            <!-- Pehla table -->
-            <div class="table-container" style="flex:1;">
-              <table>
-                <thead>
-                  <tr>
-                    {% for col in data.tender_table.columns %}
-                      <th>{{ col|safe  }}</th>
-                    {% endfor %}
-                  </tr>
-                </thead>
-                <tbody>
-      {% endif %}
+           <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
+              <!-- Pehla table -->
+              <div class="table-container" style="flex:1;">
+                <!-- 👇 Yahan heading add ki -->
+                <p style="font-weight:bold; text-align:center; margin-bottom:5px;">FOURNITURE</p>
+                <table>
+                  <thead>
+                    <tr>
+                      {% for col in data.tender_table.columns %}
+                        <th>{{ col|safe }}</th>
+                      {% endfor %}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% endif %}
 
-                  <tr>
-                    <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
-                    <td>{{ rate.rate }}</td>
-                    <td>{{ rate.rate }}</td>
-                    <td>{{ rate.rate }}</td>
-                    <td>{{ rate.rate }}</td>
-                  </tr>
+                    <tr>
+                      <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
+                      <td>{{ rate.rate }}</td>
+                      <td>{{ rate.rate }}</td>
+                      <td>{{ rate.rate }}</td>
+                      <td>{{ rate.rate }}</td>
+                    </tr>
 
-      {% if forloop.counter|divisibleby:4 or forloop.last %}
-                </tbody>
-              </table>
-            </div>
+                    {% if forloop.counter|divisibleby:5 or forloop.last %}
+                  </tbody>
+                </table>
+              </div>
 
             <!-- plus sign -->
             <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
 
             <!-- Dusra table -->
             <div class="table-container" style="flex:1;">
+              <p style="font-weight:bold; text-align:center; margin-bottom:5px;">CAPACITE</p>  <!-- 👈 Heading add -->
               <table>
                 <thead>
                   <tr>
                     {% for col in data.tender_table.columns1 %}
-                      <th>{{ col|safe  }}</th>
+                      <th>{{ col|safe }}</th>
                     {% endfor %}
                   </tr>
                 </thead>
                 <tbody>
-                  {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":4" %}
+                  {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                     <tr>
                       <td>{{ r.rate }}</td>
                       <td>{{ r.rate }}</td>
@@ -1775,7 +2046,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":4" %}
+                  {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                     <tr>
                       <td>{{ r.rate }}</td>
                     </tr>
@@ -1798,7 +2069,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":4" %}
+                      {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
                           <td>{{ r.rate }}</td>
                         </tr>
