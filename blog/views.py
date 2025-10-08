@@ -327,6 +327,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "comparatifClientHistoryPdfDto": comparatif_dto,
         "budget_global": build_budget_section(data),
         "tender_results": build_tender_results(data),
+        "tender_table": build_tender_table(data),
         "comparison_table": build_comparison_table(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
@@ -406,6 +407,19 @@ def build_tender_results(data):
                                        "sur les prochaines années. Dans le contexte actuel, marqué par la volatilité des prix et<br>"
                                        " l'incertitude liée aux conflits mondiaux, il est essentiel de sécuriser les prix sur une période à long<br>"
                                        " terme.")
+    }
+
+
+def build_tender_table(data):
+    """Tender table section."""
+    print("Inside BuildTenderTable")
+    return {
+        "title": data.get("tender_table_title", "Votre périmètre actuel"),
+        "columns": data.get("columns", [
+            "Nom du site", "Adresse du site", " Siret",
+            "PCE", "Tarif", "Profil", "Fournisseur Actuel",
+            "Échéance de Votre contrat actuel", "Volume Annuel en MWh (*)"
+        ]),
     }
 
 
