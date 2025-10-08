@@ -258,7 +258,7 @@ def generate_pdf(html_content, request, data):
 
     # ---- Remove unwanted pages (4,6,8,10,12) ----
     # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
-    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
+    remove_pages = [1,2,3,4,5,6,7,8,9,10,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
 
     reader = PdfReader(pdf_path)
     writer = PdfWriter()
@@ -343,7 +343,6 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "budget_global": build_budget_section(data),
         "tender_results": build_tender_results(data),
         "comparison_table": build_comparison_table(data),
-        "tender_table": build_tender_table(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
     }
@@ -438,18 +437,6 @@ def build_comparison_table(data):
             "Budget Énergétique <br>en €/an", "Distribution <br>en €/an", "Taxes <br>en €/an",
             "Abonnement <br>en €/an", "CEE <br>en €/an", "CTA <br>en €/an", "Budget HTVA <br>en €/an"
         ])
-    }
-
-
-def build_tender_table(data):
-    """Tender table section."""
-    print("Inside BuildTenderTable")
-    return {
-        "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
-        "columns": data.get("columns", [
-            "Fournisseur", "Molécule €/MWh", "Abonnement €/mois",
-            "CEE €/MWh", "CTA €/an", "TICGN €/MWh", "TOTAL €/an"
-        ]),
     }
 
 
