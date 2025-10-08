@@ -217,7 +217,7 @@ def render_html(presentation_data):
 
 
 def generate_pdf(html_content, request, data):
-    """Generate PDF and return its URL without unwanted pages."""
+    """Generate PDF and return its URL (without removing any pages)."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
 
@@ -256,21 +256,6 @@ def generate_pdf(html_content, request, data):
         font_config=None
     )
 
-    # ---- Remove unwanted pages (4,6,8,10,12) ----
-    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
-    remove_pages = [1,2,3,4,5,6,7,8,9,10,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
-
-    reader = PdfReader(pdf_path)
-    writer = PdfWriter()
-
-    for i in range(len(reader.pages)):
-        if i not in remove_pages:
-            writer.add_page(reader.pages[i])
-
-    with open(pdf_path, "wb") as f:
-        writer.write(f)
-    # ---------------------------------------------
-
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
         os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
@@ -299,9 +284,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    return request.build_absolute_uri(static(path))
-    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    # return f"file://{abs_path}"
+    # return request.build_absolute_uri(static(path))
+    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):

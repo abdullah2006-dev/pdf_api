@@ -1683,103 +1683,99 @@
     {% endfor %}
 
 
-    <div class="container10">
-    <div class="content-wrapper10">
-        <div>
-            <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
-        </div>
-        <div class="text-heading10">
-            <p>RÉSULTAT DE L’APPEL D’OFFRE</p>
-        </div>
-    </div>
-    <div>
-        <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
-    </div>
+    {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+        {% if forloop.counter0|divisibleby:4 %}
+        <div class="container10">
+            <div class="content-wrapper10">
+                <div>
+                    <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+                </div>
+                <div class="text-heading10">
+                    <p>RÉSULTAT DE L’APPEL D’OFFRE</p>
+                </div>
+            </div>
+            <div>
+                <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
+            </div>
 
-    <div class="table-container10">
+            <div class="table-container10">
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="3" class="blue-header">Fournisseur</th>
+                            <th rowspan="3" class="blue-header">Origine<br>de l'offre</th>
+                            <th rowspan="3" class="blue-header">Type d'offre</th>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th colspan="3" class="teal-header">Part Fournisseur</th>
+                            <th colspan="2" class="purple-header">Part Acheminement</th>
+                            <th colspan="3" class="gray-header">Part Taxes</th>
+                            <th colspan="2" class="green-header">Budget</th>
+                        </tr>
+                        <tr>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th class="teal-subheader">Prix Molécule</th>
+                            <th class="teal-subheader">CEE</th>
+                            <th class="teal-subheader">Abonnement</th>
+                            <th class="purple-subheader">Part Fixe<br>Acheminement</th>
+                            <th class="purple-subheader">Part Variable<br>Acheminement</th>
+                            <th class="gray-subheader">TICGN</th>
+                            <th class="gray-subheader">CTA</th>
+                            <th class="gray-subheader">TVA</th>
+                            <th class="green-subheader">Coût HTVA</th>
+                            <th class="green-subheader">Coût TTC</th>
+                        </tr>
+                        <tr>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th class="teal-subheader unit-row">€/MWH</th>
+                            <th class="teal-subheader unit-row">€/MWH</th>
+                            <th class="teal-subheader unit-row">€/an</th>
+                            <th class="purple-subheader unit-row">€/an</th>
+                            <th class="purple-subheader unit-row">€/MWH</th>
+                            <th class="gray-subheader unit-row">€/MWH</th>
+                            <th class="gray-subheader unit-row">€/an</th>
+                            <th class="gray-subheader unit-row">€/an</th>
+                            <th class="green-subheader unit-row">€/an</th>
+                            <th class="green-subheader unit-row">€/an</th>
+                        </tr>
+                    </thead>
+                </table>
+        {% endif %}
 
-        <!-- ✅ Header ek hi baar -->
-        <table>
-            <thead>
-                <!-- First header row - Main Categories -->
-                <tr>
-                    <th rowspan="3" class="blue-header">Fournisseur</th>
-                    <th rowspan="3" class="blue-header">Origine<br>de l'offre</th>
-                    <th rowspan="3" class="blue-header">Type d'offre</th>
-                    <th style="background: white; border: none; width: 15px;"></th>
-                    <th colspan="3" class="teal-header">Part Fournisseur</th>
-                    <th colspan="2" class="purple-header">Part Acheminement</th>
-                    <th colspan="3" class="gray-header">Part Taxes</th>
-                    <th colspan="2" class="green-header">Budget</th>
-                </tr>
+                <!-- ✅ Rate Rows -->
+                <table style="margin-top: 10px;">
+                    <tbody>
+                        <tr>
+                            <td class="data-cell blue-cell" style="text-align: center;">
+                                {% if rate.partnerPhoto and rate.partnerPhoto.path %}
+                                    <img src="{{ rate.partnerPhoto.path }}" class="partner-logo10">
+                                {% else %}
+                                    {{ rate.partnerName|default:"-" }}
+                                {% endif %}
+                            </td>
+                            <td class="data-cell blue-cell">Offre</td>
+                            <td class="data-cell blue-cell">{{ rate.offerType|default:"-" }}</td>
 
-                <!-- Second header row - Sub Categories -->
-                <tr>
-                    <th style="background: white; border: none; width: 15px;"></th>
-                    <th class="teal-subheader">Prix Molécule</th>
-                    <th class="teal-subheader">CEE</th>
-                    <th class="teal-subheader">Abonnement</th>
-                    <th class="purple-subheader">Part Fixe<br>Acheminement</th>
-                    <th class="purple-subheader">Part Variable<br>Acheminement</th>
-                    <th class="gray-subheader">TICGN</th>
-                    <th class="gray-subheader">CTA</th>
-                    <th class="gray-subheader">TVA</th>
-                    <th class="green-subheader">Coût HTVA</th>
-                    <th class="green-subheader">Coût TTC</th>
-                </tr>
+                            <th style="background: white; border: none; width: 15px;"></th>
 
-                <!-- Third header row - Units -->
-                <tr>
-                    <th style="background: white; border: none; width: 15px;"></th>
-                    <th class="teal-subheader unit-row">€/MWH</th>
-                    <th class="teal-subheader unit-row">€/MWH</th>
-                    <th class="teal-subheader unit-row">€/an</th>
-                    <th class="purple-subheader unit-row">€/an</th>
-                    <th class="purple-subheader unit-row">€/MWH</th>
-                    <th class="gray-subheader unit-row">€/MWH</th>
-                    <th class="gray-subheader unit-row">€/an</th>
-                    <th class="gray-subheader unit-row">€/an</th>
-                    <th class="green-subheader unit-row">€/an</th>
-                    <th class="green-subheader unit-row">€/an</th>
-                </tr>
-            </thead>
-        </table>
+                            <td class="data-cell">{{ rate.prixMolecule|default:"-" }}{% if rate.prixMolecule %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partCee|default:"-" }}{% if rate.partCee %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.abonnement|default:"-" }}{% if rate.abonnement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partFixedAcheminement|default:"-" }}{% if rate.partFixedAcheminement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partVariableAcheminement|default:"-" }}{% if rate.partVariableAcheminement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.ticgn|default:"-" }}{% if rate.ticgn %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.cta|default:"-" }}{% if rate.cta %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.tva|default:"-" }}{% if rate.tva %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.coutHTVA|default:"-" }}{% if rate.coutHTVA %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.coutTTC|default:"-" }}{% if rate.coutTTC %} €{% endif %}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-        <!-- ✅ Ab har rate apne alag table me -->
-        {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        <table style="margin-top: 10px;">
-            <tbody>
-                <tr>
-                    <!-- Partner Image / Name -->
-                    <td class="data-cell blue-cell" style="text-align: center;">
-                        {% if rate.partnerPhoto and rate.partnerPhoto.path %}
-                            <img src="{{ rate.partnerPhoto.path }}" class="partner-logo10">
-                        {% else %}
-                            {{ rate.partnerName|default:"-" }}
-                        {% endif %}
-                    </td>
-
-                    <td class="data-cell blue-cell">Offre</td>
-                    <td class="data-cell blue-cell">{{ rate.offerType|default:"-" }}</td>
-
-                    <th style="background: white; border: none; width: 15px;"></th>
-
-                    <td class="data-cell">{{ rate.prixMolecule|default:"-" }}{% if rate.prixMolecule %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.partCee|default:"-" }}{% if rate.partCee %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.abonnement|default:"-" }}{% if rate.abonnement %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.partFixedAcheminement|default:"-" }}{% if rate.partFixedAcheminement %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.partVariableAcheminement|default:"-" }}{% if rate.partVariableAcheminement %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.ticgn|default:"-" }}{% if rate.ticgn %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.cta|default:"-" }}{% if rate.cta %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.tva|default:"-" }}{% if rate.tva %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.coutHTVA|default:"-" }}{% if rate.coutHTVA %} €{% endif %}</td>
-                    <td class="data-cell">{{ rate.coutTTC|default:"-" }}{% if rate.coutTTC %} €{% endif %}</td>
-                </tr>
-            </tbody>
-        </table>
-        {% endfor %}
-    </div>
-</div>
+        {% if forloop.counter|divisibleby:4 or forloop.last %}
+            </div> <!-- table-container10 close -->
+        </div> <!-- container10 close -->
+        {% endif %}
+    {% endfor %}
 
 
     <div class="container5">
