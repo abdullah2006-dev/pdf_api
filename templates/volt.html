@@ -1974,13 +1974,13 @@
                 {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
                 <tr>
                     <td>{{ data.clientSociety  }}</td>
-                    <td></td>
+                    <td>{{ data.clientBusinessAddress.street }}</td>
                     <td>{{ data.clientSiret }}</td>
                     <td>{{ data.comparatifClientHistoryPdfDto.pce }}</td>
                     <td>{{ data.comparatifClientHistoryPdfDto.routingRate }}</td>
                     <td>{{ data.comparatifClientHistoryPdfDto.gasProfile }}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.currentSupplierName }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.currentContractExpiryDate }}</td>
                     <td>{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</td>
                 </tr>
                 {% endif %}
