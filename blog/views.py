@@ -156,7 +156,6 @@ def generate_chart(data):
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
 
-
 def build_comparatif_dto(comparatif, request, data):
     print("Inside BuildComparatifDTO")
     created_on_raw = comparatif.get("createdOn")
@@ -173,6 +172,11 @@ def build_comparatif_dto(comparatif, request, data):
         "title": data.get("contexte_title", "Contexte global"),
         "createdOn": created_on,
         "energyType": comparatif.get("energyType"),
+        "ratioHTVA": comparatif.get("ratioHTVA"),
+        "differenceHTVA": comparatif.get("differenceHTVA"),
+        "volumeAnnual": comparatif.get("volumeAnnual"),
+        "currentSupplierName": comparatif.get("currentSupplierName"),
+        "currentContractExpiryDate": comparatif.get("currentContractExpiryDate"),
     }
 
     energy_type = dto.get("energyType")
@@ -184,10 +188,7 @@ def build_comparatif_dto(comparatif, request, data):
         dto.update({
             "pce": comparatif.get("pce"),
             "gasProfile": comparatif.get("gasProfile"),
-            "routingRate": comparatif.get("routingRate"),
-            "volumeAnnual": comparatif.get("volumeAnnual"),
-            "ratioHTVA": comparatif.get("ratioHTVA"),
-            "differenceHTVA": comparatif.get("differenceHTVA"),
+            "routingRate": comparatif.get("routingRate")
         })
 
         # Validation: GAS ke saare required fields hone chahiye
@@ -310,7 +311,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
-        "clientBusinessAddress": safe_value(data.get("clientBusinessAddress", {})),
+        "clientBusinessAddress": data.get("clientBusinessAddress", {}),
         "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
         "currentContractExpiryDate": (
             datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
