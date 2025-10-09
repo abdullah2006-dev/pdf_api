@@ -156,6 +156,7 @@ def generate_chart(data):
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
 
+
 def build_comparatif_dto(comparatif, request, data):
     print("Inside BuildComparatifDTO")
     created_on_raw = comparatif.get("createdOn")
