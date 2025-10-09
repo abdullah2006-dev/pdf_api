@@ -285,9 +285,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    return request.build_absolute_uri(static(path))
-    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    # return f"file://{abs_path}"
+    # return request.build_absolute_uri(static(path))
+    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -350,26 +350,26 @@ def build_images(data, request):
     """Build static & dynamic image paths."""
     print("Inside BuildImages")
     return data.get("images", {
-        # "left": build_static_url(request, "image/side2-removebg-preview.png"),
-        # "right": build_static_url(request, "image/side-removebg-preview.png"),
-        # "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
-        # "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
-        # "volt_image1": build_static_url(request, "image/volt_image1.png"),
-        # "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-        # "Screenshot1": data.get("Screenshot1",
-        #                         build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-        # "Screenshot2": data.get("Screenshot2",
-        #                         build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-        # "black": build_static_url(request, "image/black-removebg-preview.png"),
-        # "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
-        # "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
-        # "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
-        # "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
-        # "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
-        # "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
-        # "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
-        # "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
-        # "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
+        "left": build_static_url(request, "image/side2-removebg-preview.png"),
+        "right": build_static_url(request, "image/side-removebg-preview.png"),
+        "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
+        "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
+        "volt_image1": build_static_url(request, "image/volt_image1.png"),
+        "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
+        "Screenshot1": data.get("Screenshot1",
+                                build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+        "Screenshot2": data.get("Screenshot2",
+                                build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+        "black": build_static_url(request, "image/black-removebg-preview.png"),
+        "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
+        "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
+        "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
+        "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
+        "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
+        "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
+        "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
+        "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
+        "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
     })
 
 
@@ -499,7 +499,7 @@ def volt_consulting_presentation_Electricitry(request):
         html_content = render_html_Elecricity(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf_Electricity(html_content, request, data)
 
         return JsonResponse({
             "status": "success",
@@ -624,6 +624,69 @@ def generate_enedis_chart(data):
     buf.seek(0)
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
+
+
+def generate_pdf_Electricity(html_content, request, data):
+    """Generate PDF and return its URL without unwanted pages."""
+    print("Inside GeneratePDF")
+    host = request.get_host().split(":")[0]
+
+    # Choose base dirs (filesystem vs URL)
+    if host == "volt-crm.caansoft.com":
+        base_dir = settings.STAGING_MEDIA_ROOT
+        base_url = settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        base_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_url = settings.PRODUCTION_MEDIA_URL
+    else:
+        base_dir = settings.MEDIA_ROOT
+        base_url = settings.MEDIA_URL
+
+    # Dynamic path: client/<id>/comparatif/
+    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif")
+    pdf_dir = os.path.join(base_dir, relative_path)
+    os.makedirs(pdf_dir, exist_ok=True)
+
+    # Generate filename
+    pdf_filename = create_comparatif_filename(
+        data.get("clientSociety"),
+        data.get("clientTradeName"),
+        data.get("comparatifClientHistoryPdfDto", {}).get("energyType")
+    )
+    pdf_path = os.path.join(pdf_dir, pdf_filename)
+
+    # Save PDF using WeasyPrint
+    css = CSS(string="""@page { size: 530mm 265mm; margin: 0.0cm; }""")
+    HTML(string=html_content).write_pdf(
+        pdf_path,
+        stylesheets=[css],
+        zoom=0.8,
+        optimize_images=True,
+        presentational_hints=True,
+        font_config=None
+    )
+
+    # ---- Remove unwanted pages (4,6,8,10,12) ----
+    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
+    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
+
+    reader = PdfReader(pdf_path)
+    writer = PdfWriter()
+
+    for i in range(len(reader.pages)):
+        if i not in remove_pages:
+            writer.add_page(reader.pages[i])
+
+    with open(pdf_path, "wb") as f:
+        writer.write(f)
+    # ---------------------------------------------
+
+    # Build public URL (mirrors saved path after /uploads/volt/)
+    pdf_url = request.build_absolute_uri(
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
+    )
+
+    return pdf_url, pdf_filename
 
 
 def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request):
