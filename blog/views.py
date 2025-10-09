@@ -285,9 +285,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    # return request.build_absolute_uri(static(path))
-    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    return f"file://{abs_path}"
+    return request.build_absolute_uri(static(path))
+    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    # return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -350,26 +350,26 @@ def build_images(data, request):
     """Build static & dynamic image paths."""
     print("Inside BuildImages")
     return data.get("images", {
-        "left": build_static_url(request, "image/side2-removebg-preview.png"),
-        "right": build_static_url(request, "image/side-removebg-preview.png"),
-        "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
-        "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
-        "volt_image1": build_static_url(request, "image/volt_image1.png"),
-        "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-        "Screenshot1": data.get("Screenshot1",
-                                build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-        "Screenshot2": data.get("Screenshot2",
-                                build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-        "black": build_static_url(request, "image/black-removebg-preview.png"),
-        "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
-        "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
-        "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
-        "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
-        "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
-        "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
-        "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
-        "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
-        "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
+        # "left": build_static_url(request, "image/side2-removebg-preview.png"),
+        # "right": build_static_url(request, "image/side-removebg-preview.png"),
+        # "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
+        # "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
+        # "volt_image1": build_static_url(request, "image/volt_image1.png"),
+        # "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
+        # "Screenshot1": data.get("Screenshot1",
+        #                         build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+        # "Screenshot2": data.get("Screenshot2",
+        #                         build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+        # "black": build_static_url(request, "image/black-removebg-preview.png"),
+        # "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
+        # "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
+        # "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
+        # "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
+        # "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
+        # "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
+        # "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
+        # "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
+        # "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
     })
 
 
