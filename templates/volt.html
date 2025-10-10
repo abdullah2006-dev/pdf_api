@@ -1504,8 +1504,8 @@
         font-weight: 600;
     }
      .partner-logo10 {
-    width: 17px;
-    height: 17px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;      /* vertically center */
     justify-content: center;  /* horizontally center */
@@ -1990,7 +1990,7 @@
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        {% if forloop.counter0|divisibleby:4 %}
+        {% if forloop.counter0|divisibleby:3 %}
         <div class="container10">
             <div class="content-wrapper10">
                 <div>
@@ -2081,7 +2081,7 @@
                     </tbody>
                 </table>
 
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
             </div> <!-- table-container10 close -->
         </div> <!-- container10 close -->
         {% endif %}

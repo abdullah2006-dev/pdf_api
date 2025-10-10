@@ -1243,31 +1243,18 @@
     margin-left: -150px;      /* thoda left offset */
     max-width: 70%;         /* taake line bahut lambi na ho */
 }
-      .hmm-image {
+        .double-image {
             position: absolute;
-            left: 1450px;
+            left: 1080px;
             bottom: -2px;       /* image ko niche align karega */
-            top: 250px;
+            top: 360px;
             width: auto;
-            height: 400px;   /* container height ke hisaab se adjust karo */
+            height: 300px;   /* container height ke hisaab se adjust karo */
             max-width: none;
             max-height: none;
             object-fit: contain;
-            margin-top: 350px;
+            margin-top: 425px;
         }
-     .side3-image {
-            position: absolute;
-            left: 0px;
-            bottom: -2px;       /* image ko niche align karega */
-            top: 190px;
-            width: auto;
-            height: 170px;   /* container height ke hisaab se adjust karo */
-            max-width: none;
-            max-height: none;
-            object-fit: contain;
-            margin-top: 220px;
-        }
-
     .table-container10 {
         margin: -350px 30px 100px 30px;
         margin-top: -300px;
@@ -1338,9 +1325,9 @@
         background: white;
         font-weight: 600;
     }
-     .partner-logo10 {
-    width: 17px;
-    height: 17px;
+     .partner-logo {
+    width: 500px;
+    height: 500px;
     display: flex;
     align-items: center;      /* vertically center */
     justify-content: center;  /* horizontally center */
@@ -1348,6 +1335,33 @@
     margin-bottom: 5px;
 }
 
+.compact-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;       /* chhota font */
+    table-layout: fixed;
+}
+
+.compact-table th,
+.compact-table td {
+    padding: 3px 5px;      /* chhoti padding */
+    text-align: center;
+    border: 2px solid #000; /* ✅ 2px border */
+    height: 25px;          /* row height chhota */
+    word-wrap: break-word;
+}
+
+.compact-table th {
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+.compact-table td img {
+    max-width: 20px;       /* partner logo chhota */
+    max-height: 20px;
+    display: block;
+    margin: 0 auto;
+}
 
     td.blue-cell {
         background: white;
@@ -1943,8 +1957,8 @@
         width: 85%;
         margin-left: auto;
         margin-right: 50px;
-        margin-top: 50px;   /* yahan table ko niche shift kiya */
-        margin-bottom: 0px;">
+        margin-top: 42px;   /* yahan table ko niche shift kiya */
+    ">
     <table style="
             width: 85%;
             margin-left: auto;
@@ -1969,11 +1983,11 @@
 
      <!-- VOLUME ANNUEL -->
 <div class="table-block11">
-  <h3 class="table-title11" style="width:85%; margin-left:auto; margin-right:50px;">
+  <h3 class="table-title11" style="width:95%; margin-left:auto; margin-right:400px;">
     Volume Annuel
   </h3>
 
-  <table style="width:85%; margin-left:auto; margin-right:50px;">
+  <table style="width:95%; margin-left:auto; margin-right:400px;">
     <thead>
       <tr>
         {% for col in data.tender_colume.columns1 %}
@@ -2021,12 +2035,10 @@
 
  
  {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-    {% if forloop.counter0|divisibleby:2 %}
+    {% if forloop.counter0|divisibleby:3 %}
     <div class="container10">
         <div class="content-wrapper10">
-            <!-- <div>
-                <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
-            </div> -->
+            <div><img src="{{ data.images.double }}" class="double-image"></div>
             <div class="text-heading10">
                 <p>Analyse détaillée des offres</p>
                 <p class="subtext10">
@@ -2036,11 +2048,10 @@
             </div>
         </div>
         <div>
-            <!-- <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image"> -->
         </div>
 
         <div class="table-container10">
-            <table>
+            <table >
                 <thead>
                     <tr>
                         <th rowspan="3" class="blue-header">Fournisseur</th>
@@ -2083,18 +2094,20 @@
     {% endif %}
 
             <!-- ✅ Rate Rows with Poste breakdown -->
-        <table style="margin-top: 10px;">
+        <table  class="compact-table" style="margin-top: 10px;">
             <tbody>
                 {% for col_label in data.tender_colume.columns2 %}
                 <tr>
                     {% if forloop.first %}
-                    <td class="data-cell blue-cell" style="text-align: center;" rowspan="{{ data.tender_colume.columns2|length }}">
-                        {% if rate.partnerPhoto and rate.partnerPhoto.path %}
-                            <img src="{{ rate.partnerPhoto.path }}" class="partner-logo10">
-                        {% else %}
-                            {{ rate.partnerName|default:"-" }}
-                        {% endif %}
-                    </td>
+                    <td class="data-cell blue-cell" rowspan="{{ data.tender_colume.columns2|length }}" style="text-align:center; vertical-align:middle;">
+    {% if rate.partnerPhoto and rate.partnerPhoto.path %}
+        <img src="{{ rate.partnerPhoto.path }}" 
+             style="width:60px; height:60px; max-width:none; max-height:none; object-fit:contain; display:block; margin:0 auto;">
+    {% else %}
+        {{ rate.partnerName|default:"-" }}
+    {% endif %}
+</td>
+
                     <td class="data-cell blue-cell" rowspan="{{ data.tender_colume.columns2|length }}">Offre</td>
                     <td class="data-cell blue-cell">{{ col_label }}</td>
 
@@ -2165,7 +2178,7 @@
             </tbody>
         </table>
 
-    {% if forloop.counter|divisibleby:2 or forloop.last %}
+    {% if forloop.counter|divisibleby:3 or forloop.last %}
         </div> <!-- table-container10 close -->
     </div> <!-- container10 close -->
     {% endif %}
