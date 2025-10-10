@@ -286,9 +286,9 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
-    # return request.build_absolute_uri(static(path))
-    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    return f"file://{abs_path}"
+    return request.build_absolute_uri(static(path))
+    # abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    # return f"file://{abs_path}"
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -351,26 +351,26 @@ def build_images(data, request):
     """Build static & dynamic image paths."""
     print("Inside BuildImages")
     return data.get("images", {
-        "left": build_static_url(request, "image/side2-removebg-preview.png"),
-        "right": build_static_url(request, "image/side-removebg-preview.png"),
-        "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
+        # "left": build_static_url(request, "image/side2-removebg-preview.png"),
+        # "right": build_static_url(request, "image/side-removebg-preview.png"),
+        # "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
         "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
-        "volt_image1": build_static_url(request, "image/volt_image1.png"),
-        "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-        "Screenshot1": data.get("Screenshot1",
-                                build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-        "Screenshot2": data.get("Screenshot2",
-                                build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-        "black": build_static_url(request, "image/black-removebg-preview.png"),
-        "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
-        "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
-        "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
-        "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
-        "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
+        # "volt_image1": build_static_url(request, "image/volt_image1.png"),
+        # "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
+        # "Screenshot1": data.get("Screenshot1",
+        #                         build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+        # "Screenshot2": data.get("Screenshot2",
+        #                         build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+        # "black": build_static_url(request, "image/black-removebg-preview.png"),
+        # "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
+        # "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
+        # "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
+        # "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
+        # "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
         "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
-        "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
-        "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
-        "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
+        # "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
+        # "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
+        # "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
     })
 
 
@@ -500,7 +500,7 @@ def volt_consulting_presentation_Electricitry(request):
         html_content = render_html_Elecricity(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf_Electricity(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
 
         return JsonResponse({
             "status": "success",
@@ -625,9 +625,6 @@ def generate_enedis_chart(data):
     buf.seek(0)
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
-
-
-def generate_pdf_Electricity(html_content, request, data):
     """Generate PDF and return its URL without unwanted pages."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
@@ -666,21 +663,6 @@ def generate_pdf_Electricity(html_content, request, data):
         presentational_hints=True,
         font_config=None
     )
-
-    # ---- Remove unwanted pages (4,6,8,10,12) ----
-    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
-    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
-
-    reader = PdfReader(pdf_path)
-    writer = PdfWriter()
-
-    for i in range(len(reader.pages)):
-        if i not in remove_pages:
-            writer.add_page(reader.pages[i])
-
-    with open(pdf_path, "wb") as f:
-        writer.write(f)
-    # ---------------------------------------------
 
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
@@ -735,22 +717,26 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "tender_table": build_tender_table_Electricity(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
-        "enedis_info": enedis_Chart(data)
+        "enedis_info": enedis_Chart(data),
+        "tender_colume": build_tender_colume_Electricity(data)
     }
 
 
 def build_comparatif_dto_Electricity(comparatif, request, data):
     print("Inside BuildComparatifDTO")
+
+    # --- Validate and format createdOn ---
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
 
     try:
-        dt = datetime.fromtimestamp(created_on_raw / 1000.0)  # convert ms → seconds
-        created_on = dt.strftime("%d/%m/%Y")  # format date
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0)
+        created_on = dt.strftime("%d/%m/%Y")
     except Exception as e:
         raise ValueError(f"Invalid createdOn value: {e}")
 
+    # --- Base DTO fields ---
     dto = {
         "title": data.get("contexte_title", "Contexte global"),
         "title2": data.get("enedis_title2", "Votre Consommation relevée par"),
@@ -758,32 +744,134 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "energyType": comparatif.get("energyType"),
     }
 
+    # --- Ensure correct energy type ---
     energy_type = dto.get("energyType")
-
-    if energy_type == "ELECTRICITY":
-        required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
-
-        dto.update({
-            "pdl": comparatif.get("pdl"),
-            "segmentation": comparatif.get("segmentation"),
-            "volumeAnnual": comparatif.get("volumeAnnual"),
-            "ratioHTVA": comparatif.get("ratioHTVA"),
-            "differenceHTVA": comparatif.get("differenceHTVA"),
-        })
-
-        for field in required_electricity_fields:
-            if not dto.get(field):
-                raise ValueError(f"Missing required ELECTRICITY field: {field}")
-
-    else:
+    if energy_type != "ELECTRICITY":
         raise ValueError("Invalid or missing energyType. Must be 'ELECTRICITY'.")
 
-    comparatif_rate = comparatif.get("comparatifRates", [])
+    # --- Basic fields ---
+    segmentation = comparatif.get("segmentation", "").upper()
+    tarif_type = comparatif.get("tarifType", "").upper()
 
-    dto["comparatifRates"] = comparatif_rate
+    dto.update({
+        "pdl": comparatif.get("pdl"),
+        "segmentation": segmentation,
+        "tarifType": tarif_type,
+        "volumeAnnual": comparatif.get("volumeAnnual"),
+        "ratioHTVA": comparatif.get("ratioHTVA"),
+        "differenceHTVA": comparatif.get("differenceHTVA"),
+        "POINT": comparatif.get("POINT"),
+        "HPH": comparatif.get("HPH"),
+        "HCH": comparatif.get("HCH"),
+        "HPE": comparatif.get("HPE"),
+        "HCE": comparatif.get("HCE"),
+        "TOTAL": comparatif.get("TOTAL"),
+        "HP": comparatif.get("HP"),
+        "HC": comparatif.get("HC"),
+        "BASE": comparatif.get("BASE"),
+    })
+
+    # --- Determine display columns for main DTO ---
+    if segmentation in ["C1", "C2", "C3"]:
+        dto["display_columns"] = ["POINT", "HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
+    elif segmentation == "C4" or (segmentation == "C5" and tarif_type == "QUATRE"):
+        dto["display_columns"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
+    elif segmentation == "C5":
+        if tarif_type == "DOUBLE":
+            dto["display_columns"] = ["HP", "HC", "TOTAL"]
+            dto["display_columns1"] = ["HP", "HC"]
+        elif tarif_type == "BASE":
+            dto["display_columns"] = ["BASE", "TOTAL"]
+            dto["display_columns1"] = ["BASE"]
+        else:
+            dto["display_columns"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
+            dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
+    else:
+        dto["display_columns"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
+
+    # --- Generate ready-to-render values list for main DTO ---
+    dto["display_data"] = [dto.get(col, "-") for col in dto["display_columns"]]
+    dto["display_data1"] = [dto.get(col, "-") for col in dto["display_columns1"]]
+
+    # --- Add rates or extra info if available ---
+    comparatif_rates = comparatif.get("comparatifRates", [])
+    processed_rates = []
+
+    for rate in comparatif_rates:
+        # Determine display columns for each rate object
+        r_seg = segmentation
+        r_tarif = tarif_type
+
+        # Determine which columns to display
+        if r_seg in ["C1", "C2", "C3"]:
+            col_keys = ["HPH", "HCH", "HPE", "HCE"]
+        elif r_seg == "C4" or (r_seg == "C5" and r_tarif == "QUATRE"):
+            col_keys = ["HPH", "HCH", "HPE", "HCE"]
+        elif r_seg == "C5":
+            if r_tarif == "DOUBLE":
+                col_keys = ["HP", "HC"]
+            elif r_tarif == "BASE":
+                col_keys = ["BASE"]
+            else:
+                col_keys = ["HPH", "HCH", "HPE", "HCE"]
+        else:
+            col_keys = ["HPH", "HCH", "HPE", "HCE"]
+
+        # Build display data arrays for Prix Molécule, Capacités, and CEE
+        # These will contain values for each poste in order
+        display_cols = []   # Prix Molécule values
+        display_cols1 = []  # Capacités values
+        display_cols2 = []  # CEE values
+        
+        for key in col_keys:
+            # Prix Molécule - try nested dict first, then single value, then HPH/HCH/HPE/HCE fields
+            prix_molecule = rate.get("prixMolecule")
+            if isinstance(prix_molecule, dict):
+                display_cols.append(prix_molecule.get(key, "-"))
+            elif prix_molecule is not None:
+                display_cols.append(prix_molecule)
+            else:
+                # Fallback: use individual field values (HPH, HCH, HPE, HCE)
+                display_cols.append(rate.get(key, "-"))
+            
+            # Capacités - try nested dict first, then distribution/capacites, then individual fields
+            capacites = rate.get("capacites")
+            if isinstance(capacites, dict):
+                display_cols1.append(capacites.get(key, "-"))
+            elif capacites is not None:
+                display_cols1.append(capacites)
+            elif rate.get("distribution") is not None:
+                display_cols1.append(rate.get("distribution"))
+            else:
+                display_cols1.append("-")
+            
+            # CEE - try nested dict first, then partCee/resultCEE, then individual fields
+            cee = rate.get("cee")
+            if isinstance(cee, dict):
+                display_cols2.append(cee.get(key, "-"))
+            elif cee is not None:
+                display_cols2.append(cee)
+            elif rate.get("partCee") is not None:
+                display_cols2.append(rate.get("partCee"))
+            elif rate.get("resultCEE") is not None:
+                display_cols2.append(rate.get("resultCEE"))
+            else:
+                display_cols2.append("-")
+
+        rate["display_columns"] = display_cols
+        rate["display_columns1"] = display_cols1
+        rate["display_columns2"] = display_cols2
+
+        processed_rates.append(rate)
+
+    dto["comparatifRates"] = processed_rates
+
     return dto
 
-
+    
 def build_comparison_table_Electricity(data):
     """Comparison table section."""
     print("Inside BuildComparisionTable")
@@ -799,42 +887,63 @@ def build_comparison_table_Electricity(data):
     }
 
 
+def build_tender_colume_Electricity(data):
+    """Tender table section."""
+    print("Inside BuildTenderTable")
+
+    tender_colume = {
+        "title": data.get("tender_table_title", "Vos volumes et puissances"),
+        "columns": data.get("columns", [
+            "Nom du site ", "RAE / PR"
+        ]),
+        "columns1": ["HPH", "HCH", "HPE", "HCE", "TOTAL"],  # Default
+        "columns2": ["HPH", "HCH", "HPE", "HCE"],
+        "columns4": ["Puissances souscrites KV", "Consommation MWh", "Total"],
+        "columns5": ["Compteu", "Déb.contrat"],
+        "columns6": ["HPH", "HCH", "HPE", "HCE"],
+        "columns7": ["MWh / an"],
+    }
+
+    # bhai yahan dynamic handling kar rahe hain segmentation aur tarifType ke hisab se
+    segmentation = data.get("comparatifClientHistoryPdfDto", {}).get("segmentation", "")
+    tarif_type = data.get("comparatifClientHistoryPdfDto", {}).get("tarifType", "")
+
+    segmentation = segmentation.upper()
+    tarif_type = tarif_type.upper()
+
+    if segmentation == "C5" and tarif_type == "DOUBLE":
+        tender_colume["columns1"] = ["HP", "HC", "TOTAL"]
+        tender_colume["columns2"] = ["HP", "HC"]
+
+    elif segmentation == "C5" and tarif_type == "BASE":
+        tender_colume["columns1"] = ["BASE", "TOTAL"]
+        tender_colume["columns2"] = ["BASE"]
+
+    elif segmentation in ["C1", "C2", "C3"]:
+        tender_colume["columns1"] = ["POINT", "HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        tender_colume["columns2"] = ["HPH", "HCH", "HPE", "HCE"]
+
+    elif segmentation == "C4" or (segmentation == "C5" and tarif_type == "QUATRE"):
+        tender_colume["columns1"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        tender_colume["columns2"] = ["HPH", "HCH", "HPE", "HCE"]
+
+    else:
+        tender_colume["columns1"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
+        tender_colume["columns2"] = ["HPH", "HCH", "HPE", "HCE"]
+
+
+    return tender_colume
+
+
 def build_tender_table_Electricity(data):
     """Tender table section."""
     print("Inside BuildTenderTable")
     return {
-        "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
+        "title": data.get("tender_table_title", "Votre périmètre actuel"),
         "columns": data.get("columns", [
-            "Fournisseur", "HPH <br> €/MWh", "HCH <br> €/MWh",
-            "HPE <br> €/MWh", "HCE <br> €/MWh"
-        ]),
-
-        "columns1": data.get("columns", [
-           "HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"
-        ]),
-
-        "columns2": data.get("columns", [
-           "CEE <br> €/MWh"
-        ]),
-
-        "columns3": data.get("columns", [
-            "TABO <br> €/an"
-        ]),
-
-        "columns4": data.get("columns", [
-            "Puissances souscrites KV", "Consommation MWh", "Total"
-        ]),
-
-        "columns5": data.get("columns", [
-            "Compteu", "Déb.contrat"
-        ]),
-
-        "columns6": data.get("columns", [
-            "HPH", "HCH", "HPE", "HCE"
-        ]),
-
-        "columns7": data.get("columns", [
-            "MWh / an"
+            "Nom du site", "Adresse du site", "Siret",
+            "Point de livraison ", "Type de Compteur", "Fournisseur Actuel",
+            "Échéance de Votre contrat actuel", "Volume Annuel en MWh (*)"
         ]),
     }
 
