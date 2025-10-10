@@ -744,12 +744,10 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "energyType": comparatif.get("energyType"),
     }
 
-    # --- Ensure correct energy type ---
     energy_type = dto.get("energyType")
     if energy_type != "ELECTRICITY":
         raise ValueError("Invalid or missing energyType. Must be 'ELECTRICITY'.")
 
-    # --- Basic fields ---
     segmentation = comparatif.get("segmentation", "").upper()
     tarif_type = comparatif.get("tarifType", "").upper()
 
@@ -805,61 +803,65 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         r_seg = segmentation
         r_tarif = tarif_type
 
-        # Determine which columns to display
         if r_seg in ["C1", "C2", "C3"]:
             col_keys = ["HPH", "HCH", "HPE", "HCE"]
+            col_keys1 = ["HPH1", "HCH1", "HPE1", "HCE1"]
+            col_keys2 = ["HPH2", "HCH2", "HPE2", "HCE2"]
         elif r_seg == "C4" or (r_seg == "C5" and r_tarif == "QUATRE"):
             col_keys = ["HPH", "HCH", "HPE", "HCE"]
+            col_keys1 = ["HPH1", "HCH1", "HPE1", "HCE1"]
+            col_keys2 = ["HPH2", "HCH2", "HPE2", "HCE2"]
         elif r_seg == "C5":
             if r_tarif == "DOUBLE":
                 col_keys = ["HP", "HC"]
+                col_keys1 = ["HP1", "HC1"]
+                col_keys2 = ["HP2", "HC2"]
             elif r_tarif == "BASE":
                 col_keys = ["BASE"]
+                col_keys1 = ["BASE1"]
+                col_keys2 = ["BASE2"]
             else:
                 col_keys = ["HPH", "HCH", "HPE", "HCE"]
+                col_keys1 = ["HPH1", "HCH1", "HPE1", "HCE1"]
+                col_keys2 = ["HPH2", "HCH2", "HPE2", "HCE2"]
         else:
             col_keys = ["HPH", "HCH", "HPE", "HCE"]
+            col_keys1 = ["HPH1", "HCH1", "HPE1", "HCE1"]
+            col_keys2 = ["HPH2", "HCH2", "HPE2", "HCE2"]
 
-        # Build display data arrays for Prix Molécule, Capacités, and CEE
-        # These will contain values for each poste in order
-        display_cols = []   # Prix Molécule values
-        display_cols1 = []  # Capacités values
-        display_cols2 = []  # CEE values
-        
-        for key in col_keys:
-            # Prix Molécule - try nested dict first, then single value, then HPH/HCH/HPE/HCE fields
+        # Build display arrays
+        display_cols = []
+        display_cols1 = []
+        display_cols2 = []
+
+        for i in range(len(col_keys)):
+            key = col_keys[i]
+            key1 = col_keys1[i]
+            key2 = col_keys2[i]
+
             prix_molecule = rate.get("prixMolecule")
             if isinstance(prix_molecule, dict):
                 display_cols.append(prix_molecule.get(key, "-"))
             elif prix_molecule is not None:
                 display_cols.append(prix_molecule)
             else:
-                # Fallback: use individual field values (HPH, HCH, HPE, HCE)
                 display_cols.append(rate.get(key, "-"))
-            
-            # Capacités - try nested dict first, then distribution/capacites, then individual fields
+
             capacites = rate.get("capacites")
             if isinstance(capacites, dict):
-                display_cols1.append(capacites.get(key, "-"))
+                display_cols1.append(capacites.get(key1, "-"))
             elif capacites is not None:
                 display_cols1.append(capacites)
-            elif rate.get("distribution") is not None:
-                display_cols1.append(rate.get("distribution"))
             else:
-                display_cols1.append("-")
-            
-            # CEE - try nested dict first, then partCee/resultCEE, then individual fields
+                display_cols1.append(rate.get(key1, "-"))
+
             cee = rate.get("cee")
             if isinstance(cee, dict):
-                display_cols2.append(cee.get(key, "-"))
+                display_cols2.append(cee.get(key2, "-"))
             elif cee is not None:
                 display_cols2.append(cee)
-            elif rate.get("partCee") is not None:
-                display_cols2.append(rate.get("partCee"))
-            elif rate.get("resultCEE") is not None:
-                display_cols2.append(rate.get("resultCEE"))
             else:
-                display_cols2.append("-")
+                display_cols2.append(rate.get(key2, "-"))
 
         rate["display_columns"] = display_cols
         rate["display_columns1"] = display_cols1
@@ -868,7 +870,6 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         processed_rates.append(rate)
 
     dto["comparatifRates"] = processed_rates
-
     return dto
 
     

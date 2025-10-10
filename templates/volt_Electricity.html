@@ -1930,15 +1930,26 @@
     </div>
 
     <!-- TABLES -->
-    <div class="tables-wrapper11">
+ <div class="tables-wrapper11" style="
+    display: flex;           /* tables side by side */
+    overflow-x: auto;        /* horizontal scroll agar zarurat ho */
+    gap: 20px;               /* tables ke beech gap */
+    padding: 10px;
+    align-items: flex-start; /* top alignment */
+">
         
-        <!-- NOM DU SITE -->
-        <div class="table-block11">
-       <table style="
+       <!-- NOM DU SITE -->
+    <div class="table-block11" style="
+        width: 85%;
+        margin-left: auto;
+        margin-right: 50px;
+        margin-top: 50px;   /* yahan table ko niche shift kiya */
+        margin-bottom: 0px;">
+    <table style="
             width: 85%;
-             margin-left: auto;
-    margin-right: 50px;
-    margin-bottom: 0px;">
+            margin-left: auto;
+            margin-right: 50px;
+            margin-bottom: 0px;">
             <thead>
             <tr>
                 {% for col in data.tender_colume.columns %}
@@ -1953,7 +1964,8 @@
                 </tr>
             </tbody>
         </table>
-        </div>
+    </div>
+
 
      <!-- VOLUME ANNUEL -->
 <div class="table-block11">
@@ -2012,9 +2024,9 @@
     {% if forloop.counter0|divisibleby:2 %}
     <div class="container10">
         <div class="content-wrapper10">
-            <div>
+            <!-- <div>
                 <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
-            </div>
+            </div> -->
             <div class="text-heading10">
                 <p>Analyse détaillée des offres</p>
                 <p class="subtext10">
@@ -2024,7 +2036,7 @@
             </div>
         </div>
         <div>
-            <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
+            <!-- <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image"> -->
         </div>
 
         <div class="table-container10">
