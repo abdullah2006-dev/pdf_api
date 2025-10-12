@@ -1065,7 +1065,7 @@
         justify-content: center;
         align-items: center;
         position: relative;
-        margin-bottom: 60px;
+        margin-bottom: 10px;
         min-height: 200px;
     }
 
@@ -1722,7 +1722,7 @@
     <!-- Left Section -->
     <div class="left-section2">
       <h1 class="main-title2">
-        <div style="text-align:center;">
+        <div style="text-align:center; margin-bottom: 2rem;">
           {{ data.comparatifClientHistoryPdfDto.title }}
         </div>
       </h1>
@@ -1737,7 +1737,7 @@
     </div>
     </div>
 
-
+    {% comment %}
     <div class="container2-enedis-chart">
     <div class="content-wrapper2-enedis-chart">
 
@@ -1821,6 +1821,7 @@
 
     </div>
     </div>
+    {% endcomment %}
 
 
     <div class="container3">
@@ -2031,6 +2032,11 @@
         </table>
         </div>
     </div>
+
+       <div class="chart-image-container-enedis-chart">
+            <img src="{{ data.imageOne.enedis_chart }}" alt="Enedis Chart" 
+                class="chart-image-enedis-chart" style="transform: scale(0.8) translateY(-150px); width: auto; display: block; margin: 0 auto;">
+        </div>
     </div>
 
  
