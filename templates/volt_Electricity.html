@@ -1907,14 +1907,14 @@
             <tbody>
                 {% if data.comparatifClientHistoryPdfDto.energyType|upper == "ELECTRICITY" %}
                 <tr>
-                    <td>{{ data.clientSociety  }}</td>
-                    <td>{{ data.clientBusinessAddress.street }}</td>
-                    <td>{{ data.clientSiret }}</td>
-                    <td>{{ data.comparatifClientHistoryPdfDto.pdl }}</td>
-                    <td>{{ data.comparatifClientHistoryPdfDto.segmentation }}</td>
-                    <td>{{ data.comparatifClientHistoryPdfDto.currentSupplierName }}</td>
-                    <td>{{ data.comparatifClientHistoryPdfDto.currentContractExpiryDate }}</td>
-                    <td>{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</td>
+                    <td>{{ data.clientSociety|default:"-"  }}</td>
+                    <td>{{ data.clientBusinessAddress.street|default:"-" }}</td>
+                    <td>{{ data.clientSiret|default:"-" }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.pdl|default:"-" }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.segmentation|default:"-" }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.currentSupplierName|default:"-" }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.currentContractExpiryDate|default:"-" }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }}</td>
                 </tr>
                 {% endif %}
             </tbody>
@@ -2115,21 +2115,45 @@
 
                     <!-- Prix Molécule -->
                     <td class="data-cell">
-                        {{ rate.display_columns.0|default:"-" }}{% if rate.display_columns.0 and rate.display_columns.0 != "-" %} €{% endif %}
+                        {% if col_label == "POINT" %}
+                            {{ rate.pteRate|default:"0" }} €
+                        {% elif col_label == "HPH" %}
+                            {{ rate.hphRate|default:"0" }} €
+                        {% elif col_label == "HP" %}
+                            {{ rate.fullHourRate|default:"0" }} €
+                        {% elif col_label == "BASE" %}
+                            {{ rate.baseRate|default:"0" }} €
+                        {% endif %}
                     </td>
                     <!-- Capacités -->
                     <td class="data-cell">
-                        {{ rate.display_columns1.0|default:"-" }}{% if rate.display_columns1.0 and rate.display_columns1.0 != "-" %} €{% endif %}
+                        {% if col_label == "POINT" %}
+                            {{ rate.pteRateCapacity|default:"0" }} €
+                        {% elif col_label == "HPH" %}
+                            {{ rate.hphRateCapacity|default:"0" }} €
+                        {% elif col_label == "HP" %}
+                            {{ rate.fullHourRateCapacity|default:"0" }} €
+                        {% elif col_label == "BASE" %}
+                            {{ rate.baseRateCapacity|default:"0" }} €
+                        {% endif %}
                     </td>
                     <!-- CEE -->
                     <td class="data-cell">
-                        {{ rate.display_columns2.0|default:"-" }}{% if rate.display_columns2.0 and rate.display_columns2.0 != "-" %} €{% endif %}
+                        {% if col_label == "POINT" %}
+                            {{ rate.pteRateCee|default:"0" }} €
+                        {% elif col_label == "HPH" %}
+                            {{ rate.hphRateCee|default:"0" }} €
+                        {% elif col_label == "HP" %}
+                            {{ rate.fullHourRateCee|default:"0" }} €
+                        {% elif col_label == "BASE" %}
+                            {{ rate.baseRateCee|default:"0" }} €
+                        {% endif %}
                     </td>
                     
                     <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.abonnement|default:"-" }}{% if rate.abonnement %} €{% endif %}</td>
-                    <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.partFixeAcheminement|default:"-" }}{% if rate.partFixeAcheminement %} €{% endif %}</td>
+                    <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.turpe|default:"-" }}{% if rate.turpe %} €{% endif %}</td>
                     <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.cta|default:"-" }}{% if rate.cta %} €{% endif %}</td>
-                    <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.ticgn|default:"-" }}{% if rate.ticgn %} €{% endif %}</td>
+                    <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.ticfe|default:"-" }}{% if rate.ticfe %} €{% endif %}</td>
                     <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.tva|default:"-" }}{% if rate.tva %} €{% endif %}</td>
                     <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.coutHTVA|default:"-" }}{% if rate.coutHTVA %} €{% endif %}</td>
                     <td class="data-cell" rowspan="{{ data.tender_colume.columns2|length }}">{{ rate.coutTTC|default:"-" }}{% if rate.coutTTC %} €{% endif %}</td>
@@ -2138,39 +2162,100 @@
                     <td class="data-cell blue-cell">{{ col_label }}</td>
                     <th style="background: white; border: none; width: 15px;"></th>
                     <td class="data-cell">
-                        {{ rate.display_columns.1|default:"-" }}{% if rate.display_columns.1 and rate.display_columns.1 != "-" %} €{% endif %}
+                        {% if col_label == "HPH" %}
+                            {{ rate.hphRate|default:"0" }} €
+                        {% elif col_label == "HCH" %}
+                            {{ rate.hchRate|default:"0" }} €
+                        {% elif col_label == "HC" %}
+                            {{ rate.offPeakHourRate|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns1.1|default:"-" }}{% if rate.display_columns1.1 and rate.display_columns1.1 != "-" %} €{% endif %}
+                        {% if col_label == "HPH" %}
+                            {{ rate.hphRateCapacity|default:"0" }} €
+                        {% elif col_label == "HCH" %}
+                            {{ rate.hchRateCapacity|default:"0" }} €
+                        {% elif col_label == "HC" %}
+                            {{ rate.offPeakHourRateCapacity|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns2.1|default:"-" }}{% if rate.display_columns2.1 and rate.display_columns2.1 != "-" %} €{% endif %}
+                        {% if col_label == "HPH" %}
+                            {{ rate.hphRateCee|default:"0" }} €
+                        {% elif col_label == "HCH" %}
+                            {{ rate.hchRateCee|default:"0" }} €
+                        {% elif col_label == "HC" %}
+                            {{ rate.offPeakHourRateCee|default:"0" }} €
+                        {% endif %}
                     </td>
                     
                     {% elif forloop.counter0 == 2 %}
                     <td class="data-cell blue-cell">{{ col_label }}</td>
                     <th style="background: white; border: none; width: 15px;"></th>
                     <td class="data-cell">
-                        {{ rate.display_columns.2|default:"-" }}{% if rate.display_columns.2 and rate.display_columns.2 != "-" %} €{% endif %}
+                        {% if col_label == "HCH" %}
+                            {{ rate.hchRate|default:"0" }} €
+                        {% elif col_label == "HPE" %}
+                            {{ rate.hpeRate|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns1.2|default:"-" }}{% if rate.display_columns1.2 and rate.display_columns1.2 != "-" %} €{% endif %}
+                        {% if col_label == "HCH" %}
+                            {{ rate.hchRateCapacity|default:"0" }} €
+                        {% elif col_label == "HPE" %}
+                            {{ rate.hpeRateCapacity|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns2.2|default:"-" }}{% if rate.display_columns2.2 and rate.display_columns2.2 != "-" %} €{% endif %}
+                        {% if col_label == "HCH" %}
+                            {{ rate.hchRateCee|default:"0" }} €
+                        {% elif col_label == "HPE" %}
+                            {{ rate.hpeRateCee|default:"0" }} €
+                        {% endif %}
                     </td>
                     
                     {% elif forloop.counter0 == 3 %}
                     <td class="data-cell blue-cell">{{ col_label }}</td>
                     <th style="background: white; border: none; width: 15px;"></th>
                     <td class="data-cell">
-                        {{ rate.display_columns.3|default:"-" }}{% if rate.display_columns.3 and rate.display_columns.3 != "-" %} €{% endif %}
+                        {% if col_label == "HPE" %}
+                            {{ rate.hpeRate|default:"0" }} €
+                        {% elif col_label == "HCE" %}
+                            {{ rate.hceRate|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns1.3|default:"-" }}{% if rate.display_columns1.3 and rate.display_columns1.3 != "-" %} €{% endif %}
+                        {% if col_label == "HPE" %}
+                            {{ rate.hpeRateCapacity|default:"0" }} €
+                        {% elif col_label == "HCE" %}
+                            {{ rate.hceRateCapacity|default:"0" }} €
+                        {% endif %}
                     </td>
                     <td class="data-cell">
-                        {{ rate.display_columns2.3|default:"-" }}{% if rate.display_columns2.3 and rate.display_columns2.3 != "-" %} €{% endif %}
+                        {% if col_label == "HPE" %}
+                            {{ rate.hpeRateCee|default:"0" }} €
+                        {% elif col_label == "HCE" %}
+                            {{ rate.hceRateCee|default:"0" }} €
+                        {% endif %}
+                    </td>
+
+                    {% elif forloop.counter0 == 4 %}
+                    <td class="data-cell blue-cell">{{ col_label }}</td>
+                    <th style="background: white; border: none; width: 15px;"></th>
+                    <td class="data-cell">
+                        {% if col_label == "HCE" %}
+                            {{ rate.hceRate|default:"0" }} €
+                        {% endif %}
+                    </td>
+                    <td class="data-cell">
+                        {% if col_label == "HCE" %}
+                            {{ rate.hceRateCapacity|default:"0" }} €
+                        {% endif %}
+                    </td>
+                    <td class="data-cell">
+                        {% if col_label == "HCE" %}
+                            {{ rate.hceRateCee|default:"0" }} €
+                        {% endif %}
                     </td>
                     {% endif %}
                 </tr>

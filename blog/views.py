@@ -748,8 +748,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     if energy_type != "ELECTRICITY":
         raise ValueError("Invalid or missing energyType. Must be 'ELECTRICITY'.")
 
-    segmentation = comparatif.get("segmentation", "").upper()
-    tarif_type = comparatif.get("tarifType", "").upper()
+    segmentation = str(comparatif.get("segmentation") or "").upper()
+    tarif_type = str(comparatif.get("tarifType") or "").upper()
 
     dto.update({
         "pdl": comparatif.get("pdl"),
@@ -758,21 +758,22 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "volumeAnnual": comparatif.get("volumeAnnual"),
         "ratioHTVA": comparatif.get("ratioHTVA"),
         "differenceHTVA": comparatif.get("differenceHTVA"),
-        "POINT": comparatif.get("POINT"),
-        "HPH": comparatif.get("HPH"),
-        "HCH": comparatif.get("HCH"),
-        "HPE": comparatif.get("HPE"),
-        "HCE": comparatif.get("HCE"),
-        "TOTAL": comparatif.get("TOTAL"),
-        "HP": comparatif.get("HP"),
-        "HC": comparatif.get("HC"),
-        "BASE": comparatif.get("BASE"),
+        "POINT": comparatif.get("pte"),
+        "HPH": comparatif.get("hph"),
+        "HCH": comparatif.get("hch"),
+        "HPE": comparatif.get("hpe"),
+        "HCE": comparatif.get("hce"),
+        "HP": comparatif.get("hp"),
+        "HC": comparatif.get("hc"),
+        "BASE": comparatif.get("base"),
+        "TOTAL": comparatif.get("sumOfAnnualRates"),
+        "puissanceMap": comparatif.get("puissanceMap")
     })
 
     # --- Determine display columns for main DTO ---
     if segmentation in ["C1", "C2", "C3"]:
         dto["display_columns"] = ["POINT", "HPH", "HCH", "HPE", "HCE", "TOTAL"]
-        dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
+        dto["display_columns1"] = ["POINT", "HPH", "HCH", "HPE", "HCE"]
     elif segmentation == "C4" or (segmentation == "C5" and tarif_type == "QUATRE"):
         dto["display_columns"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
         dto["display_columns1"] = ["HPH", "HCH", "HPE", "HCE"]
@@ -792,7 +793,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
 
     # --- Generate ready-to-render values list for main DTO ---
     dto["display_data"] = [dto.get(col, "-") for col in dto["display_columns"]]
-    dto["display_data1"] = [dto.get(col, "-") for col in dto["display_columns1"]]
+    dto["display_data1"] = [(dto.get("puissanceMap") or {}).get(col, "-") for col in dto.get("display_columns1", [])]
+
 
     # --- Add rates or extra info if available ---
     comparatif_rates = comparatif.get("comparatifRates", [])
@@ -906,8 +908,8 @@ def build_tender_colume_Electricity(data):
     }
 
     # bhai yahan dynamic handling kar rahe hain segmentation aur tarifType ke hisab se
-    segmentation = data.get("comparatifClientHistoryPdfDto", {}).get("segmentation", "")
-    tarif_type = data.get("comparatifClientHistoryPdfDto", {}).get("tarifType", "")
+    segmentation = str(data.get("comparatifClientHistoryPdfDto", {}).get("segmentation") or "").upper()
+    tarif_type = str(data.get("comparatifClientHistoryPdfDto", {}).get("tarifType") or "").upper()
 
     segmentation = segmentation.upper()
     tarif_type = tarif_type.upper()
@@ -922,7 +924,7 @@ def build_tender_colume_Electricity(data):
 
     elif segmentation in ["C1", "C2", "C3"]:
         tender_colume["columns1"] = ["POINT", "HPH", "HCH", "HPE", "HCE", "TOTAL"]
-        tender_colume["columns2"] = ["HPH", "HCH", "HPE", "HCE"]
+        tender_colume["columns2"] = ["POINT", "HPH", "HCH", "HPE", "HCE"]
 
     elif segmentation == "C4" or (segmentation == "C5" and tarif_type == "QUATRE"):
         tender_colume["columns1"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
@@ -931,7 +933,6 @@ def build_tender_colume_Electricity(data):
     else:
         tender_colume["columns1"] = ["HPH", "HCH", "HPE", "HCE", "TOTAL"]
         tender_colume["columns2"] = ["HPH", "HCH", "HPE", "HCE"]
-
 
     return tender_colume
 
