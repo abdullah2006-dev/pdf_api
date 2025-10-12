@@ -644,15 +644,30 @@ def generate_enedis_chart(chart_data):
         save_path (str, optional): Path to save the chart as PNG (e.g. "enedis_chart.png")
 
     Returns:
-        str: Base64-encoded PNG chart string (for embedding).
+        str: Base64-encoded PNG chart string (for embedding), or None if input is invalid.
     """
+
+    # --- Early return for null/empty input ---
+    if not chart_data or not isinstance(chart_data, dict):
+        return None
 
     # --- Extract data safely ---
     months = chart_data.get("months", [])
     consumption_data = chart_data.get("consumptionData", {})
 
-    if not months or not isinstance(consumption_data, dict):
-        raise ValueError("Invalid chart_data: must contain 'months' and 'consumptionData'")
+    # --- Check if data is empty ---
+    if not months or not consumption_data:
+        return None
+
+    # --- Check if consumption_data has actual values ---
+    has_data = False
+    for values in consumption_data.values():
+        if any(v > 0 for v in values):  # Check if any non-zero values exist
+            has_data = True
+            break
+    
+    if not has_data:
+        return None
 
     # --- Predefined colors for known labels ---
     label_colors = {
