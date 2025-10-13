@@ -804,7 +804,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "HC": comparatif.get("hc"),
         "BASE": comparatif.get("base"),
         "TOTAL": comparatif.get("sumOfAnnualRates"),
-        "puissanceMap": comparatif.get("puissanceMap")
+        "puissanceMap": comparatif.get("puissanceMap"),
+        "powerInKVA": comparatif.get("powerInKVA"),
     })
 
     # --- Determine display columns for main DTO ---
@@ -830,8 +831,10 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
 
     # --- Generate ready-to-render values list for main DTO ---
     dto["display_data"] = [dto.get(col, "-") for col in dto["display_columns"]]
-    dto["display_data1"] = [(dto.get("puissanceMap") or {}).get(col, "-") for col in dto.get("display_columns1", [])]
-
+    dto["display_data1"] = [
+        (dto.get("puissanceMap") or {}).get(col, dto.get("powerInKVA", "-"))
+        for col in dto.get("display_columns1", [])
+    ]
 
     # --- Add rates or extra info if available ---
     comparatif_rates = comparatif.get("comparatifRates", [])
