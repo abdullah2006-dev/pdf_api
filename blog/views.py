@@ -730,6 +730,12 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
+        "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
+        "currentContractExpiryDate": (
+            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
+            if comparatif_dto.get("currentContractExpiryDate") else ""
+        ),
         "black": (
             safe_value(comparatif_dto.get("ratioHTVA")) + "%"
             if safe_value(comparatif_dto.get("ratioHTVA")) != ""
@@ -779,6 +785,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "title2": data.get("enedis_title2", "Votre Consommation relevée par"),
         "createdOn": created_on,
         "energyType": comparatif.get("energyType"),
+        "currentSupplierName": comparatif.get("currentSupplierName"),
+        "currentContractExpiryDate": comparatif.get("currentContractExpiryDate"),
     }
 
     energy_type = dto.get("energyType")
