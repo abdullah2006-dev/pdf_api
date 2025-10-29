@@ -260,7 +260,7 @@ def generate_pdf(html_content, request, data, comparatif):
 
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
-        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")), pdf_filename)
     )
 
     return pdf_url, pdf_filename
