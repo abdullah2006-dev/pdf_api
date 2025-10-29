@@ -42,7 +42,7 @@ def volt_consulting_presentation(request):
         html_content = render_html(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data, comparatif)
 
         return JsonResponse({
             "status": "success",
@@ -218,7 +218,7 @@ def render_html(presentation_data):
     return render_to_string("volt.html", {"data": presentation_data})
 
 
-def generate_pdf(html_content, request, data):
+def generate_pdf(html_content, request, data, comparatif):
     """Generate PDF and return its URL (without removing any pages)."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
@@ -235,7 +235,7 @@ def generate_pdf(html_content, request, data):
         base_url = settings.MEDIA_URL
 
     # Dynamic path: client/<id>/comparatif/
-    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif")
+    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")))
     pdf_dir = os.path.join(base_dir, relative_path)
     os.makedirs(pdf_dir, exist_ok=True)
 
@@ -500,7 +500,7 @@ def volt_consulting_presentation_Electricitry(request):
         html_content = render_html_Elecricity(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data, comparatif)
 
         return JsonResponse({
             "status": "success",
