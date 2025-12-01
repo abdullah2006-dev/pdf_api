@@ -668,6 +668,8 @@
             justify-content: center;
             padding: 0px 6px;
             text-align: center;
+            margin-left: -100px;
+            margin-right: auto;
         }
 
         .rate-box-enedis * {
@@ -716,7 +718,7 @@
         .label-text-enedis1 {
             font-size: 15px;
             margin-top: -80px;
-            margin-left: -150px;
+            margin-left: -110px;
             color: #103A5E;
             font-weight: 600;
             line-height: 1.3;
@@ -743,7 +745,7 @@
         .label-text-enedis4 {
             font-size: 15px;
             margin-top: -80px;
-            margin-left: 100px;
+            margin-left: 200px;
             color: #103A5E;
             font-weight: 600;
             line-height: 1.3;
@@ -1954,137 +1956,202 @@
                     {% endfor %}
                 </div>
 
-                <!-- Second Row: Columns5, 6, 7 -->
-                <div class="labels-row-enedis"
-                    style="display:flex; flex-wrap:nowrap; gap:10px; justify-content:center; font-size:12px; overflow-x:auto; white-space:nowrap; padding:5px 0;">
-                    <!-- Compteur, Déb.contrat -->
-                    {% for col in data.tender_table.columns5 %}
-                    <div class="label-item-enedis"
-                        style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
-                        <div class="label-text-enedis1">{{ col|safe }}</div>
-                    </div>
-                    {% endfor %}
 
-                    <!-- Puissance Rates (first set of columns6) -->
-                    {% for col in data.tender_table.columns6 %}
-                    <div class="label-item-enedis"
-                        style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
-                        <div class="label-text-enedis2">{{ col|safe }}</div>
-                    </div>
-                    {% endfor %}
+<div class="provider-row-enedis">
+    <div class="rates-container-enedis" style="display: flex; align-items: flex-end; gap: 10px;">
 
-                    <!-- Consumption Rates (second set of columns6) -->
-                    {% for col in data.tender_table.columns6 %}
-                    <div class="label-item-enedis"
-                        style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
-                        <div class="label-text-enedis3">{{ col|safe }}</div>
-                    </div>
-                    {% endfor %}
+        <!-- PDL Number (Compteur) -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Compteur</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_On }}
+            </div>
+        </div>
 
-                    <!-- Total MWh/an -->
-                    {% for col in data.tender_table.columns7 %}
-                    <div class="label-item-enedis"
-                        style="padding:4px 8px; border:none; border-radius:0px; flex:0 0 auto;">
-                        <div class="label-text-enedis4">{{ col|safe }}</div>
-                    </div>
-                    {% endfor %}
-                </div>
+        <!-- Contract Start Date (Déb.contrat) -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Déb.contrat</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
+                {{ data.enedis_info.contract_start_date }}
+            </div>
+        </div>
 
-                <!-- Dynamic Rates Section -->
-                <div class="provider-row-enedis">
-                    <div class="rates-container-enedis">
-                        <!-- PDL Number (Compteur) -->
-                        <div class="rate-box-enedis">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_On }}</div>
-                        </div>
+        <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
 
-                        <!-- Contract Start Date (Déb.contrat) -->
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-17px;">
-                            <div class="rate-value-enedis">
-                                {{ data.enedis_info.contract_start_date }}
-                            </div>
-                        </div>
+        </div>
+           <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
 
-                        <!-- FIRST SET: PUISSANCE RATES (KVA) - Based on columns6 -->
-                        {% for col in data.tender_table.columns6 %}
-                        {% if col == "HPH" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:80px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hph }}</div>
-                        </div>
-                        {% elif col == "HCH" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-4px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hch }}</div>
-                        </div>
-                        {% elif col == "HPE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-4px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hpe }}</div>
-                        </div>
-                        {% elif col == "HCE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hce }}</div>
-                        </div>
-                        {% elif col == "POINTE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_pointe }}</div>
-                        </div>
-                        {% elif col == "HP" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:80px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hp }}</div>
-                        </div>
-                        {% elif col == "HC" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-4px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_hc }}</div>
-                        </div>
-                        {% elif col == "BASE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:80px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_puissance_base }}</div>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
+        </div>
 
-                        <!-- SECOND SET: CONSUMPTION RATES (MWh) - Based on columns6 -->
-                        {% for col in data.tender_table.columns6 %}
-                        {% if col == "HPH" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hph }}</div>
-                        </div>
-                        {% elif col == "HCH" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hch }}</div>
-                        </div>
-                        {% elif col == "HPE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hpe }}</div>
-                        </div>
-                        {% elif col == "HCE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hce }}</div>
-                        </div>
-                        {% elif col == "POINTE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_pointe }}</div>
-                        </div>
-                        {% elif col == "HP" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hp }}</div>
-                        </div>
-                        {% elif col == "HC" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_hc }}</div>
-                        </div>
-                        {% elif col == "BASE" %}
-                        <div class="rate-box-enedis" style="display:flex; margin-left:-6px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_base }}</div>
-                        </div>
-                        {% endif %}
-                        {% endfor %}
 
-                        <!-- TOTAL MWh/an -->
-                        <div class="rate-box-enedis" style="display:flex; margin-left:50px;">
-                            <div class="rate-value-enedis">{{ data.enedis_info.enedis_rate_sum }}</div>
-                        </div>
-                    </div>
-                </div>
+
+
+        <!-- FIRST SET: PUISSANCE RATES (KVA) -->
+        {% for col in data.tender_table.columns6 %}
+        {% if col == "HPH" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hph }}
+            </div>
+        </div>
+        {% elif col == "HCH" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hch }}
+            </div>
+        </div>
+        {% elif col == "HPE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hpe }}
+            </div>
+        </div>
+        {% elif col == "HCE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hce }}
+            </div>
+        </div>
+        {% elif col == "POINTE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_pointe }}
+            </div>
+        </div>
+        {% elif col == "HP" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hp }}
+            </div>
+        </div>
+        {% elif col == "HC" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_hc }}
+            </div>
+        </div>
+        {% elif col == "BASE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_puissance_base }}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+           <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+
+
+        <!-- SECOND SET: CONSUMPTION RATES (MWh) -->
+        {% for col in data.tender_table.columns6 %}
+        {% if col == "HPH" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hph }}
+            </div>
+        </div>
+        {% elif col == "HCH" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hch }}
+            </div>
+        </div>
+        {% elif col == "HPE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hpe }}
+            </div>
+        </div>
+        {% elif col == "HCE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hce }}
+            </div>
+        </div>
+        {% elif col == "POINTE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_pointe }}
+            </div>
+        </div>
+        {% elif col == "HP" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hp }}
+            </div>
+        </div>
+        {% elif col == "HC" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_hc }}
+            </div>
+        </div>
+        {% elif col == "BASE" %}
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_base }}
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+           <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+
+           <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+
+           <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+                <!-- Puissances souscrites KV Header -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin: 0 10px;">
+
+        </div>
+
+
+
+        <!-- TOTAL MWh/an -->
+        <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Total<br>MWh / an</div>
+            <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                {{ data.enedis_info.enedis_rate_sum }}
+            </div>
+        </div>
+    </div>
+</div>
 
                 <div class="chart-image-container-enedis-chart">
                     <img src="{{ data.imageOne.enedis_chart }}" alt="Enedis Chart" class="chart-image-enedis-chart">
