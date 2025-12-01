@@ -1251,7 +1251,7 @@
             align-items: flex-start;
             margin-top: -30px;
             /* 👈 row ko upar chipka diya */
-            margin-bottom: 100px;
+            margin-bottom: 25px;
             /* neeche thoda space */
             margin-left: 50px;
             /* neeche thoda space */
@@ -1341,6 +1341,7 @@
             gap: 245px;
             margin-top: 10px;
             padding-left: 590px;
+            margin-bottom: 30px;
             /* Offset for logo width */
         }
 
@@ -2204,8 +2205,9 @@
 
         {% endif %} {# End of container start block #}
 
-        <!-- PROVIDER ROW - HAR PROVIDER KE LIYE -->
-        <div class="provider-row">
+        <!-- SPECIFIC CONDITION PROVIDER - SHOW ABOVE LABELS -->
+        {% if provider.meets_specific_condition %} {# ← Replace this with your actual condition #}
+        <div class="provider-row specific-provider">
             <div class="rates-container">
                 <div class="rate-box">
                     <div class="partner-logo">
@@ -2217,20 +2219,22 @@
                     </div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.rate }}</div>
+                    <div class="rate-value">{{ provider.fourniture }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.tva }}</div>
+                    <div class="rate-value">{{ provider.turpe }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.rate }}</div>
+                    <div class="rate-value">{{ provider.taxes }}</div>
                 </div>
                 <div class="rate-box">
                     <div class="rate-value">{{ provider.coutHTVA }}</div>
                 </div>
             </div>
         </div>
-        <!-- LABELS SIRF FIRST PROVIDER KE BAAD - END MEIN -->
+        {% endif %}
+
+        <!-- LABELS ROW - ALWAYS SHOW AFTER SPECIFIC PROVIDER -->
         {% if forloop.first %}
         <div class="labels-row">
             {% for label in data.comparison_table.labels %}
@@ -2238,6 +2242,35 @@
                 <div class="label-text">{{ label|safe }}</div>
             </div>
             {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- REGULAR PROVIDERS - SHOW BELOW LABELS -->
+        {% if not provider.typeFournisseur == 'CURRENT' %} {# ← Replace this with your actual condition #}
+        <div class="provider-row regular-provider">
+            <div class="rates-container">
+                <div class="rate-box">
+                    <div class="partner-logo">
+                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                        {% else %}
+                        <img src="/images/default-logo.png" class="partner-image">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.fourniture }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.turpe }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.taxes }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.coutHTVA }}</div>
+                </div>
+            </div>
         </div>
         {% endif %}
         <br>
@@ -2304,7 +2337,7 @@
 
             <!-- Dusra table -->
             <div class="table-container" style="flex:1;">
-                <p style="font-weight:bold; text-align:center; margin-bottom:5px;">CAPACITE</p> <!-- 👈 Heading add -->
+                <p style="font-weight:bold; text-align:center; margin-bottom:5px;">CAPACITE</p>
                 <table>
                     <thead>
                         <tr>
@@ -2316,10 +2349,27 @@
                     <tbody>
                         {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
-                            <td>{{ r.rate }}</td>
-                            <td>{{ r.rate }}</td>
-                            <td>{{ r.rate }}</td>
-                            <td>{{ r.rate }}</td>
+                            {% for col in data.tender_table.columns1 %}
+                            {% if "HPH" in col and "<br>" not in col.split("HPH")[0] %}
+                            <td>{{ r.capaHph|default:"-" }}</td>
+                            {% elif "HCH" in col and "<br>" not in col.split("HCH")[0] %}
+                            <td>{{ r.capaHch|default:"-" }}</td>
+                            {% elif "HPE" in col and "<br>" not in col.split("HPE")[0] %}
+                            <td>{{ r.capaHpe|default:"-" }}</td>
+                            {% elif "HCE" in col and "<br>" not in col.split("HCE")[0] %}
+                            <td>{{ r.capaHce|default:"-" }}</td>
+                            {% elif "POINTE" in col and "<br>" not in col.split("POINTE")[0] %}
+                            <td>{{ r.capaPointe|default:"-" }}</td>
+                            {% elif "HP" in col and "<br>" not in col.split("HP")[0] and "HPH" not in col %}
+                            <td>{{ r.capaHp|default:"-" }}</td>
+                            {% elif "HC" in col and "<br>" not in col.split("HC")[0] and "HCH" not in col %}
+                            <td>{{ r.capaHc|default:"-" }}</td>
+                            {% elif "BASE" in col and "<br>" not in col.split("BASE")[0] %}
+                            <td>{{ r.capaBase|default:"-" }}</td>
+                            {% else %}
+                            <td>{{ r.rate|default:"-" }}</td>
+                            {% endif %}
+                            {% endfor %}
                         </tr>
                         {% endfor %}
                     </tbody>

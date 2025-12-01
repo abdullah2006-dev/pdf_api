@@ -675,10 +675,10 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "budget_global": build_budget_section(data),
         "tender_results": build_tender_results(data),
         "comparison_table": build_comparison_table_Electricity(data),
-        "tender_table": build_tender_table_Electricity(data),
+        "tender_table": build_tender_table_Electricity(data, comparatif_dto),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
-        "enedis_info": enedis_Chart(data)
+        "enedis_info": enedis_Chart(comparatif_dto)
     }
 
 
@@ -709,6 +709,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         dto.update({
             "pdl": comparatif.get("pdl"),
             "segmentation": comparatif.get("segmentation"),
+            "tarifType": comparatif.get("tarifType"),
             "volumeAnnual": comparatif.get("volumeAnnual"),
             "ratioHTVA": comparatif.get("ratioHTVA"),
             "differenceHTVA": comparatif.get("differenceHTVA"),
@@ -742,51 +743,176 @@ def build_comparison_table_Electricity(data):
     }
 
 
-def build_tender_table_Electricity(data):
+def build_tender_table_Electricity(data, comparatif_dto):
     """Tender table section."""
     print("Inside BuildTenderTable")
+
+    columns = data.get("columns", [])
+    columns1 = data.get("columns1", [])
+    columns6 = data.get("columns6", [])
+    if not columns6:
+        energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
+        segmentation = comparatif_dto.get("segmentation", "")
+        tarif_type = comparatif_dto.get("tarifType", "")
+
+        # Convert to uppercase and strip whitespace for case-insensitive comparison
+        energy_type_upper = energy_type.strip().upper()
+        segmentation_upper = segmentation.strip().upper()
+        tarif_type_upper = tarif_type.strip().upper()
+        print(energy_type_upper, segmentation_upper, tarif_type_upper)
+
+        if energy_type_upper == "ELECTRICITY":
+            # Define segmentation to columns6 mapping
+            segmentation_mapping = {
+                "C1": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+                "C2": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+                "C3": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+                "C4": ["HPH", "HCH", "HPE", "HCE"],
+            }
+
+            segmentation_mapping1 = {
+                "C1": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+                "C2": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+                "C3": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+                "C4": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
+            }
+            
+            # Check for C5 with specific tarif types
+            if segmentation_upper == "C5":
+                tarif_mapping = {
+                    "QUATRE": ["HPH", "HCH", "HPE", "HCE"],
+                    "DOUBLE": ["HP", "HC"],
+                    "BASE": ["BASE"]
+                }
+
+                tarif_mapping1 = {
+                    "QUATRE": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
+                    "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
+                    "BASE": ["BASE <br> €/MWh"]
+                }
+                columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])  # default to HP/HC
+                
+                # Get the base columns without "Fournisseur"
+                base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+                
+                # Add "Fournisseur" to columns (but not to columns1)
+                columns = ["Fournisseur"] + base_columns
+                columns1 = base_columns  # columns1 doesn't get "Fournisseur"
+            else:
+                # Use mapping for other segmentations
+                columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])  # default
+                
+                # Get the base columns without "Fournisseur"
+                base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+                
+                # Add "Fournisseur" to columns (but not to columns1)
+                columns = ["Fournisseur"] + base_columns
+                columns1 = base_columns  # columns1 doesn't get "Fournisseur"
+
     return {
-        "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
-        "columns": data.get("columns", [
-            "Fournisseur", "HPH <br> €/MWh", "HCH <br> €/MWh",
-            "HPE <br> €/MWh", "HCE <br> €/MWh"
+        "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
+        "columns": columns if columns else ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"],  # Fallback
+        "columns1": columns1 if columns1 else ["HP <br> €/MWh", "HC <br> €/MWh"],  # Fallback
+        "columns2": data.get("columns2", ["CEE <br> €/MWh"]),
+        "columns3": data.get("columns3", ["TABO <br> €/an"]),
+        "columns4": data.get("columns4", [
+            "Puissances souscrites KVA", "Consommation MWh", "Total"
         ]),
-
-        "columns1": data.get("columns", [
-           "HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"
-        ]),
-
-        "columns2": data.get("columns", [
-           "CEE <br> €/MWh"
-        ]),
-
-        "columns3": data.get("columns", [
-            "TABO <br> €/an"
-        ]),
-
-        "columns4": data.get("columns", [
-            "Puissances souscrites KV", "Consommation MWh", "Total"
-        ]),
-
-        "columns5": data.get("columns", [
+        "columns5": data.get("columns5", [
             "Compteu", "Déb.contrat"
         ]),
-
-        "columns6": data.get("columns", [
-            "HPH", "HCH", "HPE", "HCE"
-        ]),
-
-        "columns7": data.get("columns", [
+        "columns6": columns6 if columns6 else ["HP", "HC"],  # Fallback
+        "columns7": data.get("columns7", [
             "MWh / an"
         ]),
     }
 
+def enedis_Chart(comparatif_dto):
+    """Provide dynamic Enedis rate information based on segmentation and tarif type."""
+    
+    # Extract data with case-insensitive handling
+    energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
+    segmentation = comparatif_dto.get("segmentation", "")
+    tarif_type = comparatif_dto.get("tarifType", "")
+    
+    # Convert to uppercase for consistent comparison
+    energy_type_upper = energy_type.strip().upper()
+    segmentation_upper = segmentation.strip().upper()
+    tarif_type_upper = tarif_type.strip().upper()
+    
+    # Format contract start date from timestamp to dd/mm/yyyy
+    contract_start_date = comparatif_dto.get("contractStartDate")
+    formatted_date = "-"
+    if contract_start_date:
+        try:
+            # Handle both milliseconds and seconds timestamp
+            if contract_start_date > 1e12:  # Likely in milliseconds
+                contract_start_date = contract_start_date / 1000
+            dt = datetime.fromtimestamp(contract_start_date)
+            formatted_date = dt.strftime("%d/%m/%Y")
+        except (ValueError, TypeError, OSError):
+            formatted_date = "-"
+    
+    # Base response with common fields
+    base_response = {
+        "enedis_rate_On": comparatif_dto.get("pdl", "-"),
+        "contract_start_date": formatted_date,
+        "enedis_rate_sum": comparatif_dto.get("sumOfAnnualRates", "-"),
+    }
+    
+    # Apply exact same rules as build_tender_table_Electricity
+    if energy_type_upper == "ELECTRICITY":
+        if segmentation_upper in ["C1", "C2", "C3"]:
+            # C1, C2, C3: HPE, HPH, HCE, HCH, POINTE
+            base_response.update({
+                "enedis_rate_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_hce": comparatif_dto.get("hce", "-"),
+                "enedis_rate_pointe": comparatif_dto.get("pte", "-"),
 
-def enedis_Chart(data):
-        return {
-            "enedis_rate_On": data.get("enedis_rate_On", "30 001 790 006 259"),
-            "enedis_rate_date": data.get("enedis_rate_date", "24/12/2025"),
-            "enedis_rate": data.get("enedis_rate", "100"),
-        }
+                "enedis_rate_puissance_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_puissance_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_puissance_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_puissance_hce": comparatif_dto.get("hce", "-"),
+                "enedis_rate_puissance_pointe": comparatif_dto.get("pte", "-"),
+            })
+        elif segmentation_upper == "C4" or (segmentation_upper == "C5" and tarif_type_upper == "QUATRE"):
+            # C4 or C5 QUATRE: HPE, HPH, HCE, HCH
+            base_response.update({
+                "enedis_rate_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_hce": comparatif_dto.get("hce", "-"),
 
+                "enedis_rate_puissance_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_puissance_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_puissance_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_puissance_hce": comparatif_dto.get("hce", "-"),
+            })
+        elif segmentation_upper == "C5" and tarif_type_upper == "BASE":
+            # C5 BASE: BASE only
+            base_response.update({
+                "enedis_rate_base": comparatif_dto.get("base", "-"),
+                "enedis_rate_puissance_base": comparatif_dto.get("base", "-"),
+            })
+        elif segmentation_upper == "C5" and tarif_type_upper == "DOUBLE":
+            # C5 DOUBLE: HP, HC
+            base_response.update({
+                "enedis_rate_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_hc": comparatif_dto.get("hc", "-"),
 
+                "enedis_rate_puissance_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_puissance_hc": comparatif_dto.get("hc", "-"),
+            })
+        else:
+            # Default: HP, HC
+            base_response.update({
+                "enedis_rate_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_hc": comparatif_dto.get("hc", "-"),
+
+                "enedis_rate_puissance_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_puissance_hc": comparatif_dto.get("hc", "-"),
+            })
+    
+    return base_response
