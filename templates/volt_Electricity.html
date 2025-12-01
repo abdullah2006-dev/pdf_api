@@ -2306,7 +2306,6 @@
         <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
             <!-- Pehla table -->
             <div class="table-container" style="flex:1;">
-                <!-- 👇 Yahan heading add ki -->
                 <p style="font-weight:bold; text-align:center; margin-bottom:5px;">FOURNITURE</p>
                 <table>
                     <thead>
@@ -2317,17 +2316,99 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% endif %}
-
+                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
-                            <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
-                            <td>{{ rate.rate }}</td>
-                            <td>{{ rate.rate }}</td>
-                            <td>{{ rate.rate }}</td>
-                            <td>{{ rate.rate }}</td>
+                            {% for col in data.tender_table.columns %}
+                            {% if "Fournisseur" in col %}
+                            <td style="text-align:center; vertical-align:middle;">
+                                {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
+                                    alt="{{ r.partnerName|default:'Partner' }}"
+                                    title="{{ r.partnerName|default:'Partner' }}">
+                                {% else %}
+                                <span class="partner-name">
+                                    {{ r.partnerName|default:"-" }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            {% else %}
+                            {% if "HPH" in col %}
+                            <td>
+                                {% if r.hphRate is not None %}
+                                {{ r.hphRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HCH" in col %}
+                            <td>
+                                {% if r.hchRate is not None %}
+                                {{ r.hchRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HPE" in col %}
+                            <td>
+                                {% if r.hpeRate is not None %}
+                                {{ r.hpeRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HCE" in col %}
+                            <td>
+                                {% if r.hceRate is not None %}
+                                {{ r.hceRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "POINTE" in col %}
+                            <td>
+                                {% if r.pteRate is not None %}
+                                {{ r.pteRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HP" in col and "HPH" not in col %}
+                            <td>
+                                {% if r.fullHourRate is not None %}
+                                {{ r.fullHourRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HC" in col and "HCH" not in col %}
+                            <td>
+                                {% if r.offPeakHourRate is not None %}
+                                {{ r.offPeakHourRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "BASE" in col %}
+                            <td>
+                                {% if r.baseRate is not None %}
+                                {{ r.baseRate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% else %}
+                            <td>
+                                {% if r.rate is not None %}
+                                {{ r.rate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
                         </tr>
-
-                        {% if forloop.counter|divisibleby:5 or forloop.last %}
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -2349,27 +2430,87 @@
                     <tbody>
                         {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
+                            {% if r.typeCapa == "CAPAINCLUS" %}
                             {% for col in data.tender_table.columns1 %}
-                            {% if "HPH" in col and "<br>" not in col.split("HPH")[0] %}
-                            <td>{{ r.capaHph|default:"-" }}</td>
-                            {% elif "HCH" in col and "<br>" not in col.split("HCH")[0] %}
-                            <td>{{ r.capaHch|default:"-" }}</td>
-                            {% elif "HPE" in col and "<br>" not in col.split("HPE")[0] %}
-                            <td>{{ r.capaHpe|default:"-" }}</td>
-                            {% elif "HCE" in col and "<br>" not in col.split("HCE")[0] %}
-                            <td>{{ r.capaHce|default:"-" }}</td>
-                            {% elif "POINTE" in col and "<br>" not in col.split("POINTE")[0] %}
-                            <td>{{ r.capaPointe|default:"-" }}</td>
-                            {% elif "HP" in col and "<br>" not in col.split("HP")[0] and "HPH" not in col %}
-                            <td>{{ r.capaHp|default:"-" }}</td>
-                            {% elif "HC" in col and "<br>" not in col.split("HC")[0] and "HCH" not in col %}
-                            <td>{{ r.capaHc|default:"-" }}</td>
-                            {% elif "BASE" in col and "<br>" not in col.split("BASE")[0] %}
-                            <td>{{ r.capaBase|default:"-" }}</td>
+                            <td>inclus</td>
+                            {% endfor %}
                             {% else %}
-                            <td>{{ r.rate|default:"-" }}</td>
+                            {% for col in data.tender_table.columns1 %}
+                            {% if "HPH" in col %}
+                            <td>
+                                {% if r.capaHph is not None %}
+                                {{ r.capaHph }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HCH" in col %}
+                            <td>
+                                {% if r.capaHch is not None %}
+                                {{ r.capaHch }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HPE" in col %}
+                            <td>
+                                {% if r.capaHpe is not None %}
+                                {{ r.capaHpe }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HCE" in col %}
+                            <td>
+                                {% if r.capaHce is not None %}
+                                {{ r.capaHce }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "POINTE" in col %}
+                            <td>
+                                {% if r.capaPointe is not None %}
+                                {{ r.capaPointe }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HP" in col and "HPH" not in col %}
+                            <td>
+                                {% if r.capaHp is not None %}
+                                {{ r.capaHp }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "HC" in col and "HCH" not in col %}
+                            <td>
+                                {% if r.capaHc is not None %}
+                                {{ r.capaHc }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% elif "BASE" in col %}
+                            <td>
+                                {% if r.capaBase is not None %}
+                                {{ r.capaBase }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            {% else %}
+                            <td>
+                                {% if r.rate is not None %}
+                                {{ r.rate }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
                             {% endif %}
                             {% endfor %}
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -2392,7 +2533,13 @@
                     <tbody>
                         {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
-                            <td>{{ r.rate }}</td>
+                            <td>
+                                {% if r.partCee is not None %}
+                                {{ r.partCee }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -2415,7 +2562,13 @@
                     <tbody>
                         {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
                         <tr>
-                            <td>{{ r.rate }}</td>
+                            <td>
+                                {% if r.abonnementAnswer is not None %}
+                                {{ r.abonnementAnswer }}
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
