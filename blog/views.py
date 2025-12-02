@@ -493,7 +493,7 @@ def volt_consulting_presentation_Electricitry(request):
 
         # 2️⃣ Generate Chart (if available)
         chart_base64 = generate_chart(data)
-        enedis_chart_base64 = generate_enedis_chart(data)
+        enedis_chart_base64 = generate_enedis_chart(data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear", {}))
 
         # 3️⃣ Build Comparatif DTO
         comparatif = data.get("comparatifClientHistoryPdfDto", {})
@@ -531,106 +531,87 @@ def render_html_Elecricity(presentation_data):
     return render_to_string("volt_Electricity.html", {"data": presentation_data})
 
 
-def generate_enedis_chart(data):
-    """Generate Enedis-style stacked bar chart from chartDataDto data."""
-    print("Inside GenerateChart - Enedis Style")
+def generate_enedis_chart(chart_data):
+    """
+    Generate a stacked bar chart for Enedis consumption and optionally save it locally.
 
-    # 🔹 Extract chartDataDto
-    if "chartDataDto" not in data or not data["chartDataDto"]:
-        raise ValueError("Missing or empty field: chartDataDto")
-    chart_data = data["chartDataDto"]
+    Args:
+        chart_data (dict): Example:
+            {
+                "months": ["09/2024", "10/2024", ..., "08/2025"],
+                "consumptionData": {
+                    "HCH": [2, 3, 4, ..., 1],
+                    "HPH": [3, 5, 6, ..., 2],
+                    "HCE": [1, 2, 0, ..., 3],
+                    "HPE": [5, 1, 2, ..., 4]
+                }
+            }
+        save_path (str, optional): Path to save the chart as PNG (e.g. "enedis_chart.png")
 
-    # 🔹 Parse dates from xAxis
-    try:
-        dates = chart_data["xAxis"][0]["data"]
-        date_labels = []
-        for d in dates:
-            try:
-                date_labels.append(datetime.strptime(str(d), "%d/%m/%Y").strftime("%d/%m/%Y"))
-            except Exception:
-                date_labels.append(str(d))
-    except Exception as e:
-        print(f"Error parsing dates: {e}")
-        date_labels = [f"Period {i + 1}" for i in range(12)]
+    Returns:
+        str: Base64-encoded PNG chart string (for embedding), or None if input is invalid.
+    """
 
-    # 🔹 Prepare figure with Enedis style
-    fig, ax = plt.subplots(figsize=(13, 7))
-    fig.patch.set_facecolor('#f5f5f5')
-    ax.set_facecolor('white')
+    # --- Early return for null/empty input ---
+    if not chart_data or not isinstance(chart_data, dict):
+        return None
 
-    # 🔹 Define Enedis colors (cycle if series > 4)
-    enedis_colors = ['#b8c5d6', '#1e4d7b', '#d4c34a', '#f5a623']
+    # --- Extract data safely ---
+    months = chart_data.get("months", [])
+    consumption_data = chart_data.get("consumptionData", {})
 
-    # 🔹 Series data from chartDataDto
-    series_data = chart_data["series"]
+    # --- Check if data is empty ---
+    if not months or not consumption_data:
+        return None
 
-    x = np.arange(len(date_labels))
-    width = 0.6
-    bottom = np.zeros(len(date_labels))
+    # --- Check if consumption_data has actual values ---
+    has_data = False
+    for values in consumption_data.values():
+        if any(v > 0 for v in values):  # Check if any non-zero values exist
+            has_data = True
+            break
+    
+    if not has_data:
+        return None
 
-    # 🔹 Plot each series as stacked bars
-    for idx, series in enumerate(series_data):
-        y = np.array(series["data"], dtype=np.float64)
+    # --- Predefined colors for known labels ---
+    label_colors = {
+        "HCH": "#BFC4CC",  # light gray
+        "HPH": "#002B5C",  # dark blue
+        "HCE": "#A8C40F",  # green
+        "HPE": "#FDD36A",  # yellow
+        "HP":  "#F77F00",  # orange
+        "HC":  "#0081A7",  # teal blue
+        "BASE": "#9B5DE5",  # purple
+    }
 
-        # Ensure correct length
-        if len(y) != len(date_labels):
-            print(f"Warning: Series {idx} length mismatch. Padding/truncating.")
-            if len(y) < len(date_labels):
-                y = np.pad(y, (0, len(date_labels) - len(y)), 'constant')
-            else:
-                y = y[:len(date_labels)]
+    plt.figure(figsize=(8, 4))
+    bottom = [0] * len(months)
 
-        label = series.get("label", f"Series {idx + 1}")
-        color = enedis_colors[idx % len(enedis_colors)]
+    # --- Create stacked bars dynamically ---
+    for label, values in consumption_data.items():
+        color = label_colors.get(label, "#999999")  # fallback gray for unknown labels
+        plt.bar(months, values, bottom=bottom, label=label, color=color)
+        bottom = [b + v for b, v in zip(bottom, values)]
 
-        ax.bar(x, y, width, label=label, bottom=bottom, color=color)
-        bottom += y
-
-    # 🔹 Customize axes
-    ax.set_xlabel('')
-    ax.set_ylabel('€ consommation', fontsize=10, color='#666')
-    ax.set_xticks(x)
-    ax.set_xticklabels(date_labels, rotation=0, ha='center', fontsize=9)
-
-    ax.yaxis.grid(True, linestyle='-', alpha=0.3, color='#ddd')
-    ax.set_axisbelow(True)
-
-    # 🔹 Remove spines
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color('#ddd')
-    ax.spines['bottom'].set_color('#ddd')
-
-    # 🔹 Y-axis formatting
-    y_max = bottom.max()
-    if y_max > 0:
-        ax.set_ylim(0, y_max * 1.1)
-        ax.set_yticks(np.linspace(0, y_max * 1.1, 5))
-    else:
-        ax.set_ylim(0, 10)
-
-    # 🔹 Legend styling
-    ax.legend(
-        loc='upper center',
-        bbox_to_anchor=(0.5, -0.08),
-        ncol=len(series_data),
-        frameon=False,
-        fontsize=9,
-        columnspacing=2,
-        handlelength=1.5,
-        handleheight=1.5
+    # --- Styling ---
+    plt.ylabel("Consommation (kWh)")
+    plt.xticks(rotation=45)
+    plt.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.15),
+        ncol=len(consumption_data)
     )
+    plt.tight_layout(rect=[0, 0.05, 1, 1])
 
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.15)
-
-    # 🔹 Convert to base64
-    buf = io.BytesIO()
-    plt.savefig(buf, format="png", dpi=300, bbox_inches='tight', facecolor='#f5f5f5')
+    # --- Convert to Base64 ---
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format="png", bbox_inches="tight", transparent=True)
     plt.close()
-    buf.seek(0)
+    buffer.seek(0)
 
-    return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
+    img_base64 = base64.b64encode(buffer.read()).decode("utf-8")
+    return f"data:image/png;base64,{img_base64}"
 
 
 def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request):
