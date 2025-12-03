@@ -270,6 +270,20 @@ def generate_pdf(html_content, request, data, comparatif):
         font_config=None
     )
 
+     # ---- Remove unwanted pages (4,6,8,10,12) ----
+    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
+    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
+
+    reader = PdfReader(pdf_path)
+    writer = PdfWriter()
+
+    for i in range(len(reader.pages)):
+        if i not in remove_pages:
+            writer.add_page(reader.pages[i])
+
+    with open(pdf_path, "wb") as f:
+        writer.write(f)
+
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
         os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")), pdf_filename)
