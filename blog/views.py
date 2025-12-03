@@ -750,16 +750,28 @@ def build_tender_table_Electricity(data, comparatif_dto):
     columns = data.get("columns", [])
     columns1 = data.get("columns1", [])
     columns6 = data.get("columns6", [])
+    
     if not columns6:
+        # Safely get values with defaults
         energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
         segmentation = comparatif_dto.get("segmentation", "")
         tarif_type = comparatif_dto.get("tarifType", "")
 
-        # Convert to uppercase and strip whitespace for case-insensitive comparison
-        energy_type_upper = energy_type.strip().upper()
-        segmentation_upper = segmentation.strip().upper()
-        tarif_type_upper = tarif_type.strip().upper()
-        print(energy_type_upper, segmentation_upper, tarif_type_upper)
+        # Convert to uppercase and strip whitespace for case-insensitive comparison - SAFE VERSION
+        def safe_strip_upper(value):
+            if value is None:
+                return ""
+            try:
+                # Convert to string first, then strip and uppercase
+                return str(value).strip().upper()
+            except (AttributeError, TypeError):
+                return ""
+
+        energy_type_upper = safe_strip_upper(energy_type)
+        segmentation_upper = safe_strip_upper(segmentation)
+        tarif_type_upper = safe_strip_upper(tarif_type)
+        
+        print(f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}")
 
         if energy_type_upper == "ELECTRICITY":
             # Define segmentation to columns6 mapping
@@ -790,7 +802,9 @@ def build_tender_table_Electricity(data, comparatif_dto):
                     "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
                     "BASE": ["BASE <br> €/MWh"]
                 }
-                columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])  # default to HP/HC
+                
+                # Safely get columns6 with fallback
+                columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])
                 
                 # Get the base columns without "Fournisseur"
                 base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
@@ -800,7 +814,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
                 columns1 = base_columns  # columns1 doesn't get "Fournisseur"
             else:
                 # Use mapping for other segmentations
-                columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])  # default
+                columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])
                 
                 # Get the base columns without "Fournisseur"
                 base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
@@ -808,11 +822,16 @@ def build_tender_table_Electricity(data, comparatif_dto):
                 # Add "Fournisseur" to columns (but not to columns1)
                 columns = ["Fournisseur"] + base_columns
                 columns1 = base_columns  # columns1 doesn't get "Fournisseur"
+        else:
+            # Default fallback for non-electricity or unknown energy types
+            columns6 = ["HP", "HC"]
+            columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
+            columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
 
     return {
         "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
-        "columns": columns if columns else ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"],  # Fallback
-        "columns1": columns1 if columns1 else ["HP <br> €/MWh", "HC <br> €/MWh"],  # Fallback
+        "columns": columns if columns else ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"],
+        "columns1": columns1 if columns1 else ["HP <br> €/MWh", "HC <br> €/MWh"],
         "columns2": data.get("columns2", ["CEE <br> €/MWh"]),
         "columns3": data.get("columns3", ["TABO <br> €/an"]),
         "columns4": data.get("columns4", [
@@ -821,7 +840,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
         "columns5": data.get("columns5", [
             "Compteu", "Déb.contrat"
         ]),
-        "columns6": columns6 if columns6 else ["HP", "HC"],  # Fallback
+        "columns6": columns6 if columns6 else ["HP", "HC"],
         "columns7": data.get("columns7", [
             "MWh / an"
         ]),
