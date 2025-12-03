@@ -42,7 +42,7 @@ def volt_consulting_presentation(request):
         html_content = render_html(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data, comparatif)
 
         return JsonResponse({
             "status": "success",
@@ -185,6 +185,11 @@ def build_comparatif_dto(comparatif, request, data):
         "title": data.get("contexte_title", "Contexte global"),
         "createdOn": created_on,
         "energyType": comparatif.get("energyType"),
+        "ratioHTVA": comparatif.get("ratioHTVA"),
+        "differenceHTVA": comparatif.get("differenceHTVA"),
+        "volumeAnnual": comparatif.get("volumeAnnual"),
+        "currentSupplierName": comparatif.get("currentSupplierName"),
+        "currentContractExpiryDate": comparatif.get("currentContractExpiryDate"),
     }
 
     energy_type = dto.get("energyType")
@@ -196,10 +201,7 @@ def build_comparatif_dto(comparatif, request, data):
         dto.update({
             "pce": comparatif.get("pce"),
             "gasProfile": comparatif.get("gasProfile"),
-            "routingRate": comparatif.get("routingRate"),
-            "volumeAnnual": comparatif.get("volumeAnnual"),
-            "ratioHTVA": comparatif.get("ratioHTVA"),
-            "differenceHTVA": comparatif.get("differenceHTVA"),
+            "routingRate": comparatif.get("routingRate")
         })
 
         # Validation: GAS ke saare required fields hone chahiye
@@ -228,8 +230,8 @@ def render_html(presentation_data):
     return render_to_string("volt.html", {"data": presentation_data})
 
 
-def generate_pdf(html_content, request, data):
-    """Generate PDF and return its URL without unwanted pages."""
+def generate_pdf(html_content, request, data, comparatif):
+    """Generate PDF and return its URL (without removing any pages)."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
 
@@ -245,7 +247,7 @@ def generate_pdf(html_content, request, data):
         base_url = settings.MEDIA_URL
 
     # Dynamic path: client/<id>/comparatif/
-    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif")
+    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")))
     pdf_dir = os.path.join(base_dir, relative_path)
     os.makedirs(pdf_dir, exist_ok=True)
 
@@ -268,24 +270,9 @@ def generate_pdf(html_content, request, data):
         font_config=None
     )
 
-    # ---- Remove unwanted pages (4,6,8,10,12) ----
-    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
-    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
-
-    reader = PdfReader(pdf_path)
-    writer = PdfWriter()
-
-    for i in range(len(reader.pages)):
-        if i not in remove_pages:
-            writer.add_page(reader.pages[i])
-
-    with open(pdf_path, "wb") as f:
-        writer.write(f)
-    # ---------------------------------------------
-
     # Build public URL (mirrors saved path after /uploads/volt/)
     pdf_url = request.build_absolute_uri(
-        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", pdf_filename)
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")), pdf_filename)
     )
 
     return pdf_url, pdf_filename
@@ -337,6 +324,12 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
+        "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
+        "currentContractExpiryDate": (
+            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
+            if comparatif_dto.get("currentContractExpiryDate") else ""
+        ),
         "black": (
             safe_value(comparatif_dto.get("ratioHTVA")) + "%" 
             if safe_value(comparatif_dto.get("ratioHTVA")) != "" 
@@ -347,17 +340,15 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             if safe_value(comparatif_dto.get("differenceHTVA")) != "" 
             else ""
         ),
-        "black3": "économisé/an"
-            if safe_value(comparatif_dto.get("ratioHTVA")) != "" and safe_value(comparatif_dto.get("differenceHTVA")) != ""
-            else "",
+        "black3": "économisé/an",
         "image": build_image_section(data, chart_base64),
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
         "comparatifClientHistoryPdfDto": comparatif_dto,
         "budget_global": build_budget_section(data),
         "tender_results": build_tender_results(data),
-        "comparison_table": build_comparison_table(data),
         "tender_table": build_tender_table(data),
+        "comparison_table": build_comparison_table(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
     }
@@ -439,6 +430,19 @@ def build_tender_results(data):
     }
 
 
+def build_tender_table(data):
+    """Tender table section."""
+    print("Inside BuildTenderTable")
+    return {
+        "title": data.get("tender_table_title", "Votre périmètre actuel"),
+        "columns": data.get("columns", [
+            "Nom du site", "Adresse du site", " Siret",
+            "PCE", "Tarif", "Profil", "Fournisseur Actuel",
+            "Échéance de Votre contrat actuel", "Volume Annuel en MWh (*)"
+        ]),
+    }
+
+
 def build_comparison_table(data):
     """Comparison table section."""
     print("Inside BuildComparisionTable")
@@ -452,18 +456,6 @@ def build_comparison_table(data):
             "Budget Énergétique <br>en €/an", "Distribution <br>en €/an", "Taxes <br>en €/an",
             "Abonnement <br>en €/an", "CEE <br>en €/an", "CTA <br>en €/an", "Budget HTVA <br>en €/an"
         ])
-    }
-
-
-def build_tender_table(data):
-    """Tender table section."""
-    print("Inside BuildTenderTable")
-    return {
-        "title": data.get("tender_table_title", "RÉSULTAT DE L’APPEL D’OFFRE"),
-        "columns": data.get("columns", [
-            "Fournisseur", "Molécule €/MWh", "Abonnement €/mois",
-            "CEE €/MWh", "CTA €/an", "TICGN €/MWh", "TOTAL €/an"
-        ]),
     }
 
 

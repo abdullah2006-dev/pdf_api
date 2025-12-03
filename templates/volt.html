@@ -1,3 +1,546 @@
+<!-- <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+         .container7 {
+                max-width: 2000px;
+            height: 1000px;
+            margin: 0 auto;
+            background: #F0F0F5;
+            background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .content-wrapper7 {
+            display: flex;
+            align-items: stretch;
+            min-height: 500px;
+            position: relative;
+        }
+
+     .hmm-image {
+            position: absolute;
+            left: 1450px;
+            bottom: -2px;       /* image ko niche align karega */
+            top: 250px;
+            width: auto;
+            height: 400px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            margin-top: 350px;
+        }
+     .side3-image {
+            position: absolute;
+            left: 0px;
+            bottom: -2px;       /* image ko niche align karega */
+            top: 190px;
+            width: auto;
+            height: 170px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            margin-top: 220px;
+        }
+     .text-heading {
+            font-size: 5.0rem;       /* thoda chhota */
+            margin-top: 70px;
+            font-weight: 400;         /* halka bold feel */
+            color: #000;
+            line-height: 1.0;         /* zyada airy, vertical space */
+            margin-bottom: 350px;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 110%;              /* pura container occupy kare */
+            margin-left: 370px;           /* left edge se chipka de */
+            white-space: nowrap; /* Title hamesha ek line me hi rahega */
+        }
+        .table-container {
+            margin: -350px 30px 100px 30px;
+            margin-top: -300px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #333;
+        }
+
+        th {
+            background: #f0f0f0;
+            color: #333;
+            padding: 15px 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.9rem;
+            border: 2px solid #333;
+            line-height: 1.2;
+        }
+
+        td {
+            padding: 15px 8px;
+            text-align: center;
+            border: 2px solid #333;
+            font-size: 1.95rem;
+            color: #333;
+            background: white;
+            font-weight: bold;
+        }
+
+        .supplier-cell {
+            background: #f0f0f0;
+            text-align: center;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .partner-logo1 {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            margin-left: 70px;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 15px;
+            }
+
+            th, td {
+                padding: 10px 4px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+       {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+      {% if forloop.first or forloop.counter0|divisibleby:4 %}
+        <div class="container7">
+          <div class="content-wrapper7">
+            <div>
+              <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+            </div>
+            <div class="text-heading">
+              <p>{{ data.tender_table.title }}</p>
+            </div>
+            <div>
+              <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
+            </div>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  {% for col in data.tender_table.columns %}
+                    <th>{{ col }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+      {% endif %}
+
+                <tr>
+                  <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
+                  <td>{{ rate.prixMolecule }}</td>
+                  <td>{{ rate.abonnementMonthly }}</td>
+                  <td>{{ rate.partCee }}</td>
+                  <td>{{ rate.cta }}</td>
+                  <td>{{ rate.resultTICGN }}</td>
+                  <td>{{ rate.coutHTVA }}</td>
+                </tr>
+
+      {% if forloop.counter|divisibleby:4 or forloop.last %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %} -->
+
+<!-- {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
+        {% if forloop.counter0|divisibleby:3 %}
+          <div class="container8">
+                <div class="content-wrapper8">
+                    <div><img src="{{ data.images.double }}" class="double-image"></div>
+                    <div class="text-heading1"><p>{{ data.tender_results.title }}</p></div>
+                    <div><img src="{{ data.images.black }}" class="blacky-image"></div>
+                    <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
+                </div>
+
+                <div class="last-text">{{ data.comparison_table.last_text }}</div>
+               <div class="black2">{{ data.black }}</div>
+              <div class="black3">{{ data.black1 }}</div>
+              <div class="black4">{{ data.black3 }}</div>
+
+                <div class="reference-boxes">
+                    {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
+                        {% if data.comparatifClientHistoryPdfDto.pce %}
+                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pce }}</div>
+                        {% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.gasProfile %}
+                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.gasProfile }}</div>
+                        {% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.routingRate %}
+                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>
+                        {% endif %}
+                        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
+                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+
+                <div class="section-title">{{ data.comparison_table.section_title }}</div>
+
+        {% endif %}  {# End of container start block #}
+
+          
+    <div class="provider-row">
+        <div class="rates-container">
+            <div class="rate-box">
+                <div class="partner-logo">
+                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                      <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    {% else %}
+                      <img src="/images/default-logo.png" class="partner-image">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.tva }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
+            <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
+        </div>
+    </div>
+   
+    {% if forloop.first %}
+        <div class="labels-row">
+            {% for label in data.comparison_table.labels %}
+                <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <br>
+
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
+            </div>
+       {% endif %}
+    {% endfor %}
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+         .container8 {
+            max-width: 2000px;
+            height: 1000px;
+            margin: 0 auto;
+            background: #F0F0F5;
+            background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .content-wrapper8 {
+            display: flex;
+            align-items: stretch;
+            min-height: 500px;
+            position: relative;
+        }
+
+     .double-image {
+            position: absolute;
+            left: 1080px;
+            bottom: -2px;       /* image ko niche align karega */
+            top: 360px;
+            width: auto;
+            height: 300px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            margin-top: 425px;
+        }
+     .blacky-image {
+            position: absolute;
+            left: -115px;
+            bottom: -2px;       /* image ko niche align karega */
+            top: 115px;
+            width: auto;
+            height: 400px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            margin-top: -262px;
+        }
+     .blacky-image2 {
+            position: absolute;
+            left: 1730px;
+            bottom: -2px;       /* image ko niche align karega */
+            top: 140px;
+            width: auto;
+            height: 300px;   /* container height ke hisaab se adjust karo */
+            max-width: none;
+            max-height: none;
+            object-fit: contain;
+            margin-top: -190px;
+        }
+     .black2 {
+            position: absolute;
+            left: 1830px;
+            top: 50px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 35px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+         .black3 {
+            position: absolute;
+            left: 1815px;
+            top: 90px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 35px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+         .black4 {
+            position: absolute;
+            left: 1800px;
+            top: 130px;
+            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
+            width: auto;
+            color: white;         /* text color blue */
+            font-size: 23px;     /* text bada dikhane ke liye */
+            font-weight: bold;   /* thoda highlight ho */
+        }
+
+
+     .text-heading1 {
+            font-size: 5.0rem;       /* thoda chhota */
+            margin-top: 60px;
+            font-weight: 400;         /* halka bold feel */
+            color: #000;
+            line-height: 1.0;         /* zyada airy, vertical space */
+            margin-bottom: 350px;
+            letter-spacing: 2px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 110%;              /* pura container occupy kare */
+            margin-left: 350px;           /* left edge se chipka de */
+            white-space: nowrap; /* Title hamesha ek line me hi rahega */
+        }
+         .last-text {
+            font-size: 9px;
+            transform: scale(2.1);      /* 2x zoom ho jayega */
+            transform-origin: left top; /* position stable rahe */
+            position: relative;
+            bottom: 300px;
+            max-width: 820px;
+            left: 50px;
+            letter-spacing: 1.0px;
+         }
+         .reference-boxes {
+    display: flex;
+    justify-content: flex-start;
+    gap: 200px;
+    margin-bottom: 40px;
+    flex-wrap: nowrap;
+    margin-left: 50px;
+    margin-top: -230px;
+    overflow: hidden;
+}
+
+.reference-box {
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 35px;
+    padding: 20px 50px;
+    font-weight: bold;
+    color: #333;
+    font-size: 20px;
+    min-width: 80px;
+   min-height: 65px;
+    text-align: center;
+
+    display: flex;              /* flexbox on */
+    justify-content: center;    /* horizontally center */
+
+}
+
+.reference-box1 {
+    background: white;
+    border: 3px solid #e0e0e0;
+    border-radius: 35px;
+    padding: 20px 50px;
+    font-weight: bold;
+    color: #333;
+    font-size: 20px;
+    margin-left: 5px;
+    min-width: 80px;
+    min-height: 65px;
+    text-align: center;
+
+    display: flex;              /* flexbox on */
+    justify-content: center;    /* horizontally center */
+
+}
+
+        /* Section title */
+        .section-title {
+            text-align: center;
+            font-size: 22px;
+            color: #000;
+            margin-bottom: 55px;
+            margin-left: -1510px;
+            margin-top: -12px;
+        }
+
+      .comparison-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+.provider-row {
+    align-items: flex-start;
+    margin-top: -30px;   /* 👈 row ko upar chipka diya */
+    margin-bottom: 100px; /* neeche thoda space */
+    margin-left: 50px; /* neeche thoda space */
+    padding: 0;
+}
+
+.rates-container {
+    display: flex;
+    gap: 20px;                   /* 👈 boxes ke beech gap */
+    justify-content: flex-start;
+}
+
+        .rate-box {
+            background: #ffffff;
+            border: 3px solid #e0e0e0;
+            border-radius: 35px;
+            min-width: 180px;
+            min-height: 68px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;   /* text center */
+            justify-content: center;
+            padding: 0px 6px;
+            text-align: center;
+        }
+        .rate-box * {
+            line-height: 1.1;
+        }
+        .rate-box:hover {
+            border-color: #3b82f6;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+        }
+
+        .partner-logo {
+          width: 30px;   /* fix size */
+          height: 30px;  /* fix size */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 5px;
+          overflow: hidden; /* image bahar na nikle */
+        }
+
+        .partner-image {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain; /* image proportion maintain karegi */
+        }
+
+        .rate-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #374151;
+            line-height: 1.2;
+            margin: 2px 0;
+            margin-top: 5px;
+            word-break: break-word;
+        }
+        @media (max-width: 480px) {
+            .rates-container {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        .rate-label {
+            font-size: 10px;
+            color: #7f8c8d;
+            line-height: 1.3;
+            font-weight: 500;
+        }
+
+       .labels-row {
+            display: flex;
+            gap: 85px;
+            margin-top: 10px;
+            padding-left: 365px; /* Offset for logo width */
+        }
+
+        .label-item {
+            text-align: center;
+            min-width: 115px;
+            max-width: 160px;
+            padding: 0 16px;
+            white-space: normal;   /* text ko wrap karne dega */
+            word-wrap: break-word; /* zarurat padne par words break honge */
+        }
+
+        .label-text {
+            font-size: 17px;
+            margin-top: -80px;
+            margin-left: -140px;
+            color: #000;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .comparison-container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .rates-container {
+                justify-content: center;
+            }
+
+            .labels-row {
+                padding-left: 0;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .rate-box {
+                min-width: 80px;
+                max-width: 100px;
+            }
+        }
+
+    </style> -->
+      
 {% load static %}
 
 <!DOCTYPE html>
@@ -726,337 +1269,146 @@
         }
     </style>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-         .container8 {
-            max-width: 2000px;
-            height: 1000px;
-            margin: 0 auto;
-            background: #F0F0F5;
-            background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+    .container7 {
+        max-width: 2000px;
+        height: 1000px;
+        margin: 0 auto;
+        background: #F0F0F5;
+        background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
 
-        .content-wrapper8 {
-            display: flex;
-            align-items: stretch;
-            min-height: 500px;
-            position: relative;
-        }
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
 
-     .double-image {
-            position: absolute;
-            left: 1080px;
-            bottom: -2px;       /* image ko niche align karega */
-            top: 360px;
-            width: auto;
-            height: 300px;   /* container height ke hisaab se adjust karo */
-            max-width: none;
-            max-height: none;
-            object-fit: contain;
-            margin-top: 425px;
-        }
-     .blacky-image {
-            position: absolute;
-            left: -115px;
-            bottom: -2px;       /* image ko niche align karega */
-            top: 115px;
-            width: auto;
-            height: 400px;   /* container height ke hisaab se adjust karo */
-            max-width: none;
-            max-height: none;
-            object-fit: contain;
-            margin-top: -262px;
-        }
-     .blacky-image2 {
-            position: absolute;
-            left: 1730px;
-            bottom: -2px;       /* image ko niche align karega */
-            top: 140px;
-            width: auto;
-            height: 300px;   /* container height ke hisaab se adjust karo */
-            max-width: none;
-            max-height: none;
-            object-fit: contain;
-            margin-top: -190px;
-        }
-     .black2 {
-            position: absolute;
-            left: 1830px;
-            top: 50px;
-            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
-            width: auto;
-            color: white;         /* text color blue */
-            font-size: 35px;     /* text bada dikhane ke liye */
-            font-weight: bold;   /* thoda highlight ho */
-        }
-         .black3 {
-            position: absolute;
-            left: 1815px;
-            top: 90px;
-            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
-            width: auto;
-            color: white;         /* text color blue */
-            font-size: 35px;     /* text bada dikhane ke liye */
-            font-weight: bold;   /* thoda highlight ho */
-        }
-         .black4 {
-            position: absolute;
-            left: 1800px;
-            top: 130px;
-            height: auto;        /* auto rakho taki text ke hisaab se adjust ho */
-            width: auto;
-            color: white;         /* text color blue */
-            font-size: 23px;     /* text bada dikhane ke liye */
-            font-weight: bold;   /* thoda highlight ho */
-        }
+    .side3-image {
+        height: 140px;
+        object-fit: contain;
+    }
 
+    .hmm-image {
+        height: 180px;
+        object-fit: contain;
+    }
 
-     .text-heading1 {
-            font-size: 5.0rem;       /* thoda chhota */
-            margin-top: 60px;
-            font-weight: 400;         /* halka bold feel */
-            color: #000;
-            line-height: 1.0;         /* zyada airy, vertical space */
-            margin-bottom: 350px;
-            letter-spacing: 2px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            width: 110%;              /* pura container occupy kare */
-            margin-left: 350px;           /* left edge se chipka de */
-            white-space: nowrap; /* Title hamesha ek line me hi rahega */
-        }
-         .last-text {
-            font-size: 9px;
-            transform: scale(2.1);      /* 2x zoom ho jayega */
-            transform-origin: left top; /* position stable rahe */
-            position: relative;
-            bottom: 300px;
-            max-width: 820px;
-            left: 50px;
-            letter-spacing: 1.0px;
-         }
-         .reference-boxes {
-    display: flex;
-    justify-content: flex-start;
-    gap: 200px;
-    margin-bottom: 40px;
-    flex-wrap: nowrap;
-    margin-left: 50px;
-    margin-top: -230px;
-    overflow: hidden;
-}
+    .text-heading {
+        font-size: 3.8rem;
+        font-weight: 600;
+        color: #000;
+        text-align: center;
+        flex-grow: 1;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 40px 40px 0 40px; /* 👈 pehle number se top margin add hua */
+    }
 
-.reference-box {
-    background: white;
-    border: 3px solid #e0e0e0;
-    border-radius: 35px;
-    padding: 20px 50px;
-    font-weight: bold;
-    color: #333;
-    font-size: 20px;
-    min-width: 80px;
-   min-height: 65px;
-    text-align: center;
+    .subtitle-text {
+        font-size: 1.5rem;
+        color: #444;
+        text-align: center;
+        margin-bottom: 25px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    display: flex;              /* flexbox on */
-    justify-content: center;    /* horizontally center */
+    .table-container {
+        width: 97%;
+        margin-left: 30px;
 
-}
+    }
 
-.reference-box1 {
-    background: white;
-    border: 3px solid #e0e0e0;
-    border-radius: 35px;
-    padding: 20px 50px;
-    font-weight: bold;
-    color: #333;
-    font-size: 20px;
-    margin-left: 5px;
-    min-width: 80px;
-    min-height: 65px;
-    text-align: center;
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 2px solid #333;
+    }
 
-    display: flex;              /* flexbox on */
-    justify-content: center;    /* horizontally center */
+    th {
+        background: #f0f0f0;
+        color: #333;
+        padding: 12px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        border: 2px solid #333;
+    }
 
-}
+    td {
+        padding: 12px;
+        text-align: center;
+        border: 2px solid #333;
+        font-size: 1.1rem;
+        background: white;
+        font-weight: bold;
+    }
 
-        /* Section title */
-        .section-title {
-            text-align: center;
-            font-size: 22px;
-            color: #000;
-            margin-bottom: 55px;
-            margin-left: -1510px;
-            margin-top: -12px;
-        }
-
-      .comparison-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-
-.provider-row {
-    align-items: flex-start;
-    margin-top: -30px;   /* 👈 row ko upar chipka diya */
-    margin-bottom: 100px; /* neeche thoda space */
-    margin-left: 50px; /* neeche thoda space */
-    padding: 0;
-}
-
-.rates-container {
-    display: flex;
-    gap: 20px;                   /* 👈 boxes ke beech gap */
-    justify-content: flex-start;
-}
-
-        .rate-box {
-            background: #ffffff;
-            border: 3px solid #e0e0e0;
-            border-radius: 35px;
-            min-width: 180px;
-            min-height: 68px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;   /* text center */
-            justify-content: center;
-            padding: 0px 6px;
-            text-align: center;
-        }
-        .rate-box * {
-            line-height: 1.1;
-        }
-        .rate-box:hover {
-            border-color: #3b82f6;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
-        }
-
-        .partner-logo {
-          width: 30px;   /* fix size */
-          height: 30px;  /* fix size */
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 5px;
-          overflow: hidden; /* image bahar na nikle */
-        }
-
-        .partner-image {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain; /* image proportion maintain karegi */
-        }
-
-        .rate-value {
-            font-size: 20px;
-            font-weight: 600;
-            color: #374151;
-            line-height: 1.2;
-            margin: 2px 0;
-            margin-top: 5px;
-            word-break: break-word;
-        }
-        @media (max-width: 480px) {
-            .rates-container {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-        .rate-label {
-            font-size: 10px;
-            color: #7f8c8d;
-            line-height: 1.3;
-            font-weight: 500;
-        }
-
-       .labels-row {
-            display: flex;
-            gap: 85px;
-            margin-top: 10px;
-            padding-left: 365px; /* Offset for logo width */
-        }
-
-        .label-item {
-            text-align: center;
-            min-width: 115px;
-            max-width: 160px;
-            padding: 0 16px;
-            white-space: normal;   /* text ko wrap karne dega */
-            word-wrap: break-word; /* zarurat padne par words break honge */
-        }
-
-        .label-text {
-            font-size: 17px;
-            margin-top: -80px;
-            margin-left: -140px;
-            color: #000;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .comparison-container {
-                padding: 20px;
-                margin: 10px;
-            }
-
-            .rates-container {
-                justify-content: center;
-            }
-
-            .labels-row {
-                padding-left: 0;
-                justify-content: center;
-                margin-bottom: 20px;
-            }
-
-            .rate-box {
-                min-width: 80px;
-                max-width: 100px;
-            }
-        }
-
-</style>
+    .partner-logo1 {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+    </style>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-         .container7 {
-                max-width: 2000px;
-            height: 1000px;
-            margin: 0 auto;
-            background: #F0F0F5;
-            background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+    .container10 {
+        max-width: 2000px;
+        height: 1000px;
+        margin: 0 auto;
+        background: #F0F0F5;
+        background: linear-gradient(344deg, rgba(240, 240, 245, 1) 30%, rgba(240, 245, 245, 1) 36%, rgba(255, 255, 255, 1) 42%, rgba(240, 245, 245, 1) 58%, rgba(255, 255, 255, 1) 64%, rgba(240, 245, 245, 1) 70%, rgba(255, 255, 255, 1) 76%, rgba(240, 240, 245, 1) 92%, rgba(240, 245, 245, 1) 100%);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
 
-        .content-wrapper7 {
-            display: flex;
-            align-items: stretch;
-            min-height: 500px;
-            position: relative;
-        }
+    .content-wrapper10 {
+        display: flex;
+        align-items: stretch;
+        min-height: 500px;
+        position: relative;
+    }
 
-     .hmm-image {
+    .text-heading10 {
+        font-size: 5.0rem;
+        margin-top: 70px;
+        font-weight: 400;
+        color: #000;
+        line-height: 1.0;
+        margin-bottom: 350px;
+        letter-spacing: 2px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        width: 110%;
+        margin-left: 500px;
+        white-space: nowrap;
+    }
+    .subtext10 {
+    font-size: 1.3rem;      /* halka chhota */
+    color: #333;
+    font-weight: 400;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: left;       /* left alignment */
+    margin-top: 10px;
+    margin-left: -150px;      /* thoda left offset */
+    max-width: 70%;         /* taake line bahut lambi na ho */
+}
+      .hmm-image {
             position: absolute;
             left: 1450px;
             bottom: -2px;       /* image ko niche align karega */
@@ -1080,76 +1432,104 @@
             object-fit: contain;
             margin-top: 220px;
         }
-     .text-heading {
-            font-size: 5.0rem;       /* thoda chhota */
-            margin-top: 70px;
-            font-weight: 400;         /* halka bold feel */
-            color: #000;
-            line-height: 1.0;         /* zyada airy, vertical space */
-            margin-bottom: 350px;
-            letter-spacing: 2px;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            width: 110%;              /* pura container occupy kare */
-            margin-left: 370px;           /* left edge se chipka de */
-            white-space: nowrap; /* Title hamesha ek line me hi rahega */
-        }
-        .table-container {
-            margin: -350px 30px 100px 30px;
-            margin-top: -300px;
+
+    .table-container10 {
+        margin: -350px 30px 100px 30px;
+        margin-top: -300px;
+    }
+
+    table {
+        width: 100%;
+        table-layout: fixed; /* force equal width for all columns */
+        border-collapse: collapse;
+        border: 2px solid white;
+    }
+
+    /* ✅ Make sure text wraps and fits neatly */
+    th, td {
+        border: 2px solid black;
+        color: black;
+        text-align: center;
+        word-wrap: break-word;
+        padding: 15px 8px;
+        font-size: 1.1rem;
+    }
+
+    /* ✅ Optional: fix height for consistent row size */
+    td, th {
+        height: 60px; /* adjust as needed */
+    }
+
+    /* ✅ White background for headers */
+    .blue-header,
+    .teal-header,
+    .purple-header,
+    .gray-header,
+    .green-header {
+        background: #f0f0f0;
+        color: black;
+        padding: 15px 8px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+
+    /* ✅ White background for subheaders */
+    .teal-subheader,
+    .purple-subheader,
+    .gray-subheader,
+    .green-subheader {
+        background: #f0f0f0;
+        color: black;
+        padding: 10px 8px;
+        text-align: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    .unit-row {
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+
+    td.data-cell {
+        padding: 15px 8px;
+        text-align: center;
+        border: 2px solid black; /* data cells black border */
+        font-size: 1.1rem;
+        color: black;
+        background: white;
+        font-weight: 600;
+    }
+     .partner-logo10 {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;      /* vertically center */
+    justify-content: center;  /* horizontally center */
+    margin: 0 auto;           /* center horizontally if block-level */
+    margin-bottom: 5px;
+}
+
+
+    td.blue-cell {
+        background: white;
+        font-weight: 600;
+        color: black;
+    }
+
+    @media (max-width: 768px) {
+        .table-container10 {
+            margin: 15px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            border: 2px solid #333;
+        th, td {
+            padding: 10px 4px;
+            font-size: 0.8rem;
         }
-
-        th {
-            background: #f0f0f0;
-            color: #333;
-            padding: 15px 8px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.9rem;
-            border: 2px solid #333;
-            line-height: 1.2;
-        }
-
-        td {
-            padding: 15px 8px;
-            text-align: center;
-            border: 2px solid #333;
-            font-size: 1.95rem;
-            color: #333;
-            background: white;
-            font-weight: bold;
-        }
-
-        .supplier-cell {
-            background: #f0f0f0;
-            text-align: center;
-            font-weight: bold;
-            vertical-align: middle;
-        }
-        .partner-logo1 {
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            margin-left: 70px;
-            justify-content: center;
-            margin-bottom: 5px;
-        }
-        @media (max-width: 768px) {
-            .table-container {
-                margin: 15px;
-            }
-
-            th, td {
-                padding: 10px 4px;
-                font-size: 0.8rem;
-            }
-        }
+    }
     </style>
     <style>
         * {
@@ -1379,7 +1759,6 @@
           margin-left: -390px;
         }
     </style>
-
 </head>
 <body>
     <div class="container">
@@ -1445,12 +1824,7 @@
 
 
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
 
     <div class="container1">
   <div class="content-wrapper1">
@@ -1489,13 +1863,8 @@
     </div>
 
   </div>
-</div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    </div>
+
 
     <div class="container2">
     <div class="content-wrapper2">
@@ -1517,12 +1886,7 @@
 
     </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
 
     <div class="container3">
     <div class="content-wrapper3">
@@ -1546,12 +1910,7 @@
         </div>
     </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
 
     <div class="container4">
     <div class="content-wrapper4">
@@ -1587,142 +1946,145 @@
 </div>
     </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    
+    
+    <div class="container7">
+        <div class="header-section">
+            <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
+            <h1 class="text-heading">{{ data.tender_table.title }}</h1>
+            <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+        </div>
+        
+        <p class="subtitle-text">
+            D'après les informations que vous nous avez communiquées.<br>
+            Soit 1 site(s) pour un volume annuel de {{ data.comparatifClientHistoryPdfDto.volumeAnnual }} MWh/an (consommation réelle des 12 derniers mois)
+        </p>
 
-    {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        {% if forloop.counter0|divisibleby:3 %}
-          <div class="container8">
-                <div class="content-wrapper8">
-                    <div><img src="{{ data.images.double }}" class="double-image"></div>
-                    <div class="text-heading1"><p>{{ data.tender_results.title }}</p></div>
-                    <div><img src="{{ data.images.black }}" class="blacky-image"></div>
-                    <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-                </div>
-
-                <div class="last-text">{{ data.comparison_table.last_text }}</div>
-               <div class="black2">{{ data.black }}</div>
-              <div class="black3">{{ data.black1 }}</div>
-              <div class="black4">{{ data.black3 }}</div>
-
-                <div class="reference-boxes">
-                    {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
-                        {% if data.comparatifClientHistoryPdfDto.pce %}
-                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pce }}</div>
-                        {% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.gasProfile %}
-                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.gasProfile }}</div>
-                        {% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.routingRate %}
-                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>
-                        {% endif %}
-                        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
-                            <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
-                        {% endif %}
-                    {% endif %}
-                </div>
-
-
-                <div class="section-title">{{ data.comparison_table.section_title }}</div>
-
-        {% endif %}  {# End of container start block #}
-
-          <!-- PROVIDER ROW - HAR PROVIDER KE LIYE -->
-    <div class="provider-row">
-        <div class="rates-container">
-            <div class="rate-box">
-                <div class="partner-logo">
-                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                      <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
-                    {% else %}
-                      <img src="/images/default-logo.png" class="partner-image">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.tva }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
-            <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
+        <div class="table-container">
+            <table>
+            <thead>
+                <tr>
+                {% for col in data.tender_table.columns %}
+                    <th>{{ col }}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
+                <tr>
+                    <td>{{ data.clientSociety  }}</td>
+                    <td>{{ data.clientBusinessAddress.street }}</td>
+                    <td>{{ data.clientSiret }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.pce }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.routingRate }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.gasProfile }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.currentSupplierName }}</td>
+                    <td>{{ data.currentContractExpiryDate }}</td>
+                    <td>{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
+            </table>
         </div>
     </div>
-    <!-- LABELS SIRF FIRST PROVIDER KE BAAD - END MEIN -->
-    {% if forloop.first %}
-        <div class="labels-row">
-            {% for label in data.comparison_table.labels %}
-                <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    <br>
-
-        {% if forloop.counter|divisibleby:3 or forloop.last %}
-            </div> <!-- container8 close -->
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-       {% endif %}
-    {% endfor %}
-
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-      {% if forloop.first or forloop.counter0|divisibleby:4 %}
-        <div class="container7">
-          <div class="content-wrapper7">
+        {% if forloop.counter0|divisibleby:3 %}
+        <div class="container10">
+            <div class="content-wrapper10">
+                <div>
+                    <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+                </div>
+                <div class="text-heading10">
+                    <p>Analyse détaillée des offres</p>
+                    <p class="subtext10">
+                        Les parts “Acheminement” et “Taxes” évoluent selon la législation. 
+                        La part CEE peut évoluer selon la Réglementation.
+                    </p>
+                </div>
+            </div>
             <div>
-              <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+                <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
             </div>
-            <div class="text-heading">
-              <p>{{ data.tender_table.title }}</p>
-            </div>
-            <div>
-              <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
-            </div>
-          </div>
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  {% for col in data.tender_table.columns %}
-                    <th>{{ col }}</th>
-                  {% endfor %}
-                </tr>
-              </thead>
-              <tbody>
-      {% endif %}
 
-                <tr>
-                  <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td>
-                  <td>{{ rate.prixMolecule }}</td>
-                  <td>{{ rate.abonnementMonthly }}</td>
-                  <td>{{ rate.partCee }}</td>
-                  <td>{{ rate.cta }}</td>
-                  <td>{{ rate.resultTICGN }}</td>
-                  <td>{{ rate.coutHTVA }}</td>
-                </tr>
+            <div class="table-container10">
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="3" class="blue-header">Fournisseur</th>
+                            <th rowspan="3" class="blue-header">Origine<br>de l'offre</th>
+                            <th rowspan="3" class="blue-header">Type d'offre</th>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th colspan="3" class="teal-header">Part Fournisseur</th>
+                            <th colspan="2" class="purple-header">Part Acheminement</th>
+                            <th colspan="3" class="gray-header">Part Taxes</th>
+                            <th colspan="2" class="green-header">Budget</th>
+                        </tr>
+                        <tr>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th class="teal-subheader">Prix Molécule</th>
+                            <th class="teal-subheader">CEE</th>
+                            <th class="teal-subheader">Abonnement</th>
+                            <th class="purple-subheader">Part Fixe<br>Acheminement</th>
+                            <th class="purple-subheader">Part Variable<br>Acheminement</th>
+                            <th class="gray-subheader">TICGN</th>
+                            <th class="gray-subheader">CTA</th>
+                            <th class="gray-subheader">TVA</th>
+                            <th class="green-subheader">Coût HTVA</th>
+                            <th class="green-subheader">Coût TTC</th>
+                        </tr>
+                        <tr>
+                            <th style="background: white; border: none; width: 15px;"></th>
+                            <th class="teal-subheader unit-row">€/MWH</th>
+                            <th class="teal-subheader unit-row">€/MWH</th>
+                            <th class="teal-subheader unit-row">€/an</th>
+                            <th class="purple-subheader unit-row">€/an</th>
+                            <th class="purple-subheader unit-row">€/MWH</th>
+                            <th class="gray-subheader unit-row">€/MWH</th>
+                            <th class="gray-subheader unit-row">€/an</th>
+                            <th class="gray-subheader unit-row">€/an</th>
+                            <th class="green-subheader unit-row">€/an</th>
+                            <th class="green-subheader unit-row">€/an</th>
+                        </tr>
+                    </thead>
+                </table>
+        {% endif %}
 
-      {% if forloop.counter|divisibleby:4 or forloop.last %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-      {% endif %}
+                <!-- ✅ Rate Rows -->
+                <table style="margin-top: 10px;">
+                    <tbody>
+                        <tr>
+                            <td class="data-cell blue-cell" style="text-align: center;">
+                                {% if rate.partnerPhoto and rate.partnerPhoto.path %}
+                                    <img src="{{ rate.partnerPhoto.path }}" class="partner-logo10">
+                                {% else %}
+                                    {{ rate.partnerName|default:"-" }}
+                                {% endif %}
+                            </td>
+                            <td class="data-cell blue-cell">Offre</td>
+                            <td class="data-cell blue-cell">{{ rate.offerType|default:"-" }}</td>
+
+                            <th style="background: white; border: none; width: 15px;"></th>
+
+                            <td class="data-cell">{{ rate.prixMolecule|default:"-" }}{% if rate.prixMolecule %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partCee|default:"-" }}{% if rate.partCee %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.abonnement|default:"-" }}{% if rate.abonnement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partFixeAcheminement|default:"-" }}{% if rate.partFixeAcheminement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.partVariableAcheminement|default:"-" }}{% if rate.partVariableAcheminement %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.ticgn|default:"-" }}{% if rate.ticgn %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.cta|default:"-" }}{% if rate.cta %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.tva|default:"-" }}{% if rate.tva %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.coutHTVA|default:"-" }}{% if rate.coutHTVA %} €{% endif %}</td>
+                            <td class="data-cell">{{ rate.coutTTC|default:"-" }}{% if rate.coutTTC %} €{% endif %}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+        {% if forloop.counter|divisibleby:3 or forloop.last %}
+            </div> <!-- table-container10 close -->
+        </div> <!-- container10 close -->
+        {% endif %}
     {% endfor %}
 
 
@@ -1757,12 +2119,7 @@
         </div>
     </div>
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
 
     <div class="container6">
     <div class="content-wrapper6">
@@ -1789,5 +2146,6 @@
     </div>
     </div>
     </div>
+
 </body>
 </html>
