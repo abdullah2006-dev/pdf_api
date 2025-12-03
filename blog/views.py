@@ -623,41 +623,41 @@ def generate_enedis_chart(chart_data):
 def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request):
     print("Inside BuildPresentationData")
 
-    # Updated helper function
+    # Updated helper function - FIXED VERSION
     def safe_value(value):
         if value is None:
             return ""
-        str_val = str(value).strip().lower()
-        if str_val == "" or str_val == "none":
-            return ""
-        return str(value)
+        try:
+            str_val = str(value).strip().lower()
+            if str_val == "" or str_val == "none" or str_val == "null":
+                return ""
+            return str(value)
+        except AttributeError:
+            return str(value) if value is not None else ""
 
+    # Fix for black3 condition
+    ratio_htva = safe_value(comparatif_dto.get("ratioHTVA"))
+    difference_htva = safe_value(comparatif_dto.get("differenceHTVA"))
+    
+    # Determine if we should show "économisé/an"
+    show_economise = ratio_htva != "" and difference_htva != ""
+    
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "headingone": "APPEL D’OFFRE",
+        "headingone": "APPEL D'OFFRE",
         "clientSociety": safe_value(data.get("clientSociety")),
         "clientSiret": safe_value(data.get("clientSiret")),
         "clientFirstName": safe_value(data.get("clientFirstName")),
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
-        "black": (
-            safe_value(comparatif_dto.get("ratioHTVA")) + "%"
-            if safe_value(comparatif_dto.get("ratioHTVA")) != ""
-            else ""
-        ),
-        "black1": (
-            safe_value(comparatif_dto.get("differenceHTVA")) + "€"
-            if safe_value(comparatif_dto.get("differenceHTVA")) != ""
-            else ""
-        ),
-        "black3": "économisé/an"
-            if safe_value(comparatif_dto.get("ratioHTVA")) != "" and safe_value(comparatif_dto.get("differenceHTVA")) != ""
-            else "",
+        "black": ratio_htva + "%" if ratio_htva != "" else "",
+        "black1": difference_htva + "€" if difference_htva != "" else "",
+        "black3": "économisé/an" if show_economise else "",
         "image": build_image_section(data, chart_base64),
         "imageOne": {
-                        "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
-                    },
+            "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
+        },
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
         "comparatifClientHistoryPdfDto": comparatif_dto,
