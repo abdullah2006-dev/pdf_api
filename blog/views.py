@@ -478,11 +478,24 @@ def build_change_section(data):
 def build_contact_info(data):
     """Contact info section."""
     print("Inside BuildContactInfo")
+    
+    # Use safe_value to handle None values
+    def safe_value(value):
+        if value is None:
+            return ""
+        try:
+            str_val = str(value).strip().lower()
+            if str_val == "" or str_val == "none" or str_val == "null":
+                return ""
+            return str(value)
+        except AttributeError:
+            return str(value) if value is not None else ""
+    
     return {
-        "company_name": data.get("company_name", "VOLT CONSULTING"),
-        "phone": data.get("phone", "01 87 66 70 43"),
-        "email": data.get("email", "contact@volt-consulting.fr"),
-        "address": data.get("address", "8 Place Hoche - 78000 Versailles")
+        "company_name": safe_value(data.get("company_name", "VOLT CONSULTING")),
+        "phone": safe_value(data.get("phone", "01 87 66 70 43")),
+        "email": safe_value(data.get("email", "contact@volt-consulting.fr")),
+        "address": safe_value(data.get("address", "8 Place Hoche - 78000 Versailles"))
     }
 
 
@@ -849,15 +862,24 @@ def build_tender_table_Electricity(data, comparatif_dto):
 def enedis_Chart(comparatif_dto):
     """Provide dynamic Enedis rate information based on segmentation and tarif type."""
     
+    # Safe strip and upper function
+    def safe_strip_upper(value):
+        if value is None:
+            return ""
+        try:
+            return str(value).strip().upper()
+        except (AttributeError, TypeError):
+            return ""
+    
     # Extract data with case-insensitive handling
     energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
     segmentation = comparatif_dto.get("segmentation", "")
     tarif_type = comparatif_dto.get("tarifType", "")
     
-    # Convert to uppercase for consistent comparison
-    energy_type_upper = energy_type.strip().upper()
-    segmentation_upper = segmentation.strip().upper()
-    tarif_type_upper = tarif_type.strip().upper()
+    # Convert to uppercase for consistent comparison - SAFE VERSION
+    energy_type_upper = safe_strip_upper(energy_type)
+    segmentation_upper = safe_strip_upper(segmentation)
+    tarif_type_upper = safe_strip_upper(tarif_type)
     
     # Format contract start date from timestamp to dd/mm/yyyy
     contract_start_date = comparatif_dto.get("contractStartDate")
