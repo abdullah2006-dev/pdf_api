@@ -1295,7 +1295,7 @@
         }
 
         .partner-logo {
-            width: 50px;
+            width: 80px;
             /* fix size */
             height: 50px;
             /* fix size */
@@ -1913,8 +1913,8 @@
                         {{ data.comparatifClientHistoryPdfDto.title }}
                     </div>
                 </h1>
-                <div class="chart-image-container">
-                    <img src="{{ data.image.chart }}" alt="Gaz Evolution Chart" class="chart-image">
+                <div class="chart-image-container" style="margin-top: 20px;">
+                    <img src="{{ data.image.chart }}" alt="Electricity Evolution Chart" class="chart-image">
                 </div>
                 <div class="side4-image-container">
                     <img src="{{ data.images.side333 }}" alt="Side Image" class="side4-image">
@@ -1941,7 +1941,7 @@
                     </div>
                 </h1>
                 <div class="enedis-image-container">
-                    <img src="{{ data.images.enedis }}"  class="enedis-image">
+                    <img src="{{ data.images.enedis }}" class="enedis-image">
                 </div>
                 <br>
 
@@ -1951,16 +1951,20 @@
                         <div style="display: flex; gap: 10px;">
                             <div style="display:flex; flex-direction:column; align-items:center;">
                                 <div style="height: 20px; margin-bottom: 3px;"></div>
-                                <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Compteur</div>
-                                <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
+                                <div class="rate-label-enedis"
+                                    style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Compteur</div>
+                                <div class="rate-value-enedis"
+                                    style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
                                     {{ data.enedis_info.enedis_rate_On }}
                                 </div>
                             </div>
 
                             <div style="display:flex; flex-direction:column; align-items:center;">
                                 <div style="height: 20px; margin-bottom: 3px;"></div>
-                                <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Déb.contrat</div>
-                                <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
+                                <div class="rate-label-enedis"
+                                    style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">Déb.contrat</div>
+                                <div class="rate-value-enedis"
+                                    style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
                                     {{ data.enedis_info.contract_start_date }}
                                 </div>
                             </div>
@@ -1969,81 +1973,98 @@
 
                         <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
 
 
 
                         <!-- Puissances souscrites KVA Section -->
                         <div style="display:flex; flex-direction:column;">
-                            <div style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
+                            <div
+                                style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
                                 Puissances souscrites KVA
                             </div>
                             <div style="display: flex; gap: 10px; align-items: flex-end;">
                                 {% for col in data.tender_table.columns6 %}
                                 {% if col == "HPH" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hph }}
                                     </div>
                                 </div>
                                 {% elif col == "HCH" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hch }}
                                     </div>
                                 </div>
                                 {% elif col == "HPE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hpe }}
                                     </div>
                                 </div>
                                 {% elif col == "HCE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hce }}
                                     </div>
                                 </div>
                                 {% elif col == "POINTE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_pointe }}
                                     </div>
                                 </div>
                                 {% elif col == "HP" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hp }}
                                     </div>
                                 </div>
                                 {% elif col == "HC" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_hc }}
                                     </div>
                                 </div>
                                 {% elif col == "BASE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_puissance_base }}
                                     </div>
                                 </div>
@@ -2052,80 +2073,97 @@
                             </div>
                         </div>
 
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
 
 
                         <!-- Consommation MWh Section -->
                         <div style="display:flex; flex-direction:column;">
-                            <div style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
+                            <div
+                                style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
                                 Consommation MWh
                             </div>
                             <div style="display: flex; gap: 10px; align-items: flex-end;">
                                 {% for col in data.tender_table.columns6 %}
                                 {% if col == "HPH" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPH</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hph }}
                                     </div>
                                 </div>
                                 {% elif col == "HCH" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCH</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hch }}
                                     </div>
                                 </div>
                                 {% elif col == "HPE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HPE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hpe }}
                                     </div>
                                 </div>
                                 {% elif col == "HCE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HCE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hce }}
                                     </div>
                                 </div>
                                 {% elif col == "POINTE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">POINTE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_pointe }}
                                     </div>
                                 </div>
                                 {% elif col == "HP" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HP</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hp }}
                                     </div>
                                 </div>
                                 {% elif col == "HC" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">HC</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_hc }}
                                     </div>
                                 </div>
                                 {% elif col == "BASE" %}
                                 <div style="display:flex; flex-direction:column; align-items:center;">
-                                    <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
-                                    <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
+                                    <div class="rate-label-enedis"
+                                        style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">BASE</div>
+                                    <div class="rate-value-enedis"
+                                        style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 60px; text-align: center;">
                                         {{ data.enedis_info.enedis_rate_base }}
                                     </div>
                                 </div>
@@ -2134,27 +2172,30 @@
                             </div>
                         </div>
 
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
-                         <div style="display: flex; gap: 10px;">
+                        <div style="display: flex; gap: 10px;">
                         </div>
 
 
 
                         <!-- Total Section -->
                         <div style="display:flex; flex-direction:column;">
-                            <div style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
+                            <div
+                                style="text-align: center; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 8px;">
                                 Total
                             </div>
                             <div style="display:flex; flex-direction:column; align-items:center;">
-                                <div class="rate-label-enedis" style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">MWh / an</div>
-                                <div class="rate-value-enedis" style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
+                                <div class="rate-label-enedis"
+                                    style="margin-bottom: 5px; font-size: 12px; font-weight: 600;">MWh / an</div>
+                                <div class="rate-value-enedis"
+                                    style="background: #f5a623; padding: 8px 12px; border-radius: 4px; min-width: 80px; text-align: center;">
                                     {{ data.enedis_info.enedis_rate_sum }}
                                 </div>
                             </div>
@@ -2288,23 +2329,32 @@
                 <div class="rate-box">
                     <div class="partner-logo">
                         {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                        <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
+                            alt="{{ r.partnerName|default:'Partner' }}" title="{{ r.partnerName|default:'Partner' }}">
                         {% else %}
-                        <img src="/images/default-logo.png" class="partner-image">
+                        <span class="partner-name">
+                            {{ provider.partnerName|default:"-" }}
+                        </span>
                         {% endif %}
                     </div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.fourniture }}</div>
+                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.turpe }}</div>
+                    <div class="rate-value">
+                        {% if provider.isTurpeIncluded %}
+                        inclus
+                        {% else %}
+                        {{ provider.turpe|default:"-" }}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.taxes }}</div>
+                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.coutHTVA }}</div>
+                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
                 </div>
             </div>
         </div>
@@ -2322,29 +2372,38 @@
         {% endif %}
 
         <!-- REGULAR PROVIDERS - SHOW BELOW LABELS -->
-        {% if not provider.typeFournisseur == 'CURRENT' %} {# ← Replace this with your actual condition #}
+        {% if not provider.typeFournisseur == 'CURRENT' %}
         <div class="provider-row regular-provider">
             <div class="rates-container">
                 <div class="rate-box">
                     <div class="partner-logo">
                         {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                        <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
+                            alt="{{ r.partnerName|default:'Partner' }}" title="{{ r.partnerName|default:'Partner' }}">
                         {% else %}
-                        <img src="/images/default-logo.png" class="partner-image">
+                        <span class="partner-name">
+                            {{ provider.partnerName|default:"-" }}
+                        </span>
                         {% endif %}
                     </div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.fourniture }}</div>
+                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.turpe }}</div>
+                    <div class="rate-value">
+                        {% if provider.isTurpeIncluded %}
+                        inclus
+                        {% else %}
+                        {{ provider.turpe|default:"-" }}
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.taxes }}</div>
+                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
                 </div>
                 <div class="rate-box">
-                    <div class="rate-value">{{ provider.coutHTVA }}</div>
+                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
                 </div>
             </div>
         </div>
