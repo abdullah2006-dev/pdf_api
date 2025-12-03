@@ -73,22 +73,27 @@ def parse_request_data(request):
 def generate_chart(data):
     """Generate base64 chart image from input data with chartDataDto wrapper."""
     print("Inside GenerateChart")
-    # 🔹 Ensure chartDataDto exists
+    
+    # 🔹 Check if chartDataDto exists and is valid - Return None instead of raising error
     if "chartDataDto" not in data or not data["chartDataDto"]:
-        raise ValueError("Missing or empty field: chartDataDto")
+        print("chartDataDto is missing or empty, returning None")
+        return None
 
     chart_data = data["chartDataDto"]
 
-    # 🔹 Validate xAxis and series
+    # 🔹 Validate xAxis and series - Return None if invalid
     if "xAxis" not in chart_data or not chart_data["xAxis"]:
-        raise ValueError("Missing or empty field: xAxis")
+        print("xAxis is missing or empty, returning None")
+        return None
 
     if "series" not in chart_data or not chart_data["series"]:
-        raise ValueError("Missing or empty field: series")
+        print("series is missing or empty, returning None")
+        return None
 
     # 🔹 Validate xAxis data
     if "data" not in chart_data["xAxis"][0] or not chart_data["xAxis"][0]["data"]:
-        raise ValueError("Missing or empty field: xAxis[0].data")
+        print("xAxis[0].data is missing or empty, returning None")
+        return None
 
     try:
         # 🔥 CHANGE HERE: Use format "%Y-%m-%d" for ISO dates (yyyy-MM-dd)
@@ -98,19 +103,22 @@ def generate_chart(data):
         try:
             dates = pd.to_datetime(chart_data["xAxis"][0]["data"])  # Let pandas infer
         except Exception as e2:
-            raise ValueError(f"Invalid date format in xAxis data. Tried ISO format (yyyy-mm-dd) and auto-detect. Error: {e2}")
+            print(f"Invalid date format in xAxis data: {e2}, returning None")
+            return None
 
     plt.figure(figsize=(12, 7))
     colors = ["black", "royalblue", "green", "red"]
 
     for idx, series in enumerate(chart_data["series"]):
         if "data" not in series or not series["data"]:
-            raise ValueError(f"Missing or empty field: series[{idx}].data")
+            print(f"series[{idx}].data is missing or empty, returning None")
+            return None
 
         try:
             y = np.array(series["data"], dtype=np.float64)
         except Exception as e:
-            raise ValueError(f"Invalid numeric data in series[{idx}]: {e}")
+            print(f"Invalid numeric data in series[{idx}]: {e}, returning None")
+            return None
 
         plt.plot(
             dates[:len(y)], y,
@@ -160,7 +168,6 @@ def generate_chart(data):
     buf.seek(0)
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
-
 
 def build_comparatif_dto(comparatif, request, data):
     print("Inside BuildComparatifDTO")
