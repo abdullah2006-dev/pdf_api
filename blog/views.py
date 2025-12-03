@@ -525,7 +525,7 @@ def volt_consulting_presentation_Electricitry(request):
         html_content = render_html_Elecricity(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data)
+        pdf_url, pdf_filename = generate_pdf(html_content, request, data, comparatif)
 
         return JsonResponse({
             "status": "success",
