@@ -96,42 +96,39 @@
             margin-bottom: 5px;
         }
 
-        .info-grid {
-            margin-top: 25px;
-            margin-left: 50px;
-        }
+   .info-grid {
+    margin-top: 25px;
+    margin-left: 50px;
+}
 
-        .info-row {
-            display: flex;
-            align-items: center;
-        }
+.info-row {
+    display: flex;
+    align-items: center;
+}
 
-        .label {
-            color: #333;
-            width: 120px;
-            font-size: 30px;
-            display: inline-block;
-            /* div ko inline jaisa behave karwa diya */
-            white-space: nowrap;
-            /* text ko break hone se rok diya */
-        }
+.label {
+    color: #333;
+    width: 120px;
+    font-size: 30px;
+    display: inline-block;
+    white-space: nowrap;
+}
 
-        .value {
-            color: #444;
-            margin-left: 50px;
-            font-size: 35px;
-            flex: 1;
-        }
+.value {
+    color: #444;
+    margin-left: 50px;
+    font-size: 35px;
+    flex: 1;
+}
 
-        .email-link {
-            color: #333;
-            text-decoration: none;
-        }
+.email-link {
+    color: #333;
+    text-decoration: none;
+}
 
-        .email-link:hover {
-            text-decoration: underline;
-        }
-
+.email-link:hover {
+    text-decoration: underline;
+}
         .footer {
             position: absolute;
             bottom: 100px;
@@ -1809,44 +1806,43 @@
                 <div class="title">{{ data.headingone }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
             </div>
             <div class="info-grid">
+    <div class="info-row" style="margin-bottom:11px;">
+        <div class="label">Raison Sociale:</div>
+        <div class="value" style="margin-left:120px;">{{ data.clientSociety }}</div>
+    </div>
 
-                <div class="info-row" style="margin-bottom:11px;">
-                    <div class="label">Raison Sociale:</div>
-                    <div class="value" style="margin-left:120px;">{{ data.clientSociety }}</div>
-                </div>
+    <div class="info-row" style="margin-bottom:11px;">
+        <div class="label">SIRET:</div>
+        <div class="value" style="margin-left:120px;">{{ data.clientSiret }}</div>
+    </div>
 
-                <div class="info-row" style="margin-bottom:11px;">
-                    <div class="label">SIRET:</div>
-                    <div class="value" style="margin-left:120px;">{{ data.clientSiret }}</div>
-                </div>
+    <div class="info-row" style="margin-bottom:11px;">
+        <div class="label">Interlocuteur:</div>
+    </div>
 
-                <div class="info-row" style="margin-bottom:11px;">
-                    <div class="label">Interlocuteur:</div>
-                </div>
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
+        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Prenom:</div>
+        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientFirstName }}</div>
+    </div>
 
-                <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-                    <div class="label" style="width:110px; text-align:right; margin-left:70px;">Prenom:</div>
-                    <div class="value" style="color:#333; margin-left:60px;">{{ data.clientFirstName }}</div>
-                </div>
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
+        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Nom:</div>
+        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientLastName }}</div>
+    </div>
 
-                <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-                    <div class="label" style="width:110px; text-align:right; margin-left:70px;">Nom:</div>
-                    <div class="value" style="color:#333; margin-left:60px;">{{ data.clientLastName }}</div>
-                </div>
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
+        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Email:</div>
+        <div class="value" style="color:#333; margin-left:60px;">
+            <a href="mailto:{{ data.clientEmail }}" class="email-link">{{ data.clientEmail }}</a>
+        </div>
+    </div>
 
-                <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-                    <div class="label" style="width:110px; text-align:right; margin-left:70px;">Email:</div>
-                    <div class="value" style="color:#333; margin-left:60px;">
-                        <a href="mailto:{{ data.email }}" class="email-link">{{ data.clientEmail }}</a>
-                    </div>
-                </div>
-
-                <div class="info-row" style="display:flex; align-items:center; margin-bottom:12px;">
-                    <div class="label" style="width:110px; text-align:right; margin-left:40px;">Telephone:</div>
-                    <div class="value" style="color:#333; margin-left:90px;">{{ data.clientPhoneNumber }}</div>
-                </div>
-
-            </div>
+    <!-- FIXED: Telephone field ko baaki fields jaise consistent banaya -->
+    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
+        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Telephone:</div>
+        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientPhoneNumber }}</div>
+    </div>
+</div>
         </div>
 
 
