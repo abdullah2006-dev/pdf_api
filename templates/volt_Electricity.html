@@ -2284,7 +2284,7 @@
 
 
     {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        {% if forloop.counter0|divisibleby:3 %}
+        {% if forloop.counter0|divisibleby:4 %}
         <div class="container8">
             <div class="content-wrapper8">
                 <div><img src="{{ data.images.double }}" class="double-image"></div>
@@ -2401,7 +2401,7 @@
         {% endif %}
         <br>
 
-        {% if forloop.counter|divisibleby:3 or forloop.last %}
+        {% if forloop.counter|divisibleby:4 or forloop.last %}
         </div> <!-- container8 close -->
         <br>
         <br>
@@ -2416,11 +2416,11 @@
 
 
 {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-    {% if forloop.first or forloop.counter0|divisibleby:3 %}
+    {% if forloop.first or forloop.counter0|divisibleby:6 %}
 
     <!-- Calculate start and end indices -->
     {% with start_idx=forloop.counter0|add:0 %}
-    {% with end_idx=forloop.counter0|add:3 %}
+    {% with end_idx=forloop.counter0|add:6 %}
 
     <div class="container7">
         <div class="content-wrapper7">
