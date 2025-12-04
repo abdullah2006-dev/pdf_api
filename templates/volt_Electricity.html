@@ -2325,7 +2325,7 @@
         {% endif %} {# End of container start block #}
 
         <!-- SPECIFIC CONDITION PROVIDER - SHOW ABOVE LABELS -->
-        {% if provider.meets_specific_condition %} {# ← Replace this with your actual condition #}
+        {% if not provider.typeFournisseur == 'CURRENT' %} {# ← Replace this with your actual condition #}
         <div class="provider-row specific-provider">
             <div class="rates-container">
                 <div class="rate-box">

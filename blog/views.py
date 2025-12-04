@@ -860,7 +860,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
         "columns": columns if columns else ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"],
         "columns1": columns1 if columns1 else ["HP <br> €/MWh", "HC <br> €/MWh"],
         "columns2": data.get("columns2", ["CEE <br> €/MWh"]),
-        "columns3": data.get("columns3", ["TABO <br> €/an"]),
+        "columns3": data.get("columns3", ["ABO <br> €/an"]),
         "columns4": data.get("columns4", [
             "Puissances souscrites KVA", "Consommation MWh", "Total"
         ]),
