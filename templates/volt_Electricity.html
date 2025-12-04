@@ -96,39 +96,42 @@
             margin-bottom: 5px;
         }
 
-   .info-grid {
-    margin-top: 25px;
-    margin-left: 50px;
-}
+        .info-grid {
+            margin-top: 25px;
+            margin-left: 50px;
+        }
 
-.info-row {
-    display: flex;
-    align-items: center;
-}
+        .info-row {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: center;
+        }
 
-.label {
-    color: #333;
-    width: 120px;
-    font-size: 30px;
-    display: inline-block;
-    white-space: nowrap;
-}
+        .label {
+            color: #333;
+            width: 120px;
+            font-size: 30px;
+            display: inline-block; /* div ko inline jaisa behave karwa diya */
+            white-space: nowrap;   /* text ko break hone se rok diya */
+        }
 
-.value {
-    color: #444;
-    margin-left: 50px;
-    font-size: 35px;
-    flex: 1;
-}
+        .value {
+            font-weight: bold;
+            color: #444;
+            margin-left: 50px;
+            font-size: 30px;
+            flex: 1;
+        }
 
-.email-link {
-    color: #333;
-    text-decoration: none;
-}
+        .email-link {
+            color: #333;
+            text-decoration: none;
+        }
 
-.email-link:hover {
-    text-decoration: underline;
-}
+        .email-link:hover {
+            text-decoration: underline;
+        }
+
         .footer {
             position: absolute;
             bottom: 100px;
@@ -1805,44 +1808,37 @@
             <div class="header">
                 <div class="title">{{ data.headingone }} {{ data.comparatifClientHistoryPdfDto.createdOn }}</div>
             </div>
-            <div class="info-grid">
-    <div class="info-row" style="margin-bottom:11px;">
-        <div class="label">Raison Sociale:</div>
-        <div class="value" style="margin-left:120px;">{{ data.clientSociety }}</div>
+             <div class="info-grid">
+    <div class="info-row">
+      <div class="label">Raison Sociale:</div>
+      <div class="value" style=" margin-left:120px;">{{ data.clientSociety }}</div>
     </div>
-
-    <div class="info-row" style="margin-bottom:11px;">
-        <div class="label">SIRET:</div>
-        <div class="value" style="margin-left:120px;">{{ data.clientSiret }}</div>
+    <div class="info-row">
+      <div class="label">SIRET:</div>
+      <div class="value" style="margin-left:120px;">{{ data.clientSiret }}</div>
     </div>
-
-    <div class="info-row" style="margin-bottom:11px;">
-        <div class="label">Interlocuteur:</div>
+    <div class="info-row">
+      <div class="label">Interlocuteur:</div>
     </div>
-
-    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Prenom:</div>
-        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientFirstName }}</div>
+    <div class="info-row" style="display:flex; align-items:center;">
+      <div class="label" style="width:110px; text-align:right; margin-left:70px;">Prenom:</div>
+      <div class="value" style="color:#333; margin-left:60px;">{{ data.clientFirstName }}</div>
     </div>
-
-    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Nom:</div>
-        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientLastName }}</div>
+    <div class="info-row" style="display:flex; align-items:center;">
+      <div class="label" style="width:110px; text-align:right; margin-left:70px;">Nom:</div>
+      <div class="value" style="color:#333; margin-left:60px;">{{ data.clientLastName }}</div>
     </div>
-
-    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Email:</div>
-        <div class="value" style="color:#333; margin-left:60px;">
-            <a href="mailto:{{ data.clientEmail }}" class="email-link">{{ data.clientEmail }}</a>
-        </div>
+    <div class="info-row" style="display:flex; align-items:center;">
+      <div class="label" style="width:110px; text-align:right; margin-left:70px;">Email:</div>
+      <div class="value" style="color:#333; margin-left:60px;">
+        <a href="mailto:{{ data.email }}" class="email-link">{{ data.clientEmail }}</a>
+      </div>
     </div>
-
-    <!-- FIXED: Telephone field ko baaki fields jaise consistent banaya -->
-    <div class="info-row" style="display:flex; align-items:center; margin-bottom:11px;">
-        <div class="label" style="width:110px; text-align:right; margin-left:70px;">Telephone:</div>
-        <div class="value" style="color:#333; margin-left:60px;">{{ data.clientPhoneNumber }}</div>
+    <div class="info-row" style="display:flex; align-items:center;">
+      <div class="label" style="width:110px; text-align:right; margin-left:40px;">Telephone:</div>
+      <div class="value" style="color:#333; margin-left:90px;">{{ data.clientPhoneNumber }}</div>
     </div>
-</div>
+  </div>
         </div>
 
 
@@ -2286,35 +2282,45 @@
     <br>
     <br>
 
+
     {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
-    {% if forloop.counter0|divisibleby:3 %}
-    <div class="container8">
-        <div class="content-wrapper8">
-            <div><img src="{{ data.images.double }}" class="double-image"></div>
-            <div class="text-heading1">
-                <p>{{ data.tender_results.title }}</p>
+        {% if forloop.counter0|divisibleby:3 %}
+        <div class="container8">
+            <div class="content-wrapper8">
+                <div><img src="{{ data.images.double }}" class="double-image"></div>
+                <div class="text-heading1">
+                    <p>{{ data.tender_results.title }}</p>
+                </div>
+                <div><img src="{{ data.images.black }}" class="blacky-image"></div>
+                <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
             </div>
-            <div><img src="{{ data.images.black }}" class="blacky-image"></div>
-            <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-        </div>
 
-        <div class="last-text">{{ data.comparison_table.last_text }}</div>
-        <div class="black2">{{ data.black }}</div>
-        <div class="black3">{{ data.black1 }}</div>
-        <div class="black4">{{ data.black3 }}</div>
+            <div class="last-text">{{ data.comparison_table.last_text }}</div>
+            <div class="black2">{{ data.black }}</div>
+            <div class="black3">{{ data.black1 }}</div>
+            <div class="black4">{{ data.black3 }}</div>
 
-        <div class="reference-boxes">
-            {% if data.comparatifClientHistoryPdfDto.pdl %}
-            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
-            {% endif %}
-            {% if data.comparatifClientHistoryPdfDto.segmentation %}
-            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
-            {% endif %}
-            {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
-            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
-            {% endif %}
-        </div>
-        <div class="section-title">{{ data.comparison_table.section_title }}</div>
+            <div class="reference-boxes">
+                {% if data.comparatifClientHistoryPdfDto.pdl %}
+                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
+                {% endif %}
+                {% if data.comparatifClientHistoryPdfDto.segmentation %}
+                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
+                {% endif %}
+                {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
+                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
+                {% endif %}
+            </div>
+            <div class="section-title">{{ data.comparison_table.section_title }}</div>
+
+            <!-- LABELS ROW - NOW IN EVERY CONTAINER -->
+            <div class="labels-row">
+                {% for label in data.comparison_table.labels %}
+                <div class="label-item">
+                    <div class="label-text">{{ label|safe }}</div>
+                </div>
+                {% endfor %}
+            </div>
 
         {% endif %} {# End of container start block #}
 
@@ -2353,17 +2359,6 @@
                     <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
                 </div>
             </div>
-        </div>
-        {% endif %}
-
-        <!-- LABELS ROW - ALWAYS SHOW AFTER SPECIFIC PROVIDER -->
-        {% if forloop.first %}
-        <div class="labels-row">
-            {% for label in data.comparison_table.labels %}
-            <div class="label-item">
-                <div class="label-text">{{ label|safe }}</div>
-            </div>
-            {% endfor %}
         </div>
         {% endif %}
 
@@ -2407,20 +2402,26 @@
         <br>
 
         {% if forloop.counter|divisibleby:3 or forloop.last %}
-    </div> <!-- container8 close -->
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    {% endif %}
+        </div> <!-- container8 close -->
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        {% endif %}
     {% endfor %}
 
 
 
-    {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-    {% if forloop.first or forloop.counter0|divisibleby:5 %}
+
+{% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+    {% if forloop.first or forloop.counter0|divisibleby:3 %}
+
+    <!-- Calculate start and end indices -->
+    {% with start_idx=forloop.counter0|add:0 %}
+    {% with end_idx=forloop.counter0|add:3 %}
+
     <div class="container7">
         <div class="content-wrapper7">
             <div>
@@ -2433,6 +2434,7 @@
                 <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
             </div>
         </div>
+
         <!-- 👇 Flex container for 4 tables with plus signs -->
         <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
             <!-- Pehla table -->
@@ -2447,7 +2449,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
+                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
                         <tr>
                             {% for col in data.tender_table.columns %}
                             {% if "Fournisseur" in col %}
@@ -2464,81 +2467,28 @@
                             </td>
                             {% else %}
                             {% if "HPH" in col %}
-                            <td>
-                                {% if r.hphRate is not None %}
-                                {{ r.hphRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.hphRate|default:"-" }}</td>
                             {% elif "HCH" in col %}
-                            <td>
-                                {% if r.hchRate is not None %}
-                                {{ r.hchRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.hchRate|default:"-" }}</td>
                             {% elif "HPE" in col %}
-                            <td>
-                                {% if r.hpeRate is not None %}
-                                {{ r.hpeRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.hpeRate|default:"-" }}</td>
                             {% elif "HCE" in col %}
-                            <td>
-                                {% if r.hceRate is not None %}
-                                {{ r.hceRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.hceRate|default:"-" }}</td>
                             {% elif "POINTE" in col %}
-                            <td>
-                                {% if r.pteRate is not None %}
-                                {{ r.pteRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.pteRate|default:"-" }}</td>
                             {% elif "HP" in col and "HPH" not in col %}
-                            <td>
-                                {% if r.fullHourRate is not None %}
-                                {{ r.fullHourRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.fullHourRate|default:"-" }}</td>
                             {% elif "HC" in col and "HCH" not in col %}
-                            <td>
-                                {% if r.offPeakHourRate is not None %}
-                                {{ r.offPeakHourRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.offPeakHourRate|default:"-" }}</td>
                             {% elif "BASE" in col %}
-                            <td>
-                                {% if r.baseRate is not None %}
-                                {{ r.baseRate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.baseRate|default:"-" }}</td>
                             {% else %}
-                            <td>
-                                {% if r.rate is not None %}
-                                {{ r.rate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.rate|default:"-" }}</td>
                             {% endif %}
                             {% endif %}
                             {% endfor %}
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -2559,7 +2509,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
+                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
                         <tr>
                             {% if r.typeCapa == "CAPAINCLUS" %}
                             {% for col in data.tender_table.columns1 %}
@@ -2568,81 +2519,28 @@
                             {% else %}
                             {% for col in data.tender_table.columns1 %}
                             {% if "HPH" in col %}
-                            <td>
-                                {% if r.capaHph is not None %}
-                                {{ r.capaHph }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHph|default:"-" }}</td>
                             {% elif "HCH" in col %}
-                            <td>
-                                {% if r.capaHch is not None %}
-                                {{ r.capaHch }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHch|default:"-" }}</td>
                             {% elif "HPE" in col %}
-                            <td>
-                                {% if r.capaHpe is not None %}
-                                {{ r.capaHpe }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHpe|default:"-" }}</td>
                             {% elif "HCE" in col %}
-                            <td>
-                                {% if r.capaHce is not None %}
-                                {{ r.capaHce }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHce|default:"-" }}</td>
                             {% elif "POINTE" in col %}
-                            <td>
-                                {% if r.capaPointe is not None %}
-                                {{ r.capaPointe }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaPointe|default:"-" }}</td>
                             {% elif "HP" in col and "HPH" not in col %}
-                            <td>
-                                {% if r.capaHp is not None %}
-                                {{ r.capaHp }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHp|default:"-" }}</td>
                             {% elif "HC" in col and "HCH" not in col %}
-                            <td>
-                                {% if r.capaHc is not None %}
-                                {{ r.capaHc }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaHc|default:"-" }}</td>
                             {% elif "BASE" in col %}
-                            <td>
-                                {% if r.capaBase is not None %}
-                                {{ r.capaBase }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.capaBase|default:"-" }}</td>
                             {% else %}
-                            <td>
-                                {% if r.rate is not None %}
-                                {{ r.rate }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.rate|default:"-" }}</td>
                             {% endif %}
                             {% endfor %}
                             {% endif %}
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -2662,16 +2560,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
+                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
                         <tr>
-                            <td>
-                                {% if r.partCee is not None %}
-                                {{ r.partCee }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.partCee|default:"-" }}</td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
@@ -2681,7 +2575,7 @@
             <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
 
             <!-- Chautha table -->
-            <div class="table-container" style="width:150px;"> <!-- 👈 width chhota kar diya -->
+            <div class="table-container" style="width:150px;">
                 <table>
                     <thead>
                         <tr>
@@ -2691,33 +2585,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates|slice:":5" %}
+                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
                         <tr>
-                            <td>
-                                {% if r.abonnementAnswer is not None %}
-                                {{ r.abonnementAnswer }}
-                                {% else %}
-                                -
-                                {% endif %}
-                            </td>
+                            <td>{{ r.abonnementAnswer|default:"-" }}</td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
 
-
         </div> <!-- tables-wrapper end -->
-
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
+    {% endwith %}
+    {% endwith %}
+
+    <br><br><br><br><br><br>
     {% endif %}
-    {% endfor %}
+{% endfor %}
 
 
 
