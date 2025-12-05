@@ -598,7 +598,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: left;
             width: 13%;
-            margin-left: 1350px;
+            margin-left: 1420px;
             /* agar text left shift karna hai */
         }
 
@@ -1509,7 +1509,7 @@
             height: 22px;
             display: flex;
             align-items: center;
-            margin-left: 65px;
+            margin-left: 220px;
             justify-content: center;
             margin-bottom: 5px;
         }
@@ -2320,23 +2320,25 @@
             <div class="rate-box">
                 <div class="partner-logo">
                     {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image" alt="{{provider.partnerName|default:'-'}}" >
                     {% else %}
-                    <img src="/images/default-logo.png" class="partner-image">
+                    <span class="partner-name">
+                        {{ provider.newPartnerName|default:"-" }}
+                    </span>
                     {% endif %}
                 </div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.fourniture }}</div>
+                <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.turpe }}</div>
+                <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.taxes }}</div>
+                <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.coutHTVA }}</div>
+                <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
             </div>
         </div>
     </div>
@@ -2363,23 +2365,25 @@
             <div class="rate-box">
                 <div class="partner-logo">
                     {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image" alt="{{provider.partnerName|default:'-'}}">
                     {% else %}
-                    <img src="/images/default-logo.png" class="partner-image">
+                    <span class="partner-name">
+                        {{ provider.newPartnerName|default:"-" }}
+                    </span>
                     {% endif %}
                 </div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.fourniture }}</div>
+                <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.turpe }}</div>
+                <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.taxes }}</div>
+                <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
             </div>
             <div class="rate-box">
-                <div class="rate-value">{{ provider.coutHTVA }}</div>
+                <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
             </div>
         </div>
     </div>
@@ -2439,11 +2443,11 @@
                                 <td style="text-align:center; vertical-align:middle;">
                                     {% if r.partnerPhoto and r.partnerPhoto.path %}
                                     <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
-                                        alt="{{ r.partnerName|default:'Partner' }}"
+                                        alt="{{ r.partnerName|default:'-' }}"
                                         title="{{ r.partnerName|default:'Partner' }}">
                                     {% else %}
                                     <span class="partner-name">
-                                        {{ r.partnerName|default:"-" }}
+                                        {{ r.newPartnerName|default:"-" }}
                                     </span>
                                     {% endif %}
                                 </td>
