@@ -2283,328 +2283,310 @@
     <br>
 
 
-    {% for provider in data.comparatifClientHistoryPdfDto.comparatifRates %}
-        {% if forloop.counter0|divisibleby:4 %}
-        <div class="container8">
-            <div class="content-wrapper8">
-                <div><img src="{{ data.images.double }}" class="double-image"></div>
-                <div class="text-heading1">
-                    <p>{{ data.tender_results.title }}</p>
-                </div>
-                <div><img src="{{ data.images.black }}" class="blacky-image"></div>
-                <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-            </div>
+{% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}
+<div class="container8">
 
-            <div class="last-text">{{ data.comparison_table.last_text }}</div>
-            <div class="black2">{{ data.black }}</div>
-            <div class="black3">{{ data.black1 }}</div>
-            <div class="black4">{{ data.black3 }}</div>
-
-            <div class="reference-boxes">
-                {% if data.comparatifClientHistoryPdfDto.pdl %}
-                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
-                {% endif %}
-                {% if data.comparatifClientHistoryPdfDto.segmentation %}
-                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
-                {% endif %}
-                {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
-                <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
-                {% endif %}
-            </div>
-            <div class="section-title">{{ data.comparison_table.section_title }}</div>
-
-            <!-- LABELS ROW - NOW IN EVERY CONTAINER -->
-            <div class="labels-row">
-                {% for label in data.comparison_table.labels %}
-                <div class="label-item">
-                    <div class="label-text">{{ label|safe }}</div>
-                </div>
-                {% endfor %}
-            </div>
-
-        {% endif %} {# End of container start block #}
-
-        <!-- SPECIFIC CONDITION PROVIDER - SHOW ABOVE LABELS -->
-        {% if provider.typeFournisseur == 'CURRENT' %} {# ← Replace this with your actual condition #}
-        <div class="provider-row specific-provider">
-            <div class="rates-container">
-                <div class="rate-box">
-                    <div class="partner-logo">
-                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                        <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
-                            alt="{{ r.partnerName|default:'Partner' }}" title="{{ r.partnerName|default:'Partner' }}">
-                        {% else %}
-                        <span class="partner-name">
-                            {{ provider.partnerName|default:"-" }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">
-                        {% if provider.isTurpeIncluded %}
-                        inclus
-                        {% else %}
-                        {{ provider.turpe|default:"-" }}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-
-        <!-- REGULAR PROVIDERS - SHOW BELOW LABELS -->
-        {% if not provider.typeFournisseur == 'CURRENT' %}
-        <div class="provider-row regular-provider">
-            <div class="rates-container">
-                <div class="rate-box">
-                    <div class="partner-logo">
-                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                        <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
-                            alt="{{ r.partnerName|default:'Partner' }}" title="{{ r.partnerName|default:'Partner' }}">
-                        {% else %}
-                        <span class="partner-name">
-                            {{ provider.partnerName|default:"-" }}
-                        </span>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">
-                        {% if provider.isTurpeIncluded %}
-                        inclus
-                        {% else %}
-                        {{ provider.turpe|default:"-" }}
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
-                </div>
-                <div class="rate-box">
-                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
-        <br>
-
-        {% if forloop.counter|divisibleby:4 or forloop.last %}
-        </div> <!-- container8 close -->
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        {% endif %}
-    {% endfor %}
-
-
-
-
-{% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
-    {% if forloop.first or forloop.counter0|divisibleby:6 %}
-
-    <!-- Calculate start and end indices -->
-    {% with start_idx=forloop.counter0|add:0 %}
-    {% with end_idx=forloop.counter0|add:6 %}
-
-    <div class="container7">
-        <div class="content-wrapper7">
-            <div>
-                <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
-            </div>
-            <div class="text-heading">
-                <p>{{ data.tender_table.title }}</p>
-            </div>
-            <div>
-                <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
-            </div>
-        </div>
-
-        <!-- 👇 Flex container for 4 tables with plus signs -->
-        <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
-            <!-- Pehla table -->
-            <div class="table-container" style="flex:1;">
-                <p style="font-weight:bold; text-align:center; margin-bottom:5px;">FOURNITURE</p>
-                <table>
-                    <thead>
-                        <tr>
-                            {% for col in data.tender_table.columns %}
-                            <th>{{ col|safe }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
-                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
-                        <tr>
-                            {% for col in data.tender_table.columns %}
-                            {% if "Fournisseur" in col %}
-                            <td style="text-align:center; vertical-align:middle;">
-                                {% if r.partnerPhoto and r.partnerPhoto.path %}
-                                <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
-                                    alt="{{ r.partnerName|default:'Partner' }}"
-                                    title="{{ r.partnerName|default:'Partner' }}">
-                                {% else %}
-                                <span class="partner-name">
-                                    {{ r.partnerName|default:"-" }}
-                                </span>
-                                {% endif %}
-                            </td>
-                            {% else %}
-                            {% if "HPH" in col %}
-                            <td>{{ r.hphRate|default:"-" }}</td>
-                            {% elif "HCH" in col %}
-                            <td>{{ r.hchRate|default:"-" }}</td>
-                            {% elif "HPE" in col %}
-                            <td>{{ r.hpeRate|default:"-" }}</td>
-                            {% elif "HCE" in col %}
-                            <td>{{ r.hceRate|default:"-" }}</td>
-                            {% elif "POINTE" in col %}
-                            <td>{{ r.pteRate|default:"-" }}</td>
-                            {% elif "HP" in col and "HPH" not in col %}
-                            <td>{{ r.fullHourRate|default:"-" }}</td>
-                            {% elif "HC" in col and "HCH" not in col %}
-                            <td>{{ r.offPeakHourRate|default:"-" }}</td>
-                            {% elif "BASE" in col %}
-                            <td>{{ r.baseRate|default:"-" }}</td>
-                            {% else %}
-                            <td>{{ r.rate|default:"-" }}</td>
-                            {% endif %}
-                            {% endif %}
-                            {% endfor %}
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- plus sign -->
-            <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
-
-            <!-- Dusra table -->
-            <div class="table-container" style="flex:1;">
-                <p style="font-weight:bold; text-align:center; margin-bottom:5px;">CAPACITE</p>
-                <table>
-                    <thead>
-                        <tr>
-                            {% for col in data.tender_table.columns1 %}
-                            <th>{{ col|safe }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
-                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
-                        <tr>
-                            {% if r.typeCapa == "CAPAINCLUS" %}
-                            {% for col in data.tender_table.columns1 %}
-                            <td>inclus</td>
-                            {% endfor %}
-                            {% else %}
-                            {% for col in data.tender_table.columns1 %}
-                            {% if "HPH" in col %}
-                            <td>{{ r.capaHph|default:"-" }}</td>
-                            {% elif "HCH" in col %}
-                            <td>{{ r.capaHch|default:"-" }}</td>
-                            {% elif "HPE" in col %}
-                            <td>{{ r.capaHpe|default:"-" }}</td>
-                            {% elif "HCE" in col %}
-                            <td>{{ r.capaHce|default:"-" }}</td>
-                            {% elif "POINTE" in col %}
-                            <td>{{ r.capaPointe|default:"-" }}</td>
-                            {% elif "HP" in col and "HPH" not in col %}
-                            <td>{{ r.capaHp|default:"-" }}</td>
-                            {% elif "HC" in col and "HCH" not in col %}
-                            <td>{{ r.capaHc|default:"-" }}</td>
-                            {% elif "BASE" in col %}
-                            <td>{{ r.capaBase|default:"-" }}</td>
-                            {% else %}
-                            <td>{{ r.rate|default:"-" }}</td>
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- plus sign -->
-            <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
-
-            <!-- Teesra table -->
-            <div class="table-container" style="width:150px;">
-                <table>
-                    <thead>
-                        <tr>
-                            {% for col in data.tender_table.columns2 %}
-                            <th>{{ col|safe }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
-                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
-                        <tr>
-                            <td>{{ r.partCee|default:"-" }}</td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- plus sign -->
-            <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
-
-            <!-- Chautha table -->
-            <div class="table-container" style="width:150px;">
-                <table>
-                    <thead>
-                        <tr>
-                            {% for col in data.tender_table.columns3 %}
-                            <th>{{ col|safe }}</th>
-                            {% endfor %}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
-                        {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
-                        <tr>
-                            <td>{{ r.abonnementAnswer|default:"-" }}</td>
-                        </tr>
-                        {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-        </div> <!-- tables-wrapper end -->
+    {# Every container shows header #}
+    <div class="content-wrapper8">
+    <div><img src="{{ data.images.double }}" class="double-image"></div>
+    <div class="text-heading1">
+    <p>{{ data.tender_results.title }}</p>
+    </div>
+        <div><img src="{{ data.images.black }}" class="blacky-image"></div>
+        <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
     </div>
 
-    {% endwith %}
-    {% endwith %}
+    <div class="last-text">{{ data.comparison_table.last_text }}</div>
+    <div class="black2">{{ data.black }}</div>
+    <div class="black3">{{ data.black1 }}</div>
+    <div class="black4">{{ data.black3 }}</div>
 
-    <br><br><br><br><br><br>
+    <div class="reference-boxes">
+        {% if data.comparatifClientHistoryPdfDto.pdl %}
+        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
+        {% endif %}
+        {% if data.comparatifClientHistoryPdfDto.segmentation %}
+        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
+        {% endif %}
+        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
+        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
+        {% endif %}
+    </div>
+
+    {# Display CURRENT providers for this container #}
+    {% for provider in container.current_providers %}
+    <div class="provider-row current-provider">
+        <div class="rates-container">
+            <div class="rate-box">
+                <div class="partner-logo">
+                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    {% else %}
+                    <img src="/images/default-logo.png" class="partner-image">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.fourniture }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.turpe }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.taxes }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.coutHTVA }}</div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+
+    {# Show title and labels ONLY when all CURRENT providers are done #}
+    {% if container.show_title_labels %}
+    <div class="section-title">{{ data.comparison_table.section_title }}</div>
+
+    <div class="labels-row">
+        {% for label in data.comparison_table.labels %}
+        <div class="label-item">
+            <div class="label-text">{{ label|safe }}</div>
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
+
+    {# Display REGULAR providers for this container #}
+    {% for provider in container.regular_providers %}
+    <div class="provider-row regular-provider">
+        <div class="rates-container">
+            <div class="rate-box">
+                <div class="partner-logo">
+                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                    {% else %}
+                    <img src="/images/default-logo.png" class="partner-image">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.fourniture }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.turpe }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.taxes }}</div>
+            </div>
+            <div class="rate-box">
+                <div class="rate-value">{{ provider.coutHTVA }}</div>
+            </div>
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+
+</div> <!-- container8 close -->
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
 {% endfor %}
+
+
+    {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+        {% if forloop.first or forloop.counter0|divisibleby:6 %}
+
+        <!-- Calculate start and end indices -->
+        {% with start_idx=forloop.counter0|add:0 %}
+        {% with end_idx=forloop.counter0|add:6 %}
+
+        <div class="container7">
+            <div class="content-wrapper7">
+                <div>
+                    <img src="{{ data.images.Hmm }}" alt="Hmm Image" class="hmm-image">
+                </div>
+                <div class="text-heading">
+                    <p>{{ data.tender_table.title }}</p>
+                </div>
+                <div>
+                    <img src="{{ data.images.side333 }}" alt="Side3 Image" class="side3-image">
+                </div>
+            </div>
+
+            <!-- 👇 Flex container for 4 tables with plus signs -->
+            <div class="tables-wrapper" style="display:flex; align-items:center; gap:20px;">
+                <!-- Pehla table -->
+                <div class="table-container" style="flex:1;">
+                    <p style="font-weight:bold; text-align:center; margin-bottom:5px;">FOURNITURE</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in data.tender_table.columns %}
+                                <th>{{ col|safe }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                            {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
+                            <tr>
+                                {% for col in data.tender_table.columns %}
+                                {% if "Fournisseur" in col %}
+                                <td style="text-align:center; vertical-align:middle;">
+                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                    <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
+                                        alt="{{ r.partnerName|default:'Partner' }}"
+                                        title="{{ r.partnerName|default:'Partner' }}">
+                                    {% else %}
+                                    <span class="partner-name">
+                                        {{ r.partnerName|default:"-" }}
+                                    </span>
+                                    {% endif %}
+                                </td>
+                                {% else %}
+                                {% if "HPH" in col %}
+                                <td>{{ r.hphRate|default:"-" }}</td>
+                                {% elif "HCH" in col %}
+                                <td>{{ r.hchRate|default:"-" }}</td>
+                                {% elif "HPE" in col %}
+                                <td>{{ r.hpeRate|default:"-" }}</td>
+                                {% elif "HCE" in col %}
+                                <td>{{ r.hceRate|default:"-" }}</td>
+                                {% elif "POINTE" in col %}
+                                <td>{{ r.pteRate|default:"-" }}</td>
+                                {% elif "HP" in col and "HPH" not in col %}
+                                <td>{{ r.fullHourRate|default:"-" }}</td>
+                                {% elif "HC" in col and "HCH" not in col %}
+                                <td>{{ r.offPeakHourRate|default:"-" }}</td>
+                                {% elif "BASE" in col %}
+                                <td>{{ r.baseRate|default:"-" }}</td>
+                                {% else %}
+                                <td>{{ r.rate|default:"-" }}</td>
+                                {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- plus sign -->
+                <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
+
+                <!-- Dusra table -->
+                <div class="table-container" style="flex:1;">
+                    <p style="font-weight:bold; text-align:center; margin-bottom:5px;">CAPACITE</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in data.tender_table.columns1 %}
+                                <th>{{ col|safe }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                            {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
+                            <tr>
+                                {% if r.typeCapa == "CAPAINCLUS" %}
+                                {% for col in data.tender_table.columns1 %}
+                                <td>inclus</td>
+                                {% endfor %}
+                                {% else %}
+                                {% for col in data.tender_table.columns1 %}
+                                {% if "HPH" in col %}
+                                <td>{{ r.capaHph|default:"-" }}</td>
+                                {% elif "HCH" in col %}
+                                <td>{{ r.capaHch|default:"-" }}</td>
+                                {% elif "HPE" in col %}
+                                <td>{{ r.capaHpe|default:"-" }}</td>
+                                {% elif "HCE" in col %}
+                                <td>{{ r.capaHce|default:"-" }}</td>
+                                {% elif "POINTE" in col %}
+                                <td>{{ r.capaPointe|default:"-" }}</td>
+                                {% elif "HP" in col and "HPH" not in col %}
+                                <td>{{ r.capaHp|default:"-" }}</td>
+                                {% elif "HC" in col and "HCH" not in col %}
+                                <td>{{ r.capaHc|default:"-" }}</td>
+                                {% elif "BASE" in col %}
+                                <td>{{ r.capaBase|default:"-" }}</td>
+                                {% else %}
+                                <td>{{ r.rate|default:"-" }}</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- plus sign -->
+                <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
+
+                <!-- Teesra table -->
+                <div class="table-container" style="width:150px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in data.tender_table.columns2 %}
+                                <th>{{ col|safe }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                            {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
+                            <tr>
+                                <td>{{ r.partCee|default:"-" }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- plus sign -->
+                <div style="font-size:60px; font-weight:bold; align-self:flex-start; margin-top:-250px;">+</div>
+
+                <!-- Chautha table -->
+                <div class="table-container" style="width:150px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                {% for col in data.tender_table.columns3 %}
+                                <th>{{ col|safe }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                            {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %}
+                            <tr>
+                                <td>{{ r.abonnementAnswer|default:"-" }}</td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div> <!-- tables-wrapper end -->
+        </div>
+
+        {% endwith %}
+        {% endwith %}
+
+        <br><br><br><br><br><br>
+        {% endif %}
+    {% endfor %}
 
 
 

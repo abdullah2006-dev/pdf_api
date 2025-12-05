@@ -705,8 +705,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         raise ValueError("Missing required field: createdOn")
 
     try:
-        dt = datetime.fromtimestamp(created_on_raw / 1000.0)  # convert ms → seconds
-        created_on = dt.strftime("%d/%m/%Y")  # format date
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0)
+        created_on = dt.strftime("%d/%m/%Y")
     except Exception as e:
         raise ValueError(f"Invalid createdOn value: {e}")
 
@@ -745,13 +745,54 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         for field in required_electricity_fields:
             if not dto.get(field):
                 raise ValueError(f"Missing required ELECTRICITY field: {field}")
-
     else:
         raise ValueError("Invalid or missing energyType. Must be 'ELECTRICITY'.")
 
-    comparatif_rate = comparatif.get("comparatifRates", [])
+    # Separate CURRENT and REGULAR providers
+    comparatif_rates = comparatif.get("comparatifRates", [])
+    current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
+    regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
 
-    dto["comparatifRates"] = comparatif_rate
+    # Paginate providers into containers (4 rows per container)
+    paginated_containers = []
+    current_index = 0
+    regular_index = 0
+
+    while current_index < len(current_providers) or regular_index < len(regular_providers):
+        container = {
+            "current_providers": [],
+            "regular_providers": [],
+            "show_header": len(paginated_containers) == 0,  # Only first container gets full header
+            "show_title_labels": False
+        }
+
+        rows_in_container = 0
+
+        # Add CURRENT providers first (up to 4 rows total)
+        while current_index < len(current_providers) and rows_in_container < 4:
+            container["current_providers"].append(current_providers[current_index])
+            current_index += 1
+            rows_in_container += 1
+
+        # If all CURRENT providers are done, show title/labels in this container
+        if current_index >= len(current_providers) and len(container["current_providers"]) > 0:
+            container["show_title_labels"] = True
+
+        # If no CURRENT providers exist at all, show title/labels in first container
+        if len(current_providers) == 0 and len(paginated_containers) == 0:
+            container["show_title_labels"] = True
+
+        # Fill remaining space with REGULAR providers (after title/labels)
+        while regular_index < len(regular_providers) and rows_in_container < 4:
+            container["regular_providers"].append(regular_providers[regular_index])
+            regular_index += 1
+            rows_in_container += 1
+
+        paginated_containers.append(container)
+
+    dto["paginatedContainers"] = paginated_containers
+    dto["comparatifRates"] = comparatif_rates  # Keep original for backward compatibility
+
     return dto
 
 
