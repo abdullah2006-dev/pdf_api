@@ -2287,262 +2287,175 @@
     <br>
     <br>
 
+    {% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}
+    <div class="container8">
 
-{% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}
-<div class="container8">
-
-    {# Every container shows header #}
-    <div class="content-wrapper8">
-        <div><img src="{{ data.images.double }}" class="double-image"></div>
-        <div class="text-heading1">
-            <p>{{ data.tender_results.title }}</p>
+        {# Every container shows header #}
+        <div class="content-wrapper8">
+            <div><img src="{{ data.images.double }}" class="double-image"></div>
+            <div class="text-heading1">
+                <p>{{ data.tender_results.title }}</p>
+            </div>
+            <div><img src="{{ data.images.black }}" class="blacky-image"></div>
+            <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
         </div>
-        <div><img src="{{ data.images.black }}" class="blacky-image"></div>
-        <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-    </div>
 
-    <div class="last-text">{{ data.comparison_table.last_text }}</div>
-    <div class="black2">{{ data.black }}</div>
-    <div class="black3">{{ data.black1 }}</div>
-    <div class="black4">{{ data.black3 }}</div>
+        <div class="last-text">{{ data.comparison_table.last_text }}</div>
+        <div class="black2">{{ data.black }}</div>
+        <div class="black3">{{ data.black1 }}</div>
+        <div class="black4">{{ data.black3 }}</div>
 
-    <div class="reference-boxes">
-        {% if data.comparatifClientHistoryPdfDto.pdl %}
-        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
-        {% endif %}
-        {% if data.comparatifClientHistoryPdfDto.segmentation %}
-        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
-        {% endif %}
-        {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
-        <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
-        {% endif %}
-    </div>
+        <div class="reference-boxes">
+            {% if data.comparatifClientHistoryPdfDto.pdl %}
+            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>
+            {% endif %}
+            {% if data.comparatifClientHistoryPdfDto.segmentation %}
+            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>
+            {% endif %}
+            {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
+            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
+            {% endif %}
+        </div>
 
-    {# Display CURRENT providers for this container #}
-    {% for provider in container.current_providers %}
-    <div class="provider-row current-provider">
-        <div class="rates-container">
-            <div class="rate-box">
-                <div class="partner-logo">
-                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
-                        alt="{{ provider.partnerName|default:'-' }}">
-                    {% else %}
-                    <span class="partner-name">
-                        {% if provider.partnerName %}
-                        {{ provider.partnerName }}
+        {# Display CURRENT providers for this container #}
+        {% for provider in container.current_providers %}
+        <div class="provider-row current-provider">
+            <div class="rates-container">
+                <div class="rate-box">
+                    <div class="partner-logo">
+                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
+                            alt="{{ provider.partnerName|default:'-' }}">
                         {% else %}
-                        {{ provider.newPartnerName|default:"-" }}
+                        <span class="partner-name">
+                            {% if provider.partnerName %}
+                            {{ provider.partnerName }}
+                            {% else %}
+                            {{ provider.newPartnerName|default:"-" }}
+                            {% endif %}
+                        </span>
                         {% endif %}
-                    </span>
-                    {% endif %}
+                    </div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
                 </div>
             </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
-            </div>
         </div>
-    </div>
-    <br>
-    {% endfor %}
-
-    {# Show title and labels ONLY when all CURRENT providers are done #}
-    {% if container.show_title_labels %}
-    <div class="section-title">{{ data.comparison_table.section_title }}</div>
-
-    <div class="labels-row">
-        {% for label in data.comparison_table.labels %}
-        <div class="label-item">
-            <div class="label-text">{{ label|safe }}</div>
-        </div>
+        <br>
         {% endfor %}
-    </div>
-    {% endif %}
 
-    {% for provider in container.regular_providers %}
-    <div class="provider-row regular-provider">
-        <div class="rates-container"
-             {% if loop.index == 1 %} style="background-color:#d8f5d1;" {% endif %}>
+        {# Show title and labels ONLY when all CURRENT providers are done #}
+        {% if container.show_title_labels %}
+        <div class="section-title">{{ data.comparison_table.section_title }}</div>
 
-            <div class="rate-box">
-                <div class="partner-logo">
-                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
-                        alt="{{ provider.partnerName|default:'-' }}">
-                    {% else %}
-                    <span class="partner-name">
-                        {% if provider.partnerName %}
-                        {{ provider.partnerName }}
+        <div class="labels-row">
+            {% for label in data.comparison_table.labels %}
+            <div class="label-item">
+                <div class="label-text">{{ label|safe }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% for provider in container.regular_providers %}
+        {% if forloop.first and forloop.parentloop.first %}
+            <!-- GREEN ROW: Only first row of first container -->
+            <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: -30px; margin-bottom: 25px; margin-left: 50px; padding: 0;">
+
+                <div style="display: flex; gap: 35px; justify-content: flex-start;">
+
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 330px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                            <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 340px; height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden;">
                         {% else %}
-                        {{ provider.newPartnerName|default:"-" }}
+                            <span style="display: flex; align-items: center; justify-content: center; width: 80px; height: 50px; margin-bottom: 5px; overflow: hidden; color: black;">
+                                {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
+                            </span>
                         {% endif %}
-                    </span>
-                    {% endif %}
+                    </div>
+
+                    <!-- Fourniture box -->
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 320px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                        <div style="font-size: 27px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                            {{ provider.fourniture|default:"-" }}
+                        </div>
+                    </div>
+
+                    <!-- Turpe box -->
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 320px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                        <div style="font-size: 27px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                            {{ provider.turpe|default:"-" }}
+                        </div>
+                    </div>
+
+                    <!-- Taxes box -->
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 320px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                        <div style="font-size: 27px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                            {{ provider.taxes|default:"-" }}
+                        </div>
+                    </div>
+
+                    <!-- CoutHTVA box -->
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 320px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                        <div style="font-size: 27px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                            {{ provider.coutHTVA|default:"-" }}
+                        </div>
+                    </div>
+
                 </div>
             </div>
+            <br>
+        {% else %}
+            <!-- NORMAL ROW: All other rows -->
+            <div class="provider-row regular-provider">
+                <div class="rates-container">
+                    <div class="rate-box">
+                        <div class="partner-logo">
+                            {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                                <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
+                                     alt="{{ provider.partnerName|default:'-' }}">
+                            {% else %}
+                                <span class="partner-name">
+                                    {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="rate-box">
+                        <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
+                    </div>
+                    <div class="rate-box">
+                        <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
+                    </div>
+                    <div class="rate-box">
+                        <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
+                    </div>
+                    <div class="rate-box">
+                        <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endif %}
+        {% endfor %}
 
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.turpe|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
-            </div>
 
-        </div>
-    </div>
-    <br>
+
+    </div> <!-- container8 close -->
+    <br><br><br><br><br><br>
+
     {% endfor %}
 
-
-
-
-</div> <!-- container8 close -->
-<br><br><br><br><br><br>
-
-{% endfor %}
-
-
-<!--    {% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}-->
-<!--    <div class="container8">-->
-
-<!--        {# Every container shows header #}-->
-<!--        <div class="content-wrapper8">-->
-<!--            <div><img src="{{ data.images.double }}" class="double-image"></div>-->
-<!--            <div class="text-heading1">-->
-<!--                <p>{{ data.tender_results.title }}</p>-->
-<!--            </div>-->
-<!--            <div><img src="{{ data.images.black }}" class="blacky-image"></div>-->
-<!--            <div><img src="{{ data.images.last }}" class="blacky-image2"></div>-->
-<!--        </div>-->
-
-<!--        <div class="last-text">{{ data.comparison_table.last_text }}</div>-->
-<!--        <div class="black2">{{ data.black }}</div>-->
-<!--        <div class="black3">{{ data.black1 }}</div>-->
-<!--        <div class="black4">{{ data.black3 }}</div>-->
-
-<!--        <div class="reference-boxes">-->
-<!--            {% if data.comparatifClientHistoryPdfDto.pdl %}-->
-<!--            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.pdl }}</div>-->
-<!--            {% endif %}-->
-<!--            {% if data.comparatifClientHistoryPdfDto.segmentation %}-->
-<!--            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.segmentation }}</div>-->
-<!--            {% endif %}-->
-<!--            {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}-->
-<!--            <div class="reference-box1">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>-->
-<!--            {% endif %}-->
-<!--        </div>-->
-
-<!--        {# Display CURRENT providers for this container #}-->
-<!--        {% for provider in container.current_providers %}-->
-<!--        <div class="provider-row current-provider">-->
-<!--            <div class="rates-container">-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="partner-logo">-->
-<!--                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}-->
-<!--                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image"-->
-<!--                            alt="{{ provider.partnerName|default:'-' }}">-->
-<!--                        {% else %}-->
-<!--                        <span class="partner-name">-->
-<!--                            {% if provider.partnerName %}-->
-<!--                            {{ provider.partnerName }}-->
-<!--                            {% else %}-->
-<!--                            {{ provider.newPartnerName|default:"-" }}-->
-<!--                            {% endif %}-->
-<!--                        </span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.turpe|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <br>-->
-<!--        {% endfor %}-->
-
-<!--        {# Show title and labels ONLY when all CURRENT providers are done #}-->
-<!--        {% if container.show_title_labels %}-->
-<!--        <div class="section-title">{{ data.comparison_table.section_title }}</div>-->
-
-<!--        <div class="labels-row">-->
-<!--            {% for label in data.comparison_table.labels %}-->
-<!--            <div class="label-item">-->
-<!--                <div class="label-text">{{ label|safe }}</div>-->
-<!--            </div>-->
-<!--            {% endfor %}-->
-<!--        </div>-->
-<!--        {% endif %}-->
-
-<!--        {# Display REGULAR providers for this container #}-->
-<!--        {% for provider in container.regular_providers %}-->
-<!--        <div class="provider-row regular-provider">-->
-<!--            <div class="rates-container">-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="partner-logo">-->
-<!--                        {% if provider.partnerPhoto and provider.partnerPhoto.path %}-->
-<!--                        <img src="{{ provider.partnerPhoto.path }}" class="partner-image"-->
-<!--                            alt="{{ provider.partnerName|default:'-' }}">-->
-<!--                        {% else %}-->
-<!--                        <span class="partner-name">-->
-<!--                            {% if provider.partnerName %}-->
-<!--                            {{ provider.partnerName }}-->
-<!--                            {% else %}-->
-<!--                            {{ provider.newPartnerName|default:"-" }}-->
-<!--                            {% endif %}-->
-<!--                        </span>-->
-<!--                        {% endif %}-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.fourniture|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.turpe|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>-->
-<!--                </div>-->
-<!--                <div class="rate-box">-->
-<!--                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <br>-->
-<!--        {% endfor %}-->
-
-<!--    </div> &lt;!&ndash; container8 close &ndash;&gt;-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <br>-->
-<!--    <br>-->
-
-<!--    {% endfor %}-->
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
