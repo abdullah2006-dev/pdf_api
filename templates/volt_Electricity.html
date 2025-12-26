@@ -1855,6 +1855,7 @@
     <br>
     <br>
 
+
     <div class="container1">
         <div class="content-wrapper1">
 
@@ -1900,6 +1901,7 @@
     <br>
     <br>
 
+
     <div class="container2">
         <div class="content-wrapper2">
 
@@ -1926,6 +1928,7 @@
     <br>
     <br>
     <br>
+
 
     <div class="container2-enedis-chart">
         <div class="content-wrapper2-enedis-chart">
@@ -2217,6 +2220,7 @@
     <br>
     <br>
 
+
     <div class="container3">
         <div class="content-wrapper3">
 
@@ -2245,6 +2249,7 @@
     <br>
     <br>
     <br>
+
 
     <div class="container4">
         <div class="content-wrapper4">
@@ -2286,6 +2291,7 @@
     <br>
     <br>
     <br>
+
 
     {% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}
     <div class="container8">
@@ -2368,7 +2374,7 @@
         {% endif %}
 
         {% for provider in container.regular_providers %}
-        {% if forloop.first and forloop.parentloop.first %}
+        {% if provider.is_green_row %}
             <!-- GREEN ROW: Only first row of first container -->
             <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: -30px; margin-bottom: 25px; margin-left: 50px; padding: 0;">
 
@@ -2455,7 +2461,6 @@
     <br><br><br><br><br><br>
 
     {% endfor %}
-
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
@@ -2649,8 +2654,6 @@
     {% endfor %}
 
 
-
-
     <div class="container5">
         <div class="content-wrapper5">
 
@@ -2688,6 +2691,7 @@
     <br>
     <br>
     <br>
+
 
     <div class="container6">
         <div class="content-wrapper6">

@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -16,6 +17,7 @@ from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
 from PyPDF2 import PdfReader, PdfWriter
+
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -73,7 +75,7 @@ def parse_request_data(request):
 def generate_chart(data):
     """Generate base64 chart image from input data with chartDataDto wrapper."""
     print("Inside GenerateChart")
-    
+
     # 🔹 Check if chartDataDto exists and is valid - Return None instead of raising error
     if "chartDataDto" not in data or not data["chartDataDto"]:
         print("chartDataDto is missing or empty, returning None")
@@ -169,15 +171,18 @@ def generate_chart(data):
 
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
 
+
 def build_comparatif_dto(comparatif, request, data):
     print("Inside BuildComparatifDTO")
+
+    # Validate and format createdOn
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
 
     try:
         dt = datetime.fromtimestamp(created_on_raw / 1000.0)  # convert ms → seconds
-        created_on = dt.strftime("%d/%m/%Y")  # format date
+        created_on = dt.strftime("%d/%m/%Y")
     except Exception as e:
         raise ValueError(f"Invalid createdOn value: {e}")
 
@@ -192,36 +197,83 @@ def build_comparatif_dto(comparatif, request, data):
         "currentContractExpiryDate": comparatif.get("currentContractExpiryDate"),
     }
 
+    # GAS-specific fields
     energy_type = dto.get("energyType")
-
     if energy_type == "GAS":
         required_gas_fields = ["pce", "gasProfile", "routingRate"]
 
-        # GAS ke fields update karna
         dto.update({
             "pce": comparatif.get("pce"),
             "gasProfile": comparatif.get("gasProfile"),
             "routingRate": comparatif.get("routingRate")
         })
 
-        # Validation: GAS ke saare required fields hone chahiye
         for field in required_gas_fields:
             if not dto.get(field):
                 raise ValueError(f"Missing required GAS field: {field}")
 
-        # Agar ELECTRICITY ke fields mistakenly bhej diye gaye hain toh error
         forbidden_electricity_fields = ["pdl", "segmentation"]
         for field in forbidden_electricity_fields:
             if comparatif.get(field):
                 raise ValueError(f"Field '{field}' is not allowed for GAS energyType")
-
     else:
         raise ValueError("Invalid or missing energyType. Must be 'GAS'.")
 
-    # Comparatif rate validation
-    comparatif_rate = comparatif.get("comparatifRates", [])
+    # Separate CURRENT and REGULAR providers
+    comparatif_rates = comparatif.get("comparatifRates", [])
+    current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
+    regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
 
-    dto["comparatifRates"] = comparatif_rate
+    # Paginate providers into containers (4 rows per container)
+    paginated_containers = []
+    current_index = 0
+    regular_index = 0
+    green_row_used = False  # Flag for green row (only once after labels)
+
+    while current_index < len(current_providers) or regular_index < len(regular_providers):
+        container = {
+            "current_providers": [],
+            "regular_providers": [],
+            "show_header": len(paginated_containers) == 0,
+            "show_title_labels": False
+        }
+
+        rows_in_container = 0
+
+        # Add CURRENT providers first
+        while current_index < len(current_providers) and rows_in_container < 4:
+            container["current_providers"].append(current_providers[current_index])
+            current_index += 1
+            rows_in_container += 1
+
+        # If all CURRENT providers are done, show title/labels in this container
+        if current_index >= len(current_providers) and len(container["current_providers"]) > 0:
+            container["show_title_labels"] = True
+
+        # If no CURRENT providers exist at all, show title/labels in first container
+        if len(current_providers) == 0 and len(paginated_containers) == 0:
+            container["show_title_labels"] = True
+
+        # Fill REGULAR providers (after labels)
+        while regular_index < len(regular_providers) and rows_in_container < 4:
+            provider = regular_providers[regular_index]
+
+            # GREEN ROW: only first row **after labels**, only once
+            if not green_row_used and container["show_title_labels"]:
+                provider["is_green_row"] = True
+                green_row_used = True
+            else:
+                provider["is_green_row"] = False
+
+            container["regular_providers"].append(provider)
+            regular_index += 1
+            rows_in_container += 1
+
+        paginated_containers.append(container)
+
+    dto["paginatedContainers"] = paginated_containers
+    dto["comparatifRates"] = comparatif_rates  # Keep original for backward compatibility
+
     return dto
 
 
@@ -231,7 +283,7 @@ def render_html(presentation_data):
 
 
 def generate_pdf(html_content, request, data, comparatif):
-    """Generate PDF and return its URL (without removing any pages)."""
+    """Generate PDF and return its URL (removes truly blank pages)."""
     print("Inside GeneratePDF")
     host = request.get_host().split(":")[0]
 
@@ -270,23 +322,103 @@ def generate_pdf(html_content, request, data, comparatif):
         font_config=None
     )
 
-     # ---- Remove unwanted pages (4,6,8,10,12) ----
-    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
-    remove_pages = [1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71,73,75,77,79,81,83,85,87,89,91,93,95,97,99]
-
+    # Remove blank pages - improved detection
     reader = PdfReader(pdf_path)
     writer = PdfWriter()
 
-    for i in range(len(reader.pages)):
-        if i not in remove_pages:
-            writer.add_page(reader.pages[i])
+    for i, page in enumerate(reader.pages):
+        is_blank = True
 
+        try:
+            # Method 1: Check for text content
+            text = page.extract_text().strip()
+            if len(text) > 20:  # Has meaningful text
+                is_blank = False
+
+            # Method 2: Check for images/XObjects
+            if '/Resources' in page:
+                resources = page['/Resources']
+                if '/XObject' in resources:
+                    xobjects = resources['/XObject'].get_object()
+                    # Check if XObjects actually exist and aren't empty
+                    if len(xobjects) > 0:
+                        is_blank = False
+
+            # Method 3: Check content stream size (more aggressive)
+            if '/Contents' in page and is_blank:
+                contents = page['/Contents']
+
+                if hasattr(contents, 'get_object'):
+                    content_obj = contents.get_object()
+                else:
+                    content_obj = contents
+
+                # Calculate actual content size
+                content_size = 0
+                if isinstance(content_obj, list):
+                    for stream in content_obj:
+                        if hasattr(stream, 'get_data'):
+                            data_content = stream.get_data()
+                            # Filter out whitespace-only content
+                            if data_content and len(data_content.strip()) > 50:
+                                content_size += len(data_content)
+                elif hasattr(content_obj, 'get_data'):
+                    data_content = content_obj.get_data()
+                    if data_content and len(data_content.strip()) > 50:
+                        content_size = len(data_content)
+
+                # Page has substantial content
+                if content_size > 200:
+                    is_blank = False
+
+            # Method 4: Check for graphics/drawing operations
+            if is_blank and '/Contents' in page:
+                try:
+                    contents = page['/Contents']
+                    if hasattr(contents, 'get_object'):
+                        content_obj = contents.get_object()
+                    else:
+                        content_obj = contents
+
+                    if hasattr(content_obj, 'get_data'):
+                        content_data = content_obj.get_data().decode('latin-1', errors='ignore')
+                        # Check for actual drawing commands (not just whitespace)
+                        drawing_commands = ['re', 'f', 'S', 'rg', 'RG', 'cm', 'Do', 'Tm', 'Tj']
+                        command_count = sum(content_data.count(cmd) for cmd in drawing_commands)
+                        if command_count > 2:  # Has actual graphics commands
+                            is_blank = False
+                except:
+                    pass
+
+        except Exception as e:
+            print(f"Error checking page {i + 1}: {e}")
+            # When in doubt, check page height - very short pages might be blanks
+            try:
+                mediabox = page.mediabox
+                height = float(mediabox.height)
+                if height < 100:  # Very small page = likely blank
+                    is_blank = True
+                else:
+                    is_blank = False  # Keep it
+            except:
+                is_blank = False
+
+        if not is_blank:
+            writer.add_page(page)
+            print(f"✓ Keeping page {i + 1}")
+        else:
+            print(f"✗ Removing blank page {i + 1}")
+
+    print(f"Final PDF: {len(writer.pages)} pages (removed {len(reader.pages) - len(writer.pages)} blank pages)")
+
+    # Write cleaned PDF
     with open(pdf_path, "wb") as f:
         writer.write(f)
 
-    # Build public URL (mirrors saved path after /uploads/volt/)
+    # Build public URL
     pdf_url = request.build_absolute_uri(
-        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")), pdf_filename)
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")),
+                     pdf_filename)
     )
 
     return pdf_url, pdf_filename
@@ -345,13 +477,13 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             if comparatif_dto.get("currentContractExpiryDate") else ""
         ),
         "black": (
-            safe_value(comparatif_dto.get("ratioHTVA")) + "%" 
-            if safe_value(comparatif_dto.get("ratioHTVA")) != "" 
+            safe_value(comparatif_dto.get("ratioHTVA")) + "%"
+            if safe_value(comparatif_dto.get("ratioHTVA")) != ""
             else ""
         ),
         "black1": (
-            safe_value(comparatif_dto.get("differenceHTVA")) + "€" 
-            if safe_value(comparatif_dto.get("differenceHTVA")) != "" 
+            safe_value(comparatif_dto.get("differenceHTVA")) + "€"
+            if safe_value(comparatif_dto.get("differenceHTVA")) != ""
             else ""
         ),
         "black3": "économisé/an",
@@ -386,7 +518,7 @@ def build_images(data, request):
         "Screenshot1": data.get("Screenshot1",
                                 build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
         "Screenshot2": data.get("Screenshot2",
-                                build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+                                 build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
         "black": build_static_url(request, "image/black-removebg-preview.png"),
         "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
         "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
@@ -448,11 +580,10 @@ def build_tender_table(data):
     """Tender table section."""
     print("Inside BuildTenderTable")
     return {
-        "title": data.get("tender_table_title", "Votre périmètre actuel"),
+        "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
         "columns": data.get("columns", [
-            "Nom du site", "Adresse du site", " Siret",
-            "PCE", "Tarif", "Profil", "Fournisseur Actuel",
-            "Échéance de Votre contrat actuel", "Volume Annuel en MWh (*)"
+            "Fournisseur", "Molecule€/MWh", "SiretAbonnement€/mois",
+            "CEE€/MWh", "CTA€/an", "TICGN€/MWh", "TOTAL€/an"
         ]),
     }
 
@@ -492,7 +623,7 @@ def build_change_section(data):
 def build_contact_info(data):
     """Contact info section."""
     print("Inside BuildContactInfo")
-    
+
     # Use safe_value to handle None values
     def safe_value(value):
         if value is None:
@@ -504,7 +635,7 @@ def build_contact_info(data):
             return str(value)
         except AttributeError:
             return str(value) if value is not None else ""
-    
+
     return {
         "company_name": safe_value(data.get("company_name", "VOLT CONSULTING")),
         "phone": safe_value(data.get("phone", "01 87 66 70 43")),
@@ -526,20 +657,22 @@ def volt_consulting_presentation_Electricitry(request):
 
         # 2️⃣ Generate Chart (if available)
         chart_base64 = generate_chart(data)
-        enedis_chart_base64 = generate_enedis_chart(data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear", {}))
+        enedis_chart_base64 = generate_enedis_chart(
+            data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear", {}))
 
         # 3️⃣ Build Comparatif DTO
         comparatif = data.get("comparatifClientHistoryPdfDto", {})
         comparatif_dto = build_comparatif_dto_Electricity(comparatif, request, data)
 
         # 4️⃣ Build Presentation Data
-        presentation_data = build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto, request)
+        presentation_data = build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64, comparatif_dto,
+                                                                request)
 
         # 5️⃣ Render HTML
         html_content = render_html_Elecricity(presentation_data)
 
         # 6️⃣ Generate PDF
-        pdf_url, pdf_filename = generate_pdf(html_content, request, data, comparatif)
+        pdf_url, pdf_filename = generate_pdf_Electricity(html_content, request, data, comparatif)
 
         return JsonResponse({
             "status": "success",
@@ -603,7 +736,7 @@ def generate_enedis_chart(chart_data):
         if any(v > 0 for v in values):  # Check if any non-zero values exist
             has_data = True
             break
-    
+
     if not has_data:
         return None
 
@@ -613,8 +746,8 @@ def generate_enedis_chart(chart_data):
         "HPH": "#002B5C",  # dark blue
         "HCE": "#A8C40F",  # green
         "HPE": "#FDD36A",  # yellow
-        "HP":  "#F77F00",  # orange
-        "HC":  "#0081A7",  # teal blue
+        "HP": "#F77F00",  # orange
+        "HC": "#0081A7",  # teal blue
         "BASE": "#9B5DE5",  # purple
     }
 
@@ -665,10 +798,10 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
     # Fix for black3 condition
     ratio_htva = safe_value(comparatif_dto.get("ratioHTVA"))
     difference_htva = safe_value(comparatif_dto.get("differenceHTVA"))
-    
+
     # Determine if we should show "économisé/an"
     show_economise = ratio_htva != "" and difference_htva != ""
-    
+
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
         "headingone": "APPEL D'OFFRE",
@@ -700,6 +833,8 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
 
 def build_comparatif_dto_Electricity(comparatif, request, data):
     print("Inside BuildComparatifDTO")
+
+    # Validate and format createdOn
     created_on_raw = comparatif.get("createdOn")
     if not created_on_raw:
         raise ValueError("Missing required field: createdOn")
@@ -757,41 +892,51 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     paginated_containers = []
     current_index = 0
     regular_index = 0
+    green_row_used = False  # Flag for green row (once after labels)
 
     while current_index < len(current_providers) or regular_index < len(regular_providers):
         container = {
             "current_providers": [],
             "regular_providers": [],
-            "show_header": len(paginated_containers) == 0,  # Only first container gets full header
+            "show_header": len(paginated_containers) == 0,
             "show_title_labels": False
         }
 
         rows_in_container = 0
 
-        # Add CURRENT providers first (up to 4 rows total)
+        # Add CURRENT providers first
         while current_index < len(current_providers) and rows_in_container < 4:
             container["current_providers"].append(current_providers[current_index])
             current_index += 1
             rows_in_container += 1
 
-        # If all CURRENT providers are done, show title/labels in this container
+        # Show title/labels if all CURRENT providers done
         if current_index >= len(current_providers) and len(container["current_providers"]) > 0:
             container["show_title_labels"] = True
 
-        # If no CURRENT providers exist at all, show title/labels in first container
+        # If no CURRENT providers at all, show labels in first container
         if len(current_providers) == 0 and len(paginated_containers) == 0:
             container["show_title_labels"] = True
 
-        # Fill remaining space with REGULAR providers (after title/labels)
+        # Fill REGULAR providers (after title/labels)
         while regular_index < len(regular_providers) and rows_in_container < 4:
-            container["regular_providers"].append(regular_providers[regular_index])
+            provider = regular_providers[regular_index]
+
+            # GREEN ROW: first provider row after labels, only once
+            if not green_row_used and container["show_title_labels"]:
+                provider["is_green_row"] = True
+                green_row_used = True
+            else:
+                provider["is_green_row"] = False
+
+            container["regular_providers"].append(provider)
             regular_index += 1
             rows_in_container += 1
 
         paginated_containers.append(container)
 
     dto["paginatedContainers"] = paginated_containers
-    dto["comparatifRates"] = comparatif_rates  # Keep original for backward compatibility
+    dto["comparatifRates"] = comparatif_rates
 
     return dto
 
@@ -818,7 +963,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
     columns = data.get("columns", [])
     columns1 = data.get("columns1", [])
     columns6 = data.get("columns6", [])
-    
+
     if not columns6:
         # Safely get values with defaults
         energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
@@ -838,8 +983,9 @@ def build_tender_table_Electricity(data, comparatif_dto):
         energy_type_upper = safe_strip_upper(energy_type)
         segmentation_upper = safe_strip_upper(segmentation)
         tarif_type_upper = safe_strip_upper(tarif_type)
-        
-        print(f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}")
+
+        print(
+            f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}")
 
         if energy_type_upper == "ELECTRICITY":
             # Define segmentation to columns6 mapping
@@ -856,7 +1002,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
                 "C3": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
                 "C4": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
             }
-            
+
             # Check for C5 with specific tarif types
             if segmentation_upper == "C5":
                 tarif_mapping = {
@@ -870,23 +1016,23 @@ def build_tender_table_Electricity(data, comparatif_dto):
                     "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
                     "BASE": ["BASE <br> €/MWh"]
                 }
-                
+
                 # Safely get columns6 with fallback
                 columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])
-                
+
                 # Get the base columns without "Fournisseur"
                 base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
-                
+
                 # Add "Fournisseur" to columns (but not to columns1)
                 columns = ["Fournisseur"] + base_columns
                 columns1 = base_columns  # columns1 doesn't get "Fournisseur"
             else:
                 # Use mapping for other segmentations
                 columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])
-                
+
                 # Get the base columns without "Fournisseur"
                 base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
-                
+
                 # Add "Fournisseur" to columns (but not to columns1)
                 columns = ["Fournisseur"] + base_columns
                 columns1 = base_columns  # columns1 doesn't get "Fournisseur"
@@ -914,9 +1060,75 @@ def build_tender_table_Electricity(data, comparatif_dto):
         ]),
     }
 
+
+def generate_pdf_Electricity(html_content, request, data, comparatif):
+    """Generate PDF and return its URL (without removing any pages)."""
+    print("Inside GeneratePDF")
+    host = request.get_host().split(":")[0]
+
+    # Choose base dirs (filesystem vs URL)
+    if host == "volt-crm.caansoft.com":
+        base_dir = settings.STAGING_MEDIA_ROOT
+        base_url = settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        base_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_url = settings.PRODUCTION_MEDIA_URL
+    else:
+        base_dir = settings.MEDIA_ROOT
+        base_url = settings.MEDIA_URL
+
+    # Dynamic path: client/<id>/comparatif/
+    relative_path = os.path.join("clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")))
+    pdf_dir = os.path.join(base_dir, relative_path)
+    os.makedirs(pdf_dir, exist_ok=True)
+
+    # Generate filename
+    pdf_filename = create_comparatif_filename(
+        data.get("clientSociety"),
+        data.get("clientTradeName"),
+        data.get("comparatifClientHistoryPdfDto", {}).get("energyType")
+    )
+    pdf_path = os.path.join(pdf_dir, pdf_filename)
+
+    # Save PDF using WeasyPrint
+    css = CSS(string="""@page { size: 530mm 265mm; margin: 0.0cm; }""")
+    HTML(string=html_content).write_pdf(
+        pdf_path,
+        stylesheets=[css],
+        zoom=0.8,
+        optimize_images=True,
+        presentational_hints=True,
+        font_config=None
+    )
+
+    # ---- Remove unwanted pages (4,6,8,10,12) ----
+    # PyPDF2 uses 0-based index: 3=page4, 5=page6, etc.
+    remove_pages = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 35, 37, 39, 41,
+                    43, 45, 47, 49, 51, 53, 55, 57, 59, 61, 63, 65, 67, 69, 71, 73, 75, 77, 79, 81, 83, 85, 87, 89, 91,
+                    93, 95, 97, 99]
+
+    reader = PdfReader(pdf_path)
+    writer = PdfWriter()
+
+    for i in range(len(reader.pages)):
+        if i not in remove_pages:
+            writer.add_page(reader.pages[i])
+
+    with open(pdf_path, "wb") as f:
+        writer.write(f)
+
+    # Build public URL (mirrors saved path after /uploads/volt/)
+    pdf_url = request.build_absolute_uri(
+        os.path.join(base_url, "clients", str(data.get("clientId")), "comparatif", str(comparatif.get("id")),
+                     pdf_filename)
+    )
+
+    return pdf_url, pdf_filename
+
+
 def enedis_Chart(comparatif_dto):
     """Provide dynamic Enedis rate information based on segmentation and tarif type."""
-    
+
     # Safe strip and upper function
     def safe_strip_upper(value):
         if value is None:
@@ -925,17 +1137,17 @@ def enedis_Chart(comparatif_dto):
             return str(value).strip().upper()
         except (AttributeError, TypeError):
             return ""
-    
+
     # Extract data with case-insensitive handling
     energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
     segmentation = comparatif_dto.get("segmentation", "")
     tarif_type = comparatif_dto.get("tarifType", "")
-    
+
     # Convert to uppercase for consistent comparison - SAFE VERSION
     energy_type_upper = safe_strip_upper(energy_type)
     segmentation_upper = safe_strip_upper(segmentation)
     tarif_type_upper = safe_strip_upper(tarif_type)
-    
+
     # Format contract start date from timestamp to dd/mm/yyyy
     contract_start_date = comparatif_dto.get("contractStartDate")
     formatted_date = "-"
@@ -948,14 +1160,14 @@ def enedis_Chart(comparatif_dto):
             formatted_date = dt.strftime("%d/%m/%Y")
         except (ValueError, TypeError, OSError):
             formatted_date = "-"
-    
+
     # Base response with common fields
     base_response = {
         "enedis_rate_On": comparatif_dto.get("pdl", "-"),
         "contract_start_date": formatted_date,
         "enedis_rate_sum": comparatif_dto.get("sumOfAnnualRates", "-"),
     }
-    
+
     # Apply exact same rules as build_tender_table_Electricity
     if energy_type_upper == "ELECTRICITY":
         if segmentation_upper in ["C1", "C2", "C3"]:
@@ -1010,5 +1222,5 @@ def enedis_Chart(comparatif_dto):
                 "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
                 "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
             })
-    
+
     return base_response
