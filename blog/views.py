@@ -582,8 +582,8 @@ def build_tender_table(data):
     return {
         "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
         "columns": data.get("columns", [
-            "Fournisseur", "Molecule€/MWh", "SiretAbonnement€/mois",
-            "CEE€/MWh", "CTA€/an", "TICGN€/MWh", "TOTAL€/an"
+            "Fournisseur", "Molecule €/MWh", "Abonnement €/mois",
+            "CEE €/MWh", "CTA€/an", "TICGN €/MWh", "TOTAL€/an"
         ]),
     }
 
