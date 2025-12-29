@@ -1662,7 +1662,7 @@
                         <!-- Fourniture box -->
                         <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
                             <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.prixMoleculeAnnual|default:"-" }}
+                                {{ provider.budgetEnergetique|default:"-" }}
                             </div>
                         </div>
 
@@ -1690,7 +1690,7 @@
                         <!-- ResultCEE box -->
                         <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
                             <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.partCeeAnnual|default:"-" }}
+                                {{ provider.partCeeByCA|default:"-" }}
                             </div>
                         </div>
 
@@ -1725,11 +1725,11 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="rate-box"><div class="rate-value">{{ provider.prixMoleculeAnnual|default:"-" }}</div></div>
+                        <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.distribution|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.taxes|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div></div>
-                        <div class="rate-box"><div class="rate-value">{{ provider.partCeeAnnual|default:"-" }}</div></div>
+                        <div class="rate-box"><div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.cta|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div></div>
                     </div>
