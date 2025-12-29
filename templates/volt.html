@@ -1624,13 +1624,13 @@
                             {% endif %}
                         </div>
                     </div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.distribution }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.tva }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.abonnement }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.resultCEE }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.cta }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergie|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.distribution|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.tva|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.cta|default:"-" }}</div></div>
+                    <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div></div>
                 </div>
             </div>
         {% endfor %}
