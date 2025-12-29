@@ -1617,10 +1617,12 @@
                 <div class="rates-container">
                     <div class="rate-box">
                         <div class="partner-logo">
-                            {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                                <img src="{{ provider.partnerPhoto.path }}" class="partner-image">
+                             {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                                <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 180px; height: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden;">
                             {% else %}
-                                <img src="/images/default-logo.png" class="partner-image">
+                                <span style="display: flex; align-items: center; justify-content: center; width: 100px; height: 30px; margin-bottom: 5px; overflow: hidden; color: black;">
+                                    {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
+                                </span>
                             {% endif %}
                         </div>
                     </div>
