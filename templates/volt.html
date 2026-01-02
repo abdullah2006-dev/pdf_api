@@ -934,21 +934,48 @@
             justify-content: flex-start;
         }
 
-        .rate-box {
-            background: #ffffff;
-            border: 3px solid #e0e0e0;
-            border-radius: 35px;
-            min-width: 180px;
-            min-height: 68px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 0px 6px;
-            text-align: center;
-        }
+   .partner-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 30%;      /* full width le */
+    min-height: 30px; /* logo ke liye space fix */
+}
+
+.partner-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.partner-name {
+    display: flex;
+    align-items: center;       /* vertically center */
+    justify-content: center;   /* horizontally center */
+    width: 100%;               /* box ke full width le */
+    height: 100%;              /* rate-box ke height me fit ho jaye */
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    word-break: break-word;    /* long names wrap ho jaye */
+    padding: 0 5px;
+}
+.rate-box {
+    width: 180px;    /* fixed width */
+    height: 68px;   /* fixed height */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border: 3px solid #e0e0e0;
+    border-radius: 35px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
         .rate-box * {
             line-height: 1.1;
         }
@@ -958,21 +985,7 @@
             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
         }
 
-        .partner-logo {
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 5px;
-            overflow: hidden;
-        }
 
-        .partner-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
 
         .rate-value {
             font-size: 20px;
@@ -1582,150 +1595,51 @@
 
 
     {% for container in data.comparatifClientHistoryPdfDto.paginatedContainers %}
-    <div class="container8">
-        <div class="content-wrapper8">
-            <div><img src="{{ data.images.double }}" class="double-image"></div>
-            <div class="text-heading1"><p>{{ data.tender_results.title }}</p></div>
-            <div><img src="{{ data.images.black }}" class="blacky-image"></div>
-            <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
-        </div>
-
-        <div class="last-text">{{ data.comparison_table.last_text }}</div>
-        <div class="black2">{{ data.black }}</div>
-        <div class="black3">{{ data.black1 }}</div>
-        <div class="black4">{{ data.black3 }}</div>
-
-        <div class="reference-boxes">
-            {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
-                {% if data.comparatifClientHistoryPdfDto.pce %}
-                    <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pce }}</div>
-                {% endif %}
-                {% if data.comparatifClientHistoryPdfDto.gasProfile %}
-                    <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.gasProfile }}</div>
-                {% endif %}
-                {% if data.comparatifClientHistoryPdfDto.routingRate %}
-                    <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>
-                {% endif %}
-                {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
-                    <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
-                {% endif %}
-            {% endif %}
-        </div>
-
-        {% for provider in container.current_providers %}
-            <div class="provider-row">
-                <div class="rates-container">
-                    <div class="rate-box">
-                        <div class="partner-logo">
-                             {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                                <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 180px; height: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden;">
-                            {% else %}
-                                <span style="display: flex; align-items: center; justify-content: center; width: 100px; height: 30px; margin-bottom: 5px; overflow: hidden; color: black;">
-                                    {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
-                                </span>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.distribution|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.taxes|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.cta|default:"-" }}</div></div>
-                    <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div></div>
-                </div>
+        <div class="container8">
+            <div class="content-wrapper8">
+                <div><img src="{{ data.images.double }}" class="double-image"></div>
+                <div class="text-heading1"><p>{{ data.tender_results.title }}</p></div>
+                <div><img src="{{ data.images.black }}" class="blacky-image"></div>
+                <div><img src="{{ data.images.last }}" class="blacky-image2"></div>
             </div>
-        {% endfor %}
 
-        <!-- Labels row: show only once after CURRENT providers -->
-        {% if container.show_title_labels %}
-            <div class="labels-row">
-                {% for label in data.comparison_table.labels %}
-                    <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
-                {% endfor %}
+            <div class="last-text">{{ data.comparison_table.last_text }}</div>
+            <div class="black2">{{ data.black }}</div>
+            <div class="black3">{{ data.black1 }}</div>
+            <div class="black4">{{ data.black3 }}</div>
+
+            <div class="reference-boxes">
+                {% if data.comparatifClientHistoryPdfDto.energyType|upper == "GAS" %}
+                    {% if data.comparatifClientHistoryPdfDto.pce %}
+                        <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.pce }}</div>
+                    {% endif %}
+                    {% if data.comparatifClientHistoryPdfDto.gasProfile %}
+                        <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.gasProfile }}</div>
+                    {% endif %}
+                    {% if data.comparatifClientHistoryPdfDto.routingRate %}
+                        <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.routingRate }}</div>
+                    {% endif %}
+                    {% if data.comparatifClientHistoryPdfDto.volumeAnnual %}
+                        <div class="reference-box">{{ data.comparatifClientHistoryPdfDto.volumeAnnual }}</div>
+                    {% endif %}
+                {% endif %}
             </div>
-        {% endif %}
 
-        {% for provider in container.regular_providers %}
-            {% if provider.is_green_row %}
-                <!-- GREEN ROW: Only first row of first container -->
-                <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: -30px; margin-bottom: 50px; margin-left: 170px; padding: 0;">
-                    <div style="display: flex; gap: 20px; justify-content: flex-start;">
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                                <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 180px; height: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden;">
-                            {% else %}
-                                <span style="display: flex; align-items: center; justify-content: center; width: 100px; height: 30px; margin-bottom: 5px; overflow: hidden; color: black;">
-                                    {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Fourniture box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.budgetEnergetique|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- Turpe box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.distribution|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- Taxes box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.taxes|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- Abonnement box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.abonnementAnnual|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- ResultCEE box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.partCeeByCA|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- CTA box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.cta|default:"-" }}
-                            </div>
-                        </div>
-
-                        <!-- CoutHTVA box -->
-                        <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                            <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
-                                {{ provider.coutHTVA|default:"-" }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <br>
-            {% else %}
-                <!-- NORMAL ROW: All other rows -->
-                <div class="provider-row regular-provider">
+            {% for provider in container.current_providers %}
+                <div class="provider-row">
                     <div class="rates-container">
                         <div class="rate-box">
-                            <div class="partner-logo">
-                                {% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
+                           <div class="partner-logo">
+                                {% if provider.newPartnerName and provider.newPartnerName.path %}
+                                    <img src="{{ provider.newPartnerName.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
                                 {% else %}
                                     <span class="partner-name">
                                         {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
                                     </span>
+
                                 {% endif %}
                             </div>
+
                         </div>
                         <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div></div>
                         <div class="rate-box"><div class="rate-value">{{ provider.distribution|default:"-" }}</div></div>
@@ -1736,17 +1650,119 @@
                         <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div></div>
                     </div>
                 </div>
-                <br>
+            {% endfor %}
+
+            <!-- Labels row: show only once after CURRENT providers -->
+            {% if container.show_title_labels %}
+                <div class="labels-row">
+                    {% for label in data.comparison_table.labels %}
+                        <div class="label-item"><div class="label-text">{{ label|safe }}</div></div>
+                    {% endfor %}
+                </div>
             {% endif %}
-        {% endfor %}
-    </div> <!-- container8 close -->
 
-    <!-- Conditional page break - only between containers, not after last one -->
-    {% if not forloop.last %}
-        <div style="page-break-after: always;"></div>
-    {% endif %}
+            {% for provider in container.regular_providers %}
+                {% if provider.is_green_row %}
+                    <!-- GREEN ROW: Only first row of first container -->
+                    <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: -30px; margin-bottom: 50px; margin-left: 170px; padding: 0;">
+                        <div style="display: flex; gap: 20px; justify-content: flex-start;">
 
-{% endfor %}
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                {% if provider.newPartnerName and provider.newPartnerName.path %}
+                                    <img src="{{ provider.newPartnerName.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 125px; height: 35px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden; margin-left: 20px;">
+                                {% else %}
+                                    <span style="display: flex; align-items: center; justify-content: center; width: 180px; height: 20px; margin-bottom: 5px; overflow: hidden; color: black;">
+                                        {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Fourniture box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.budgetEnergetique|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- Turpe box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.distribution|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- Taxes box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.taxes|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- Abonnement box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.abonnementAnnual|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- ResultCEE box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.partCeeByCA|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- CTA box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.cta|default:"-" }}
+                                </div>
+                            </div>
+
+                            <!-- CoutHTVA box -->
+                            <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                                <div style="font-size: 20px; font-weight: 600; color: black; line-height: 1.2; margin: 5px 0; word-break: break-word;">
+                                    {{ provider.coutHTVA|default:"-" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                {% else %}
+                    <!-- NORMAL ROW: All other rows -->
+                    <div class="provider-row regular-provider">
+                        <div class="rates-container">
+                            <div class="rate-box">
+                                <div class="partner-logo">
+                                    {% if provider.newPartnerName and provider.newPartnerName.path %}
+                                        <img src="{{ provider.newPartnerName.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
+                                    {% else %}
+                                        <span class="partner-name">
+                                            {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.distribution|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.taxes|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.cta|default:"-" }}</div></div>
+                            <div class="rate-box"><div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div></div>
+                        </div>
+                    </div>
+                    <br>
+                {% endif %}
+            {% endfor %}
+        </div> <!-- container8 close -->
+
+        <!-- Conditional page break - only between containers, not after last one -->
+        {% if not forloop.last %}
+            <div style="page-break-after: always;"></div>
+        {% endif %}
+
+    {% endfor %}
 
 
 
@@ -1777,21 +1793,23 @@
       {% endif %}
 
                 <tr>
-                  <!-- <td><img src="{{ rate.partnerPhoto.path }}" class="partner-logo1"></td> -->
-                  <td>{% if provider.partnerPhoto and provider.partnerPhoto.path %}
-                                <img src="{{ rate.partnerPhoto.path }}" class="partner-image"
-                                     alt="{{ rate.partnerName|default:'-' }}">
-                            {% else %}
-                                <span class="partner-name">
-                                    {{ rate.partnerName|default:rate.newPartnerName|default:"-" }}
-                                </span>
-                            {% endif %}</td>
-                  <td>{{ rate.prixMolecule|default:"-" }}</td>
-                  <td>{{ rate.abonnement|default:"-" }}</td>
-                  <td>{{ rate.partCee|default:"-" }}</td>
-                  <td>{{ rate.cta|default:"-" }}</td>
-                  <td>{{ rate.ticgn|default:"-" }}</td>
-                  <td>{{ rate.coutHTVA|default:"-" }}</td>
+                    <td>
+                        {% if rate.newPartnerName and rate.newPartnerName.path %}
+                            <img src="{{ rate.newPartnerName.path }}"
+                                 alt="{{ rate.partnerName|default:'-' }}"
+                                 style="width:50px; height:auto; border-radius:5px; object-fit:contain;">
+                        {% else %}
+                            <span style="font-size:15px;">
+                                {{ rate.partnerName|default:rate.newPartnerName|default:"-" }}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ rate.prixMolecule|default:"-" }}</td>
+                    <td>{{ rate.abonnement|default:"-" }}</td>
+                    <td>{{ rate.partCee|default:"-" }}</td>
+                    <td>{{ rate.cta|default:"-" }}</td>
+                    <td>{{ rate.ticgn|default:"-" }}</td>
+                    <td>{{ rate.coutHTVA|default:"-" }}</td>
                 </tr>
 
       {% if forloop.counter|divisibleby:4 or forloop.last %}
