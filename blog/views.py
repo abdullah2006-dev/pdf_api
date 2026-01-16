@@ -866,7 +866,8 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     energy_type = dto.get("energyType")
 
     if energy_type == "ELECTRICITY":
-        required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
+        # required_electricity_fields = ["pdl", "segmentation", "volumeAnnual"]
+        required_electricity_fields = ["pdl", "segmentation"]
 
         dto.update({
             "pdl": comparatif.get("pdl"),
