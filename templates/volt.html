@@ -462,7 +462,7 @@
             left: 330px;
             bottom: -90px;
             height: 670px;     /* bada kar diya */
-           width: auto; proportion maintain rahe */
+            width: auto;  /*proportion maintain rahe */
             max-width: none;
             max-height: none;
             object-fit: contain;
@@ -1630,8 +1630,8 @@
                     <div class="rates-container">
                         <div class="rate-box">
                            <div class="partner-logo">
-                                {% if provider.newPartnerName and provider.newPartnerName.path %}
-                                    <img src="{{ provider.newPartnerName.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
+                                {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                                    <img src="{{ provider.partnerPhoto.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
                                 {% else %}
                                     <span class="partner-name">
                                         {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
@@ -1668,8 +1668,8 @@
                         <div style="display: flex; gap: 20px; justify-content: flex-start;">
 
                             <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 180px; min-height: 68px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
-                                {% if provider.newPartnerName and provider.newPartnerName.path %}
-                                    <img src="{{ provider.newPartnerName.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 125px; height: 35px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden; margin-left: 20px;">
+                                {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                                    <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 250px; height: 35px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden; margin-left: 20px;">
                                 {% else %}
                                     <span style="display: flex; align-items: center; justify-content: center; width: 180px; height: 20px; margin-bottom: 5px; overflow: hidden; color: black;">
                                         {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
@@ -1734,8 +1734,8 @@
                         <div class="rates-container">
                             <div class="rate-box">
                                 <div class="partner-logo">
-                                    {% if provider.newPartnerName and provider.newPartnerName.path %}
-                                        <img src="{{ provider.newPartnerName.path }}" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
+                                    {% if provider.partnerPhoto and provider.partnerPhoto.path %}
+                                        <img src="{{ provider.partnerPhoto.path }}" style="width: 250px;" class="partner-image" alt="{{ provider.partnerName|default:'-' }}">
                                     {% else %}
                                         <span class="partner-name">
                                             {{ provider.partnerName|default:provider.newPartnerName|default:"-" }}
@@ -1794,10 +1794,10 @@
 
                 <tr>
                     <td>
-                        {% if rate.newPartnerName and rate.newPartnerName.path %}
-                            <img src="{{ rate.newPartnerName.path }}"
+                        {% if rate.partnerPhoto and rate.partnerPhoto.path %}
+                            <img src="{{ rate.partnerPhoto.path }}"
                                  alt="{{ rate.partnerName|default:'-' }}"
-                                 style="width:50px; height:auto; border-radius:5px; object-fit:contain;">
+                                 style="max-height: 40px; width: 100%; border-radius:5px; object-fit:contain;">
                         {% else %}
                             <span style="font-size:15px;">
                                 {{ rate.partnerName|default:rate.newPartnerName|default:"-" }}

@@ -500,7 +500,8 @@
             height: 670px;
             /* bada kar diya */
             width: auto;
-            proportion maintain rahe */ max-width: none;
+            /* proportion maintain rahe */ 
+            max-width: none;
             max-height: none;
             object-fit: contain;
         }
@@ -618,7 +619,8 @@
             height: 670px;
             /* bada kar diya */
             width: auto;
-            proportion maintain rahe */ max-width: none;
+            /* proportion maintain rahe */ 
+            max-width: none;
             max-height: none;
             object-fit: contain;
         }
@@ -2501,20 +2503,23 @@
                         {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %} <tr>
                             {% for col in data.tender_table.columns %}
                             {% if "Fournisseur" in col %}
-                            <td style="text-align:center; vertical-align:middle;">
-                                {% if r.partnerPhoto and r.partnerPhoto.path %}
-                                <img src="{{ r.partnerPhoto.path }}" class="partner-logo1"
-                                    alt="{{ r.partnerName|default:'-' }}" title="{{ r.partnerName|default:'Partner' }}">
-                                {% else %}
-                                <span class="partner-name">
-                                    {% if r.partnerName %}
-                                    {{ r.partnerName }}
+                          <td style="padding: 0;">
+                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                        <img src="{{ r.partnerPhoto.path }}"
+                                            alt="{{ r.partnerName|default:'-' }}"
+                                            title="{{ r.partnerName|default:'Partner' }}"
+                                            style="max-height: 40px; width: 100%;  object-fit: contain; display: block; margin: auto; padding: 5px 0;" />
                                     {% else %}
-                                    {{ r.newPartnerName|default:"-" }}
+                                        <span class="partner-name">
+                                            {% if r.partnerName %}
+                                                {{ r.partnerName }}
+                                            {% else %}
+                                                {{ r.newPartnerName|default:"-" }}
+                                            {% endif %}
+                                        </span>
                                     {% endif %}
-                                </span>
-                                {% endif %}
-                            </td>
+                                </td>
+
                             {% else %}
                             {% if "HPH" in col %}
                             <td>{{ r.hphRate|default:"-" }}</td>
