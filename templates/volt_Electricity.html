@@ -2573,21 +2573,21 @@
                             {% else %}
                             {% for col in data.tender_table.columns1 %}
                             {% if "HPH" in col %}
-                            <td>{{ r.capaHph|default:"-" }}</td>
+                            <td>{{ r.capaHph|default_if_none:"-" }}</td>
                             {% elif "HCH" in col %}
-                            <td>{{ r.capaHch|default:"-" }}</td>
+                            <td>{{ r.capaHch|default_if_none:"-" }}</td>
                             {% elif "HPE" in col %}
-                            <td>{{ r.capaHpe|default:"-" }}</td>
+                            <td>{{ r.capaHpe|default_if_none:"-" }}</td>
                             {% elif "HCE" in col %}
-                            <td>{{ r.capaHce|default:"-" }}</td>
+                            <td>{{ r.capaHce|default_if_none:"-" }}</td>
                             {% elif "POINTE" in col %}
-                            <td>{{ r.capaPointe|default:"-" }}</td>
+                            <td>{{ r.capaPointe|default_if_none:"-" }}</td>
                             {% elif "HP" in col and "HPH" not in col %}
-                            <td>{{ r.capaHp|default:"-" }}</td>
+                            <td>{{ r.capaHp|default_if_none:"-" }}</td>
                             {% elif "HC" in col and "HCH" not in col %}
-                            <td>{{ r.capaHc|default:"-" }}</td>
+                            <td>{{ r.capaHc|default_if_none:"-" }}</td>
                             {% elif "BASE" in col %}
-                            <td>{{ r.capaBase|default:"-" }}</td>
+                            <td>{{ r.capaBase|default_if_none:"-" }}</td>
                             {% else %}
                             <td>{{ r.rate|default:"-" }}</td>
                             {% endif %}
