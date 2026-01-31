@@ -461,9 +461,46 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             return ""
         return str(value)
 
+    # Get ratioHTVA and differenceHTVA values
+    ratio_htva = comparatif_dto.get("ratioHTVA")
+    difference_htva = comparatif_dto.get("differenceHTVA")
+    
+    # Initialize black, black1, black3 based on conditions
+    black = ""
+    black1 = ""
+    black3 = ""
+    
+    # Condition for black (ratioHTVA):
+    # Show only if ratioHTVA is not None, not empty, and ≤ 0
+    if ratio_htva is not None and ratio_htva != "":
+        try:
+            ratio_num = float(ratio_htva)
+            if ratio_num <= 0:  # ≤ 0 (including negative values)
+                black = f"{ratio_htva}%"
+        except (ValueError, TypeError):
+            # If can't convert to number, keep empty
+            pass
+    
+    # Condition for black1 (differenceHTVA):
+    # Show only if differenceHTVA is not None, not empty, and ≤ 0
+    if difference_htva is not None and difference_htva != "":
+        try:
+            diff_num = float(difference_htva)
+            if diff_num <= 0:  # ≤ 0 (including negative values)
+                black1 = f"{difference_htva}€"
+        except (ValueError, TypeError):
+            # If can't convert to number, keep empty
+            pass
+    
+    # Condition for black3 ("économisé/an"):
+    # Show only if BOTH ratioHTVA ≤ 0 AND differenceHTVA ≤ 0
+    # (both are negative or zero)
+    if black != "" and black1 != "":
+        black3 = "économisé/an"
+
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
-        "headingone": "APPEL D’OFFRE",
+        "headingone": "APPEL D'OFFRE",
         "clientSociety": safe_value(data.get("clientSociety")),
         "clientSiret": safe_value(data.get("clientSiret")),
         "clientFirstName": safe_value(data.get("clientFirstName")),
@@ -476,17 +513,9 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
             datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
             if comparatif_dto.get("currentContractExpiryDate") else ""
         ),
-        "black": (
-            safe_value(comparatif_dto.get("ratioHTVA")) + "%"
-            if safe_value(comparatif_dto.get("ratioHTVA")) != ""
-            else ""
-        ),
-        "black1": (
-            safe_value(comparatif_dto.get("differenceHTVA")) + "€"
-            if safe_value(comparatif_dto.get("differenceHTVA")) != ""
-            else ""
-        ),
-        "black3": "économisé/an",
+        "black": black,
+        "black1": black1,
+        "black3": black3,
         "image": build_image_section(data, chart_base64),
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
@@ -795,12 +824,42 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         except AttributeError:
             return str(value) if value is not None else ""
 
-    # Fix for black3 condition
-    ratio_htva = safe_value(comparatif_dto.get("ratioHTVA"))
-    difference_htva = safe_value(comparatif_dto.get("differenceHTVA"))
-
-    # Determine if we should show "économisé/an"
-    show_economise = ratio_htva != "" and difference_htva != ""
+    # Get ratioHTVA and differenceHTVA values
+    ratio_htva = comparatif_dto.get("ratioHTVA")
+    difference_htva = comparatif_dto.get("differenceHTVA")
+    
+    # Initialize black, black1, black3 based on conditions
+    black = ""
+    black1 = ""
+    black3 = ""
+    
+    # Condition for black (ratioHTVA):
+    # Show only if ratioHTVA is not None, not empty, and ≤ 0
+    if ratio_htva is not None and ratio_htva != "":
+        try:
+            ratio_num = float(ratio_htva)
+            if ratio_num <= 0:  # ≤ 0 (including negative values)
+                black = f"{ratio_htva}%"
+        except (ValueError, TypeError):
+            # If can't convert to number, keep empty
+            pass
+    
+    # Condition for black1 (differenceHTVA):
+    # Show only if differenceHTVA is not None, not empty, and ≤ 0
+    if difference_htva is not None and difference_htva != "":
+        try:
+            diff_num = float(difference_htva)
+            if diff_num <= 0:  # ≤ 0 (including negative values)
+                black1 = f"{difference_htva}€"
+        except (ValueError, TypeError):
+            # If can't convert to number, keep empty
+            pass
+    
+    # Condition for black3 ("économisé/an"):
+    # Show only if BOTH ratioHTVA ≤ 0 AND differenceHTVA ≤ 0
+    # (both are negative or zero)
+    if black != "" and black1 != "":
+        black3 = "économisé/an"
 
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
@@ -811,9 +870,9 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "clientLastName": safe_value(data.get("clientLastName")),
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
-        "black": ratio_htva + "%" if ratio_htva != "" else "",
-        "black1": difference_htva + "€" if difference_htva != "" else "",
-        "black3": "économisé/an" if show_economise else "",
+        "black": black,
+        "black1": black1,
+        "black3": black3,
         "image": build_image_section(data, chart_base64),
         "imageOne": {
             "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
