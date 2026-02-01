@@ -2330,7 +2330,7 @@
         <div class="provider-row current-provider">
             <div class="rates-container">
                 <div class="rate-box">
-                    <div class="partner-logo">
+                    <div class="partner-logo" style="width: 8rem;">
                         {% if provider.partnerPhoto and provider.partnerPhoto.path %}
                         <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
                             alt="{{ provider.partnerName|default:'-' }}">
@@ -2379,10 +2379,8 @@
         {% if provider.is_green_row %}
             <!-- GREEN ROW: Only first row of first container -->
             <div style="display: flex; flex-direction: row; align-items: flex-start; margin-top: -30px; margin-bottom: 25px; margin-left: 50px; padding: 0;">
-
                 <div style="display: flex; gap: 35px; justify-content: flex-start;">
-
-                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 330px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1;">
+                    <div style="background: #98FB98; border: 3px solid #e0e0e0; border-radius: 40px; min-width: 330px; min-height: 75px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6px; text-align: center; line-height: 1.1; width: 8rem;">
                         {% if provider.partnerPhoto and provider.partnerPhoto.path %}
                             <img src="{{ provider.partnerPhoto.path }}" alt="{{ provider.partnerName|default:'-' }}" style="max-width: 100%; max-height: 100%; object-fit: contain; width: 340px; height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 5px; overflow: hidden;">
                         {% else %}
@@ -2431,7 +2429,7 @@
             <div class="provider-row regular-provider">
                 <div class="rates-container">
                     <div class="rate-box">
-                        <div class="partner-logo">
+                        <div class="partner-logo" style="width: 8rem;">
                             {% if provider.partnerPhoto and provider.partnerPhoto.path %}
                                 <img src="{{ provider.partnerPhoto.path }}" class="partner-image"
                                      alt="{{ provider.partnerName|default:'-' }}">

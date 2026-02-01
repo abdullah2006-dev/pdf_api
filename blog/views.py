@@ -223,6 +223,32 @@ def build_comparatif_dto(comparatif, request, data):
     comparatif_rates = comparatif.get("comparatifRates", [])
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
+    
+    # NEW: Sort regular_providers by coutHTVA in ascending order
+    # Handle None values by putting them at the end
+    def get_cout_htva(provider):
+        cout_htva = provider.get("coutHTVA")
+        if cout_htva is None:
+            return float('inf')  # Put None values at the end
+        try:
+            return float(cout_htva)
+        except (ValueError, TypeError):
+            return float('inf')
+    
+    regular_providers.sort(key=get_cout_htva)
+
+    # Get current provider's coutHTVA for comparison
+    current_cout_htva = None
+    if current_providers and len(current_providers) > 0:
+        current_cout_htva = get_cout_htva(current_providers[0])
+
+    # NEW: Find the minimum coutHTVA from regular_providers
+    min_regular_cout_htva = None
+    if regular_providers:
+        min_regular_cout_htva = get_cout_htva(regular_providers[0])
+        # If min_regular_cout_htva is infinity (None values), set to None
+        if min_regular_cout_htva == float('inf'):
+            min_regular_cout_htva = None
 
     # Paginate providers into containers (4 rows per container)
     paginated_containers = []
@@ -258,8 +284,20 @@ def build_comparatif_dto(comparatif, request, data):
         while regular_index < len(regular_providers) and rows_in_container < 4:
             provider = regular_providers[regular_index]
 
-            # GREEN ROW: only first row **after labels**, only once
-            if not green_row_used and container["show_title_labels"]:
+            # UPDATED GREEN ROW LOGIC:
+            # Mark as green row only if:
+            # 1. Not already used
+            # 2. We're in the container that shows title/labels
+            # 3. This is the first regular provider after labels
+            # 4. This provider has the minimum coutHTVA among regular providers
+            # 5. The min_regular_cout_htva ≤ current_cout_htva
+            if (not green_row_used and 
+                container["show_title_labels"] and 
+                regular_index == 0 and  # First regular provider
+                min_regular_cout_htva is not None and 
+                current_cout_htva is not None and 
+                min_regular_cout_htva <= current_cout_htva):
+                
                 provider["is_green_row"] = True
                 green_row_used = True
             else:
@@ -947,6 +985,32 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     comparatif_rates = comparatif.get("comparatifRates", [])
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
+    
+    # NEW: Sort regular_providers by coutHTVA in ascending order
+    # Handle None values by putting them at the end
+    def get_cout_htva(provider):
+        cout_htva = provider.get("coutHTVA")
+        if cout_htva is None:
+            return float('inf')  # Put None values at the end
+        try:
+            return float(cout_htva)
+        except (ValueError, TypeError):
+            return float('inf')
+    
+    regular_providers.sort(key=get_cout_htva)
+
+    # Get current provider's coutHTVA for comparison
+    current_cout_htva = None
+    if current_providers and len(current_providers) > 0:
+        current_cout_htva = get_cout_htva(current_providers[0])
+
+    # NEW: Find the minimum coutHTVA from regular_providers
+    min_regular_cout_htva = None
+    if regular_providers:
+        min_regular_cout_htva = get_cout_htva(regular_providers[0])
+        # If min_regular_cout_htva is infinity (None values), set to None
+        if min_regular_cout_htva == float('inf'):
+            min_regular_cout_htva = None
 
     # Paginate providers into containers (4 rows per container)
     paginated_containers = []
@@ -982,8 +1046,20 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         while regular_index < len(regular_providers) and rows_in_container < 4:
             provider = regular_providers[regular_index]
 
-            # GREEN ROW: first provider row after labels, only once
-            if not green_row_used and container["show_title_labels"]:
+            # UPDATED GREEN ROW LOGIC:
+            # Mark as green row only if:
+            # 1. Not already used
+            # 2. We're in the container that shows title/labels
+            # 3. This is the first regular provider after labels
+            # 4. This provider has the minimum coutHTVA among regular providers
+            # 5. The min_regular_cout_htva ≤ current_cout_htva
+            if (not green_row_used and 
+                container["show_title_labels"] and 
+                regular_index == 0 and  # First regular provider
+                min_regular_cout_htva is not None and 
+                current_cout_htva is not None and 
+                min_regular_cout_htva <= current_cout_htva):
+                
                 provider["is_green_row"] = True
                 green_row_used = True
             else:
@@ -999,7 +1075,6 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     dto["comparatifRates"] = comparatif_rates
 
     return dto
-
 
 def build_comparison_table_Electricity(data):
     """Comparison table section."""
