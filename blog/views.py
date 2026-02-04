@@ -973,6 +973,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
             "volumeAnnual": comparatif.get("volumeAnnual"),
             "ratioHTVA": comparatif.get("ratioHTVA"),
             "differenceHTVA": comparatif.get("differenceHTVA"),
+            "parametreDeCompteur": comparatif.get("parametreDeCompteur"),
         })
 
         for field in required_electricity_fields:
@@ -1104,6 +1105,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
         energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
         segmentation = comparatif_dto.get("segmentation", "")
         tarif_type = comparatif_dto.get("tarifType", "")
+        parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")
 
         # Convert to uppercase and strip whitespace for case-insensitive comparison - SAFE VERSION
         def safe_strip_upper(value):
@@ -1118,12 +1120,12 @@ def build_tender_table_Electricity(data, comparatif_dto):
         energy_type_upper = safe_strip_upper(energy_type)
         segmentation_upper = safe_strip_upper(segmentation)
         tarif_type_upper = safe_strip_upper(tarif_type)
+        parametreDeCompteur_upper = safe_strip_upper(parametreDeCompteur)
 
         print(
             f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}")
-
+        
         if energy_type_upper == "ELECTRICITY":
-            # Define segmentation to columns6 mapping
             segmentation_mapping = {
                 "C1": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
                 "C2": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
@@ -1131,51 +1133,84 @@ def build_tender_table_Electricity(data, comparatif_dto):
                 "C4": ["HPH", "HCH", "HPE", "HCE"],
             }
 
-            segmentation_mapping1 = {
+            segmentation_mapping_with_units = {
                 "C1": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
                 "C2": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
                 "C3": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
                 "C4": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
             }
 
-            # Check for C5 with specific tarif types
-            if segmentation_upper == "C5":
-                tarif_mapping = {
-                    "QUATRE": ["HPH", "HCH", "HPE", "HCE"],
-                    "DOUBLE": ["HP", "HC"],
-                    "BASE": ["BASE"]
-                }
+            if segmentation_upper in {"C1", "C2", "C3", "C4"}:
+                columns = ["Fournisseur"] + segmentation_mapping_with_units.get(segmentation_upper, [])
+                columns1 = segmentation_mapping_with_units.get(segmentation_upper, [])
+                columns6 = segmentation_mapping.get(segmentation_upper, [])
+            elif parametreDeCompteur_upper == "C5BASE":
+                columns = ["Fournisseur", "BASE <br> €/MWh"]
+                columns1 = ["BASE <br> €/MWh"]
+                column6 = ["BASE"]
+            elif parametreDeCompteur_upper == "C5C4":
+                columns = ["Fournisseur"] + segmentation_mapping_with_units.get("C4", [])
+                columns1 = segmentation_mapping_with_units.get("C4", [])
+                columns6 = segmentation_mapping.get("C4", [])
+            elif parametreDeCompteur_upper == "C5HP":
+                columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
+                columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
+                columns6 = ["HP", "HC"]
 
-                tarif_mapping1 = {
-                    "QUATRE": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
-                    "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
-                    "BASE": ["BASE <br> €/MWh"]
-                }
+        # if energy_type_upper == "ELECTRICITY":
+        #     # Define segmentation to columns6 mapping
+        #     segmentation_mapping = {
+        #         "C1": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+        #         "C2": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+        #         "C3": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
+        #         "C4": ["HPH", "HCH", "HPE", "HCE"],
+        #     }
 
-                # Safely get columns6 with fallback
-                columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])
+        #     segmentation_mapping1 = {
+        #         "C1": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+        #         "C2": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+        #         "C3": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
+        #         "C4": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
+        #     }
 
-                # Get the base columns without "Fournisseur"
-                base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+        #     # Check for C5 with specific tarif types
+        #     if segmentation_upper == "C5":
+        #         tarif_mapping = {
+        #             "QUATRE": ["HPH", "HCH", "HPE", "HCE"],
+        #             "DOUBLE": ["HP", "HC"],
+        #             "BASE": ["BASE"]
+        #         }
 
-                # Add "Fournisseur" to columns (but not to columns1)
-                columns = ["Fournisseur"] + base_columns
-                columns1 = base_columns  # columns1 doesn't get "Fournisseur"
-            else:
-                # Use mapping for other segmentations
-                columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])
+        #         tarif_mapping1 = {
+        #             "QUATRE": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
+        #             "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
+        #             "BASE": ["BASE <br> €/MWh"]
+        #         }
 
-                # Get the base columns without "Fournisseur"
-                base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+        #         # Safely get columns6 with fallback
+        #         columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])
 
-                # Add "Fournisseur" to columns (but not to columns1)
-                columns = ["Fournisseur"] + base_columns
-                columns1 = base_columns  # columns1 doesn't get "Fournisseur"
-        else:
-            # Default fallback for non-electricity or unknown energy types
-            columns6 = ["HP", "HC"]
-            columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
-            columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
+        #         # Get the base columns without "Fournisseur"
+        #         base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+
+        #         # Add "Fournisseur" to columns (but not to columns1)
+        #         columns = ["Fournisseur"] + base_columns
+        #         columns1 = base_columns  # columns1 doesn't get "Fournisseur"
+        #     else:
+        #         # Use mapping for other segmentations
+        #         columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])
+
+        #         # Get the base columns without "Fournisseur"
+        #         base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
+
+        #         # Add "Fournisseur" to columns (but not to columns1)
+        #         columns = ["Fournisseur"] + base_columns
+        #         columns1 = base_columns  # columns1 doesn't get "Fournisseur"
+        # else:
+        #     # Default fallback for non-electricity or unknown energy types
+        #     columns6 = ["HP", "HC"]
+        #     columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
+        #     columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
 
     return {
         "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
