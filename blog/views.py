@@ -1387,13 +1387,13 @@ def enedis_Chart(comparatif_dto):
     #         })
     #     else:
             # Default: HP, HC
-            base_response.update({
-                "enedis_rate_hp": comparatif_dto.get("hp", "-"),
-                "enedis_rate_hc": comparatif_dto.get("hc", "-"),
+            # base_response.update({
+            #     "enedis_rate_hp": comparatif_dto.get("hp", "-"),
+            #     "enedis_rate_hc": comparatif_dto.get("hc", "-"),
 
-                "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
-                "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
-            })
+            #     "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
+            #     "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
+            # })
 
     if energy_type_upper == "ELECTRICITY":
         if segmentation_upper in ["C1", "C2", "C3"]:
