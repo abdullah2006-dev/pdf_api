@@ -1147,7 +1147,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
             elif parametreDeCompteur_upper == "C5BASE":
                 columns = ["Fournisseur", "BASE <br> €/MWh"]
                 columns1 = ["BASE <br> €/MWh"]
-                column6 = ["BASE"]
+                columns6 = ["BASE"]
             elif parametreDeCompteur_upper == "C5C4":
                 columns = ["Fournisseur"] + segmentation_mapping_with_units.get("C4", [])
                 columns1 = segmentation_mapping_with_units.get("C4", [])
