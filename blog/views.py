@@ -1312,11 +1312,13 @@ def enedis_Chart(comparatif_dto):
     energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
     segmentation = comparatif_dto.get("segmentation", "")
     tarif_type = comparatif_dto.get("tarifType", "")
+    parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")
 
     # Convert to uppercase for consistent comparison - SAFE VERSION
     energy_type_upper = safe_strip_upper(energy_type)
     segmentation_upper = safe_strip_upper(segmentation)
     tarif_type_upper = safe_strip_upper(tarif_type)
+    parametreDeCompteur_upper = safe_strip_upper(parametreDeCompteur)
 
     # Format contract start date from timestamp to dd/mm/yyyy
     contract_start_date = comparatif_dto.get("contractStartDate")
@@ -1392,5 +1394,60 @@ def enedis_Chart(comparatif_dto):
                 "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
                 "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
             })
+
+    if energy_type_upper == "ELECTRICITY":
+        if segmentation_upper in ["C1", "C2", "C3"]:
+            # C1, C2, C3: HPE, HPH, HCE, HCH, POINTE
+            base_response.update({
+                "enedis_rate_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_hce": comparatif_dto.get("hce", "-"),
+                "enedis_rate_pointe": comparatif_dto.get("pte", "-"),
+
+                "enedis_rate_puissance_hph": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hch": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hpe": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hce": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_pointe": comparatif_dto.get("puissance", "-"),
+            })
+        elif segmentation_upper == "C4" or (segmentation_upper == "C5" and parametreDeCompteur_upper == "C5C4"):
+            # C4 or C5 QUATRE: HPE, HPH, HCE, HCH
+            base_response.update({
+                "enedis_rate_hph": comparatif_dto.get("hph", "-"),
+                "enedis_rate_hch": comparatif_dto.get("hch", "-"),
+                "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
+                "enedis_rate_hce": comparatif_dto.get("hce", "-"),
+
+                "enedis_rate_puissance_hph": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hch": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hpe": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hce": comparatif_dto.get("puissance", "-"),
+            })
+        elif segmentation_upper == "C5" and parametreDeCompteur == "C5BASE":
+            # C5 BASE: BASE only
+            base_response.update({
+                "enedis_rate_base": comparatif_dto.get("base", "-"),
+                "enedis_rate_puissance_base": comparatif_dto.get("puissance", "-"),
+            })
+        elif segmentation_upper == "C5" and parametreDeCompteur == "C5HP":
+            # C5 DOUBLE: HP, HC
+            base_response.update({
+                "enedis_rate_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_hc": comparatif_dto.get("hc", "-"),
+
+                "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
+            })
+        else:
+            # Default: HP, HC
+            base_response.update({
+                "enedis_rate_hp": comparatif_dto.get("hp", "-"),
+                "enedis_rate_hc": comparatif_dto.get("hc", "-"),
+
+                "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
+                "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
+            })
+
 
     return base_response
