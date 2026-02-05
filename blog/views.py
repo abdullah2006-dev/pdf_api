@@ -1123,7 +1123,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
         parametreDeCompteur_upper = safe_strip_upper(parametreDeCompteur)
 
         print(
-            f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}")
+            f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}, parametreDeCompteur_upper={parametreDeCompteur_upper}")
         
         if energy_type_upper == "ELECTRICITY":
             segmentation_mapping = {
@@ -1424,13 +1424,13 @@ def enedis_Chart(comparatif_dto):
                 "enedis_rate_puissance_hpe": comparatif_dto.get("puissance", "-"),
                 "enedis_rate_puissance_hce": comparatif_dto.get("puissance", "-"),
             })
-        elif segmentation_upper == "C5" and parametreDeCompteur == "C5BASE":
+        elif segmentation_upper == "C5" and parametreDeCompteur_upper == "C5BASE":
             # C5 BASE: BASE only
             base_response.update({
                 "enedis_rate_base": comparatif_dto.get("base", "-"),
                 "enedis_rate_puissance_base": comparatif_dto.get("puissance", "-"),
             })
-        elif segmentation_upper == "C5" and parametreDeCompteur == "C5HP":
+        elif segmentation_upper == "C5" and parametreDeCompteur_upper == "C5HP":
             # C5 DOUBLE: HP, HC
             base_response.update({
                 "enedis_rate_hp": comparatif_dto.get("hp", "-"),
