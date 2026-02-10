@@ -254,7 +254,7 @@ def build_comparatif_dto(comparatif, request, data):
     paginated_containers = []
     current_index = 0
     regular_index = 0
-    green_row_used = False  # Flag for green row (only once after labels)
+    green_row_used = True  # Flag for green row (only once after labels)
 
     while current_index < len(current_providers) or regular_index < len(regular_providers):
         container = {
@@ -1017,7 +1017,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     paginated_containers = []
     current_index = 0
     regular_index = 0
-    green_row_used = False  # Flag for green row (once after labels)
+    green_row_used = True  # Flag for green row (once after labels)
 
     while current_index < len(current_providers) or regular_index < len(regular_providers):
         container = {
