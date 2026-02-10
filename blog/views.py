@@ -564,6 +564,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "comparison_table": build_comparison_table(data),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
+        "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
     }
 
 
@@ -924,7 +925,8 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "tender_table": build_tender_table_Electricity(data, comparatif_dto),
         "change_section": build_change_section(data),
         "contact_info": build_contact_info(data),
-        "enedis_info": enedis_Chart(comparatif_dto)
+        "enedis_info": enedis_Chart(comparatif_dto),
+        "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
     }
 
 
