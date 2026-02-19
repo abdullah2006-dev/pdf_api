@@ -1649,6 +1649,7 @@
     </div>
 
 
+    {% if data.has_chart %}
     <div class="container2">
         <div class="content-wrapper2">
 
@@ -1669,6 +1670,7 @@
 
         </div>
     </div>
+    {% endif %}
 
 
     <div class="container3">
@@ -1928,27 +1930,27 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.distribution|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.cta|default:"-" }}</div>
-            </div>
-            <div class="rate-box">
-                <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.distribution|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.taxes|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.abonnementAnnual|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.partCeeByCA|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.cta|default:"-" }}</div>
+                </div>
+                <div class="rate-box">
+                    <div class="rate-value">{{ provider.coutHTVA|default:"-" }}</div>
+                </div>
             </div>
         </div>
     </div>

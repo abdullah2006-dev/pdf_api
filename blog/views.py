@@ -555,6 +555,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "black1": black1,
         "black3": black3,
         "image": build_image_section(data, chart_base64),
+        "hasChart": chart_base64 is not None,
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
         "comparatifClientHistoryPdfDto": comparatif_dto,
@@ -913,6 +914,7 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         "black1": black1,
         "black3": black3,
         "image": build_image_section(data, chart_base64),
+        "has_chart": chart_base64 is not None,
         "imageOne": {
             "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
         },
