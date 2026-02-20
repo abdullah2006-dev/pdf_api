@@ -555,7 +555,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "black1": black1,
         "black3": black3,
         "image": build_image_section(data, chart_base64),
-        "hasChart": chart_base64 is not None,
+        "has_chart": chart_base64 is not None,
         "images": build_images(data, request),
         "company_presentation": build_company_presentation(data),
         "comparatifClientHistoryPdfDto": comparatif_dto,

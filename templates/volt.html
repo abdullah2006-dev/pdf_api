@@ -1783,7 +1783,6 @@
                         </span>
                         {% endif %}
                     </div>
-
                 </div>
                 <div class="rate-box">
                     <div class="rate-value">{{ provider.budgetEnergetique|default:"-" }}</div>
@@ -1953,19 +1952,16 @@
                 </div>
             </div>
         </div>
-    </div>
-    <br>
-    {% endif %}
-    {% endfor %}
+        <br>
+        {% endif %}
+        {% endfor %}
     </div> <!-- container8 close -->
 
-    <!-- Conditional page break - only between containers, not after last one -->
     {% if not forloop.last %}
     <div style="page-break-after: always;"></div>
     {% endif %}
 
     {% endfor %}
-
 
 
     {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
