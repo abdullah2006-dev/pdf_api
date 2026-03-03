@@ -224,7 +224,7 @@ def build_comparatif_dto(comparatif, request, data):
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
     
-    # NEW: Sort regular_providers by coutHTVA in ascending order
+    # Sort regular_providers by coutHTVA in ascending order
     # Handle None values by putting them at the end
     def get_cout_htva(provider):
         cout_htva = provider.get("coutHTVA")
@@ -242,7 +242,7 @@ def build_comparatif_dto(comparatif, request, data):
     if current_providers and len(current_providers) > 0:
         current_cout_htva = get_cout_htva(current_providers[0])
 
-    # NEW: Find the minimum coutHTVA from regular_providers
+    # Find the minimum coutHTVA from regular_providers
     min_regular_cout_htva = None
     if regular_providers:
         min_regular_cout_htva = get_cout_htva(regular_providers[0])
@@ -311,6 +311,21 @@ def build_comparatif_dto(comparatif, request, data):
 
     dto["paginatedContainers"] = paginated_containers
     dto["comparatifRates"] = comparatif_rates  # Keep original for backward compatibility
+    
+    # Add a flattened list of all regular providers in sorted order
+    all_regular_providers = []
+    for container in paginated_containers:
+        all_regular_providers.extend(container["regular_providers"])
+    dto["allRegularProviders"] = all_regular_providers
+    
+    # Add a flattened list of ALL providers (CURRENT + regular) for tables
+    all_providers_for_tables = []
+    # Add CURRENT providers first (they appear at the top in the UI)
+    for container in paginated_containers:
+        all_providers_for_tables.extend(container["current_providers"])
+    # Then add regular providers
+    all_providers_for_tables.extend(all_regular_providers)
+    dto["allProvidersForTables"] = all_providers_for_tables
 
     return dto
 
@@ -991,7 +1006,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
     
-    # NEW: Sort regular_providers by coutHTVA in ascending order
+    # Sort regular_providers by coutHTVA in ascending order
     # Handle None values by putting them at the end
     def get_cout_htva(provider):
         cout_htva = provider.get("coutHTVA")
@@ -1009,7 +1024,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     if current_providers and len(current_providers) > 0:
         current_cout_htva = get_cout_htva(current_providers[0])
 
-    # NEW: Find the minimum coutHTVA from regular_providers
+    # Find the minimum coutHTVA from regular_providers
     min_regular_cout_htva = None
     if regular_providers:
         min_regular_cout_htva = get_cout_htva(regular_providers[0])
@@ -1078,6 +1093,21 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
 
     dto["paginatedContainers"] = paginated_containers
     dto["comparatifRates"] = comparatif_rates
+    
+    # Add a flattened list of all regular providers in sorted order
+    all_regular_providers = []
+    for container in paginated_containers:
+        all_regular_providers.extend(container["regular_providers"])
+    dto["allRegularProviders"] = all_regular_providers
+    
+    # Add a flattened list of ALL providers (CURRENT + regular) for tables
+    all_providers_for_tables = []
+    # Add CURRENT providers first (they appear at the top in the UI)
+    for container in paginated_containers:
+        all_providers_for_tables.extend(container["current_providers"])
+    # Then add regular providers
+    all_providers_for_tables.extend(all_regular_providers)
+    dto["allProvidersForTables"] = all_providers_for_tables
 
     return dto
 

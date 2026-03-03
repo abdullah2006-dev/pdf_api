@@ -2492,7 +2492,7 @@
     {% endfor %}
 
 
-    {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+    {% for rate in data.comparatifClientHistoryPdfDto.allProvidersForTables  %}
     {% if forloop.first or forloop.counter0|divisibleby:6 %}
 
     <!-- Calculate start and end indices -->

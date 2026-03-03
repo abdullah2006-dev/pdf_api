@@ -1964,7 +1964,7 @@
     {% endfor %}
 
 
-    {% for rate in data.comparatifClientHistoryPdfDto.comparatifRates %}
+    {% for rate in data.comparatifClientHistoryPdfDto.allProvidersForTables %}
     {% if forloop.first or forloop.counter0|divisibleby:4 %}
     <div class="container7">
         <div class="content-wrapper7">
