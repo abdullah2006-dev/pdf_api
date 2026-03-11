@@ -2526,7 +2526,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables %}
                         {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %} <tr>
                             {% for col in data.tender_table.columns %}
                             {% if "Fournisseur" in col %}
@@ -2595,7 +2595,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables %}
                         {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %} <tr>
                             {% if r.typeCapa == "CAPAINCLUS" %}
                             {% for col in data.tender_table.columns1 %}
@@ -2645,7 +2645,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables %}
                         {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %} <tr>
                             <td>{{ r.partCee|default:"-" }}</td>
                             </tr>
