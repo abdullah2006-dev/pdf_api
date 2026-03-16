@@ -2669,7 +2669,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for r in data.comparatifClientHistoryPdfDto.comparatifRates %}
+                        {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables %}
                         {% if forloop.counter0 >= start_idx and forloop.counter0 < end_idx %} <tr>
                             <td>{{ r.abonnementAnswer|default:"-" }}</td>
                             </tr>
