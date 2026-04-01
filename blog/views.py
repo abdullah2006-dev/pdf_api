@@ -483,13 +483,21 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
         clean_society = re.sub(r"\s+", "", str(society))
     else:
         clean_society = re.sub(r"\s+", "", str(trade_name))
-
+    
+    # 🚨 IMPORTANT: Remove path separators and other problematic characters
+    # Replace any non-alphanumeric characters (except underscore) with underscore
+    clean_society = re.sub(r'[^a-zA-Z0-9_]', '_', clean_society)
+    # Remove multiple consecutive underscores
+    clean_society = re.sub(r'_+', '_', clean_society)
+    # Remove leading/trailing underscores
+    clean_society = clean_society.strip('_')
+    
     # 2️⃣ Energy type suffix
     additional_text = "_elec" if energy_type.upper() == "ELECTRICITY" else "_gaz"
-
+    
     # 3️⃣ Date part (YYYY-MM-DD)
     date_str = datetime.now().strftime("%Y-%m-%d")
-
+    
     # 4️⃣ Final filename
     filename = f"Comparatif_{clean_society}{additional_text}_{date_str}.pdf"
     return filename
