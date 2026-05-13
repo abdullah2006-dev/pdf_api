@@ -1,0 +1,795 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>Réduisez Immédiatement Votre Budget Énergie</title>
+    
+    <!-- html2pdf.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        /* CRITICAL: Force landscape for print and screen */
+        @page {
+            size: landscape;
+            margin: 0cm;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Force landscape orientation in browser */
+        @media screen and (orientation: portrait) {
+            body {
+                transform: rotate(0deg);
+                width: 100vw;
+                overflow-x: auto;
+            }
+            .page, .page2 {
+                transform: rotate(0deg);
+                margin: 10px auto;
+            }
+        }
+
+        html, body {
+            margin: 0 !important;
+            padding: 20px !important;
+            background: #cbd5e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            flex-direction: column;
+        }
+
+        /* PAGE 1 STYLES - Landscape */
+        .page {
+            width: 29.7cm;
+            height: 21cm;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+            margin: 0 0 20px 0;
+            padding: 0;
+            position: relative;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            height: calc(100% - 40px);
+        }
+
+        .left {
+            width: 60%;
+            padding: 14px 18px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .right {
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(to left, rgba(0,0,0,0.25), rgba(0,0,0,0.08)),
+                        url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1400&q=80')
+                        center center / cover no-repeat;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #071f3d;
+            line-height: 1;
+        }
+
+        .logo small {
+            display: block;
+            font-size: 7px;
+            letter-spacing: 4px;
+            font-weight: 700;
+            margin-top: 3px;
+            color: #5f6670;
+        }
+
+        .energy-badge {
+            background: linear-gradient(180deg, #0c84d0, #0b6fb8);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 900;
+            padding: 5px 12px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        h1 {
+            font-size: 26px;
+            line-height: 1.05;
+            font-weight: 900;
+            color: #071f3d;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+
+        .subtitle {
+            font-size: 11px;
+            color: #3f4650;
+            line-height: 1.3;
+            flex-shrink: 0;
+        }
+
+        .recommendation {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            color: #1d9abc;
+            text-transform: uppercase;
+            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .recommendation span {
+            font-size: 8.5px;
+            color: #5f6670;
+            font-weight: 600;
+            text-transform: none;
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .card {
+            border: 1.5px solid #e0e8ef;
+            border-radius: 8px;
+            padding: 7px 5px 6px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .card h3 {
+            font-size: 8px;
+            line-height: 1.25;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #071f3d;
+            margin-bottom: 3px;
+        }
+
+        .card h3 .highlight { color: #0b95b5; }
+
+        .card p {
+            font-size: 7px;
+            line-height: 1.3;
+            color: #5f6670;
+        }
+
+        .date-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: linear-gradient(180deg, #062040, #04162d);
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .date-box {
+            color: #fff;
+            padding: 7px 10px;
+            border-right: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .date-box:last-child { border-right: none; }
+
+        .date-label {
+            font-size: 7px;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .date-label .cyan { color: #21d2ff; }
+
+        .date-value {
+            font-size: 18px;
+            font-weight: 900;
+            color: #21d2ff;
+            margin-top: 2px;
+        }
+
+        .date-sub {
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+
+        .lower {
+            display: grid;
+            grid-template-columns: 42% 58%;
+            gap: 8px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .free-box {
+            border: 1.5px solid #e0e8ef;
+            border-radius: 8px;
+            padding: 7px 10px;
+            height: 100%;
+        }
+
+        .free-title {
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #1a97ba;
+            margin-bottom: 4px;
+        }
+
+        .free-box p {
+            font-size: 8px;
+            line-height: 1.4;
+            color: #5f6670;
+        }
+
+        .client-box {
+            border: 1.5px solid #e0e8ef;
+            border-radius: 8px;
+            padding: 7px 10px;
+            height: 100%;
+        }
+
+        .client-title {
+            font-size: 10px;
+            font-weight: 900;
+            color: #1a97ba;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .client-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field {
+            display: flex;
+            align-items: baseline;
+            gap: 5px;
+            font-size: 8px;
+            font-weight: 800;
+            color: #1f2730;
+            text-transform: uppercase;
+        }
+
+        .field .line {
+            flex: 1;
+            border-bottom: 1.5px solid #d6dfe7;
+            min-width: 40px;
+        }
+
+        .footer {
+            background: linear-gradient(180deg, #03172d, #041a34);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            font-size: 7px;
+            font-weight: 800;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            height: 30px;
+        }
+
+        .footer .accent { color: #2cd6ff; }
+        .footer .small { font-size: 6.5px; font-weight: 600; text-transform: none; }
+
+        /* ========== PAGE 2 STYLES (Landscape) ========== */
+        .page2 {
+            width: 29.7cm;
+            height: 21cm;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+            margin: 0;
+            padding: 0;
+            position: relative;
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        .page2-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            height: calc(100% - 40px);
+        }
+
+        .page2-left {
+            width: 60%;
+            padding: 14px 18px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .page2-right {
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(to left, rgba(0,0,0,0.2), rgba(0,0,0,0.05)),
+                        url('https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1400&q=80')
+                        center center / cover no-repeat;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #071f3d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 4px solid #0c84d0;
+            padding-left: 10px;
+            margin-bottom: 6px;
+        }
+
+        .section-subtitle {
+            font-size: 10px;
+            color: #5f6670;
+            margin-bottom: 8px;
+            padding-left: 14px;
+        }
+
+        .offer-comparison {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            background: #071f3d;
+            color: white;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 8px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .comparison-header span:first-child {
+            text-align: left;
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            padding: 8px 10px;
+            font-size: 9px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row .provider-name {
+            font-weight: 800;
+            color: #071f3d;
+            text-align: left;
+        }
+
+        .savings-badge {
+            background: #10b981;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 7px;
+            font-weight: 800;
+            display: inline-block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .stat-card {
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: 900;
+            color: #0c84d0;
+        }
+
+        .stat-label {
+            font-size: 7px;
+            color: #5f6670;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .recommendation-box {
+            background: linear-gradient(135deg, #0c84d0, #0b6fb8);
+            color: white;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+
+        .recommendation-box h4 {
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 6px;
+        }
+
+        .recommendation-box p {
+            font-size: 8.5px;
+            line-height: 1.4;
+        }
+
+        .page2-footer {
+            background: linear-gradient(180deg, #03172d, #041a34);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px;
+            font-size: 7px;
+            font-weight: 800;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            height: 30px;
+        }
+
+        .page2-footer .accent { color: #2cd6ff; }
+
+        /* Force horizontal scroll in browser if needed */
+        .pages-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        /* DOWNLOAD BUTTON */
+        .download-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 100;
+            background: linear-gradient(180deg, #071f3d, #0b2b4f);
+            color: #fff;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .download-btn:hover { transform: scale(1.1); }
+
+        /* Browser landscape hint */
+        .orientation-hint {
+            display: none;
+            background: #ff9800;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        @media screen and (orientation: portrait) {
+            .orientation-hint {
+                display: block;
+            }
+        }
+
+        @media print {
+            .download-btn {
+                display: none !important;
+            }
+            .page, .page2 {
+                box-shadow: none;
+                margin: 0;
+            }
+            .orientation-hint {
+                display: none;
+            }
+        }
+
+        /* Make pages responsive */
+        @media screen and (max-width: 1200px) {
+            .page, .page2 {
+                transform: scale(0.95);
+                transform-origin: center;
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="orientation-hint">
+    🔄 For better experience, please rotate your device to LANDSCAPE mode (horizontal)
+</div>
+
+<!-- DOWNLOAD BUTTON -->
+<button class="download-btn" id="downloadBtn">📥</button>
+
+<div class="pages-container">
+    <!-- ==================== PAGE 1 - ORIGINAL DESIGN ==================== -->
+    <div class="page">
+        <div class="layout">
+            <div class="left">
+                <div class="header">
+                    <div class="logo">
+                        VOLT
+                        <small>CONSULTING</small>
+                    </div>
+                    <div class="energy-badge">
+                        {% if data.energy_type == "ELECTRICITY" %}⚡ ÉLECTRICITÉ{% else %}🔥 GAZ{% endif %}
+                    </div>
+                </div>
+
+                <h1>
+                    Réduisez Immédiatement<br>
+                    Votre Budget Énergie
+                </h1>
+
+                <div class="subtitle">
+                    Analyse du marché en temps réel &amp; recommandation immédiate
+                </div>
+
+                <div class="recommendation">
+                    🎯 RECOMMANDATION BASÉE SUR LES PRIX MARCHÉ DU JOUR
+                    <span>(valable aujourd'hui)</span>
+                </div>
+
+                <div class="benefits">
+                    <div class="card">
+                        <div class="icon">📉</div>
+                        <h3>Réduire<br><span class="highlight">Immédiatement</span><br>Vos Coûts</h3>
+                        <p>Identification d'économies dès aujourd'hui.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🛡️</div>
+                        <h3>Bloquer<br><span class="highlight">Un Prix</span><br>Avant Hausse</h3>
+                        <p>Protection face à la volatilité du marché.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🎯</div>
+                        <h3>Accéder Aux<br><span class="highlight">Meilleures Offres</span><br>Fournisseurs</h3>
+                        <p>Mise en concurrence en temps réel.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🤝</div>
+                        <h3>Un Expert Dédié<br>Jusqu'à La<br><span class="highlight">Signature</span></h3>
+                        <p>0 perte de temps – on gère tout pour vous.</p>
+                    </div>
+                </div>
+
+                <div class="date-bar">
+                    <div class="date-box">
+                        <div class="date-label">ÉTUDE RÉALISÉE LE</div>
+                        <div class="date-value">{{ data.created_on|default:"23/04/2026" }}</div>
+                        <div class="date-sub">à {{ data.created_time|default:"10h30" }}</div>
+                    </div>
+                    <div class="date-box">
+                        <div class="date-label">
+                            VALIDITÉ DES PRIX<br>
+                            <span class="cyan">JUSQU'À AUJOURD'HUI</span>
+                        </div>
+                        <div class="date-value">17H00</div>
+                    </div>
+                </div>
+
+                <div class="lower">
+                    <div class="free-box">
+                        <div class="free-title">Sans Frais Pour Votre Entreprise</div>
+                        <p>Notre accompagnement est rémunéré par les fournisseurs. Vous n'avez rien à payer.</p>
+                    </div>
+
+                    <div class="client-box">
+                        <div class="client-title">Informations Client</div>
+                        <div class="client-grid">
+                            <div class="field">🏢 Société&nbsp;: <span class="line"></span>{{ data.client_society|default:"________" }}</div>
+                            <div class="field">📍 Site&nbsp;: <span class="line"></span>{{ data.client_address|default:"________" }}</div>
+                            <div class="field">👤 Interlocuteur&nbsp;: <span class="line"></span>{{ data.client_name|default:"________" }}</div>
+                            <div class="field">📝 Nom &amp; Prénom&nbsp;: <span class="line"></span>{{ data.client_contact|default:"________" }}</div>
+                            <div class="field">⚡ PDL&nbsp;: <span class="line"></span>{{ data.pdl|default:"________" }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="right"></div>
+        </div>
+
+        <div class="footer">
+            <div>
+                ⚠️ LES PRIX ÉVOLUENT CHAQUE JOUR
+                <span class="small">&nbsp;CETTE RECOMMANDATION PEUT NE PLUS ÊTRE VALABLE DEMAIN.</span>
+            </div>
+            <div class="accent">🔒 DOCUMENT CONFIDENTIEL</div>
+            <div class="small">Document strictement confidentiel – Destiné exclusivement à son destinataire.</div>
+        </div>
+    </div>
+
+    <!-- ==================== PAGE 2 - NEW DESIGN ==================== -->
+    <div class="page2">
+        <div class="page2-layout">
+            <div class="page2-left">
+                <div class="section-title">📊 RÉSULTAT DE L'APPEL D'OFFRES</div>
+                <div class="section-subtitle">Comparatif détaillé des offres reçues</div>
+                
+                <div class="offer-comparison">
+                    <div class="comparison-header">
+                        <span>Fournisseur</span>
+                        <span>Prix €/MWh</span>
+                        <span>Abonnement €/mois</span>
+                        <span>Budget €/an</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="provider-name">Fournisseur Actuel</span>
+                        <span>85,50 €</span>
+                        <span>45,00 €</span>
+                        <span>42 750 €</span>
+                    </div>
+                    <div class="comparison-row" style="background: #e8f5e9;">
+                        <span class="provider-name">🏆 Offre Optimale VOLT</span>
+                        <span><strong>72,30 €</strong></span>
+                        <span><strong>42,00 €</strong></span>
+                        <span><strong>36 150 €</strong> <span class="savings-badge">-15,4%</span></span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="provider-name">Énergie France</span>
+                        <span>74,80 €</span>
+                        <span>44,50 €</span>
+                        <span>37 400 €</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="provider-name">PowerCorp</span>
+                        <span>76,20 €</span>
+                        <span>43,80 €</span>
+                        <span>38 100 €</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="provider-name">GreenEnergy</span>
+                        <span>78,50 €</span>
+                        <span>45,50 €</span>
+                        <span>39 250 €</span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">{{ data.savings_percent|default:"15,4" }}%</div>
+                        <div class="stat-label">Économies potentielles</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">{{ data.savings_amount|default:"6 600" }}€</div>
+                        <div class="stat-label">Économisables / an</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Mois prix bloqué</div>
+                    </div>
+                </div>
+
+                <div class="recommendation-box">
+                    <h4>🎯 NOTRE RECOMMANDATION</h4>
+                    <p>Nous vous recommandons l'offre <strong>Optimale VOLT</strong> qui vous permet de réaliser <strong>15,4% d'économies</strong> sur votre budget énergétique annuel, soit <strong>6 600 €</strong> par rapport à votre contrat actuel, avec un prix bloqué sur 24 mois.</p>
+                </div>
+            </div>
+            <div class="page2-right"></div>
+        </div>
+
+        <div class="page2-footer">
+            <div>📈 Analyse basée sur votre consommation des 12 derniers mois</div>
+            <div class="accent">🎯 Offre valable jusqu'au {{ data.validity_date|default:"30/04/2026" }}</div>
+            <div class="small">Offre soumise à conditions - Document non contractuel</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        // Get both pages
+        var page1 = document.querySelector('.page');
+        var page2 = document.querySelector('.page2');
+        
+        // Create a wrapper div to hold both pages
+        var wrapper = document.createElement('div');
+        wrapper.style.width = '29.7cm';
+        wrapper.style.margin = '0';
+        wrapper.style.padding = '0';
+        wrapper.style.backgroundColor = '#cbd5e0';
+        
+        // Clone both pages and append to wrapper
+        var clone1 = page1.cloneNode(true);
+        var clone2 = page2.cloneNode(true);
+        wrapper.appendChild(clone1);
+        wrapper.appendChild(clone2);
+        
+        var opt = {
+            margin: [0, 0, 0, 0],
+            filename: 'energy_offer_complete.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true,
+                logging: false,
+                letterRendering: true
+            },
+            jsPDF: { 
+                unit: 'mm', 
+                format: [297, 210],  // Width 297mm, Height 210mm = LANDSCAPE
+                orientation: 'l'       // 'l' for landscape
+            },
+            pagebreak: { mode: 'avoid-all' }
+        };
+        
+        html2pdf().set(opt).from(wrapper).save();
+    });
+</script>
+
+</body>
+</html>

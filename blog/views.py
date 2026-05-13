@@ -2,6 +2,8 @@ import re, io, base64
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
+from django.shortcuts import render
+from django.http import HttpResponse
 import matplotlib
 
 matplotlib.use('Agg')
@@ -1493,3 +1495,122 @@ def enedis_Chart(comparatif_dto):
 
 
     return base_response
+
+
+
+# new code mehboob
+
+# views.py mein naya function add karein
+
+# @csrf_exempt
+# @require_http_methods(["POST"])
+# def energy_offer_summary(request):
+#     """
+#     Simple energy offer summary PDF generator - Direct save without any helper function
+#     """
+#     try:
+#         # Build presentation data for new template (HARDCODED)
+#         presentation_data = {
+#             "energy_type": "ELECTRICITY",
+#             "created_on": datetime.now().strftime("%d/%m/%Y"),
+#             "created_time": datetime.now().strftime("%H:%M"),
+#             "client_society": "TEST COMPANY",
+#             "client_name": "John Doe",
+#             "client_address": "123 Test Street, Paris",
+#             "client_contact": "test@volt-consulting.com",
+#             "pdl": "12345678901234",
+#         }
+        
+#         # Render HTML
+#         return render("energy_offer.html", {"data": presentation_data})
+        
+#         # # ============================================================
+#         # # DIRECT PDF SAVE - WITHOUT ANY generate_simple_pdf FUNCTION
+#         # # ============================================================
+        
+#         # # Create directory - using media root directly
+#         # pdf_dir = os.path.join(settings.MEDIA_ROOT, "energy_offers")
+#         # os.makedirs(pdf_dir, exist_ok=True)
+        
+#         # # Create filename with timestamp
+#         # timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+#         # pdf_filename = f"Energy_Offer_{timestamp}.pdf"
+#         # pdf_path = os.path.join(pdf_dir, pdf_filename)
+        
+#         # # Generate PDF directly using WeasyPrint
+#         # css = CSS(string="@page { size: A4 landscape; margin: 6mm; }")
+#         # HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
+        
+#         # # Build URL for response
+#         # pdf_url = request.build_absolute_uri(
+#         #     os.path.join(settings.MEDIA_URL, "energy_offers", pdf_filename)
+#         # )
+        
+#         # return JsonResponse({
+#         #     "status": "success",
+#         #     "path": pdf_url,
+#         #     "name": pdf_filename,
+#         #     "mime_type": "application/pdf",
+#         #     "message": f"PDF saved successfully at: {pdf_path}"
+#         # })
+        
+#     except Exception as e:
+#         return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def energy_offer_summary(request):
+    """
+    Return HTML directly - Simple and works without WeasyPrint
+    """
+    try:
+        presentation_data = {
+            "energy_type": "ELECTRICITY",
+            "created_on": datetime.now().strftime("%d/%m/%Y"),
+            "created_time": datetime.now().strftime("%H:%M"),
+            "client_society": "TEST COMPANY",
+            "client_name": "John Doe",
+            "client_address": "123 Test Street, Paris",
+            "client_contact": "test@volt-consulting.com",
+            "pdl": "12345678901234",
+        }
+        
+        html_content = render_to_string("energy_offer.html", {"data": presentation_data})
+        
+        # Simple HTML response
+        return HttpResponse(html_content, content_type='text/html')
+        
+    except Exception as e:
+        return HttpResponse(f"Error: {str(e)}", status=500)
+
+
+
+def generate_simple_pdf(html_content, request, data, comparatif):
+    """Simple PDF generator without complex blank page removal"""
+    host = request.get_host().split(":")[0]
+    
+    if host == "volt-crm.caansoft.com":
+        base_dir = settings.STAGING_MEDIA_ROOT
+        base_url = settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        base_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_url = settings.PRODUCTION_MEDIA_URL
+    else:
+        base_dir = settings.MEDIA_ROOT
+        base_url = settings.MEDIA_URL
+    
+    relative_path = os.path.join("clients", str(data.get("clientId")), "energy_offer")
+    pdf_dir = os.path.join(base_dir, relative_path)
+    os.makedirs(pdf_dir, exist_ok=True)
+    
+    pdf_filename = f"Energy_Offer_{data.get('clientSociety', 'client')}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    pdf_path = os.path.join(pdf_dir, pdf_filename)
+    
+    css = CSS(string="@page { size: A4 landscape; margin: 6mm; }")
+    HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
+    
+    pdf_url = request.build_absolute_uri(
+        os.path.join(base_url, relative_path, pdf_filename)
+    )
+    
+    return pdf_url, pdf_filename
