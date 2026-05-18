@@ -506,10 +506,14 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 
 
 def build_static_url(request, path):
-    print("Inside BuildStaticURL")
-    # return request.build_absolute_uri(static(path))
-    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
-    return f"file://{abs_path}"
+    """Build HTTP static URL for browser rendering (works in headless Chrome)."""
+    from django.templatetags.static import static
+    
+    # If request is available, build absolute URI
+    if request:
+        return request.build_absolute_uri(static(path))
+    # Fallback to relative static URL
+    return static(path)
 
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
@@ -623,8 +627,25 @@ def build_images(data, request):
         "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
         "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
         "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
+        "contact_portrait": build_static_url(request, "image/contact-portrait.jpg"),
+        "hero_turbines": build_static_url(request, "image/hero-turbines.jpg"),
+        "team_meeting": build_static_url(request, "image/team-meeting.jpg"),
     })
 
+def build_static_url_http(path):
+    """Build HTTP static URL for browser rendering."""
+    from django.templatetags.static import static
+    return static(path)
+
+def build_images_v2(request=None):
+    """Build static & dynamic image paths."""
+    print("Inside BuildImages")
+    return {        
+        "contact_portrait": build_static_url_http("image/contact-portrait.jpg"),
+        "hero_turbines": build_static_url_http("image/hero-turbines.jpg"),
+        "team_meeting": build_static_url_http("image/team-meeting.jpg"),
+        "logo": build_static_url_http("image/transparent-logo.png"),
+    }
 
 def build_company_presentation(data):
     """Company presentation section."""
@@ -1496,66 +1517,38 @@ def enedis_Chart(comparatif_dto):
 
     return base_response
 
+def build_presentation_data_energy_offer(data, request):
+    """
+    Build presentation data for the energy offer summary page.
+    This follows the same pattern as build_presentation_data_Electricity.
+    """
+    print("Inside BuildPresentationDataEnergyOffer")
 
+    # Helper function to safely get values
+    def safe_value(value):
+        if value is None:
+            return ""
+        try:
+            str_val = str(value).strip().lower()
+            if str_val == "" or str_val == "none" or str_val == "null":
+                return ""
+            return str(value)
+        except AttributeError:
+            return str(value) if value is not None else ""
 
-# new code mehboob
-
-# views.py mein naya function add karein
-
-# @csrf_exempt
-# @require_http_methods(["POST"])
-# def energy_offer_summary(request):
-#     """
-#     Simple energy offer summary PDF generator - Direct save without any helper function
-#     """
-#     try:
-#         # Build presentation data for new template (HARDCODED)
-#         presentation_data = {
-#             "energy_type": "ELECTRICITY",
-#             "created_on": datetime.now().strftime("%d/%m/%Y"),
-#             "created_time": datetime.now().strftime("%H:%M"),
-#             "client_society": "TEST COMPANY",
-#             "client_name": "John Doe",
-#             "client_address": "123 Test Street, Paris",
-#             "client_contact": "test@volt-consulting.com",
-#             "pdl": "12345678901234",
-#         }
-        
-#         # Render HTML
-#         return render("energy_offer.html", {"data": presentation_data})
-        
-#         # # ============================================================
-#         # # DIRECT PDF SAVE - WITHOUT ANY generate_simple_pdf FUNCTION
-#         # # ============================================================
-        
-#         # # Create directory - using media root directly
-#         # pdf_dir = os.path.join(settings.MEDIA_ROOT, "energy_offers")
-#         # os.makedirs(pdf_dir, exist_ok=True)
-        
-#         # # Create filename with timestamp
-#         # timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-#         # pdf_filename = f"Energy_Offer_{timestamp}.pdf"
-#         # pdf_path = os.path.join(pdf_dir, pdf_filename)
-        
-#         # # Generate PDF directly using WeasyPrint
-#         # css = CSS(string="@page { size: A4 landscape; margin: 6mm; }")
-#         # HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
-        
-#         # # Build URL for response
-#         # pdf_url = request.build_absolute_uri(
-#         #     os.path.join(settings.MEDIA_URL, "energy_offers", pdf_filename)
-#         # )
-        
-#         # return JsonResponse({
-#         #     "status": "success",
-#         #     "path": pdf_url,
-#         #     "name": pdf_filename,
-#         #     "mime_type": "application/pdf",
-#         #     "message": f"PDF saved successfully at: {pdf_path}"
-#         # })
-        
-#     except Exception as e:
-#         return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return {
+        "energy_type": "ELECTRICITY",
+        "created_on": datetime.now().strftime("%d/%m/%Y"),
+        "created_time": datetime.now().strftime("%H:%M"),
+        "clientSociety": safe_value(data.get("clientSociety")),
+        "clientFirstName": safe_value(data.get("clientFirstName")),
+        "clientLastName": safe_value(data.get("clientLastName")),
+        "clientAddress": safe_value(data.get("clientBusinessAddress", {}).get("address", "")),
+        "clientContact": safe_value(data.get("clientEmail")),
+        "clientPhone": safe_value(data.get("clientPhoneNumber")),
+        "pdl": safe_value(data.get("pdl")),
+        "images": build_images_v2(None),
+    }
 
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
@@ -1564,26 +1557,32 @@ def energy_offer_summary(request):
     Return HTML directly - Simple and works without WeasyPrint
     """
     try:
+        # 1️⃣ Parse incoming data
+        data = parse_request_data(request)
+
+        # 2️⃣ Build presentation data using the new function
+        presentation_data = build_presentation_data_energy_offer(data, request)
+
         presentation_data = {
             "energy_type": "ELECTRICITY",
             "created_on": datetime.now().strftime("%d/%m/%Y"),
             "created_time": datetime.now().strftime("%H:%M"),
-            "client_society": "TEST COMPANY",
-            "client_name": "John Doe",
+            "clientSociety": data.get("clientSociety", ""),
+            "clientFirstName": data.get("clientFirstName", ""),
+            "clientLastName": data.get("clientLastName", ""),
             "client_address": "123 Test Street, Paris",
             "client_contact": "test@volt-consulting.com",
             "pdl": "12345678901234",
-        }
-        
-        html_content = render_to_string("energy_offer.html", {"data": presentation_data})
+            "images": build_images_v2(request),
+        }        
+
+        html_content = render_to_string("index.html", {"data": presentation_data})
         
         # Simple HTML response
         return HttpResponse(html_content, content_type='text/html')
         
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}", status=500)
-
-
 
 def generate_simple_pdf(html_content, request, data, comparatif):
     """Simple PDF generator without complex blank page removal"""
