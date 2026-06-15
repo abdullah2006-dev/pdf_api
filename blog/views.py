@@ -174,6 +174,115 @@ def generate_chart(data):
     return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
 
 
+def generate_price_chart_styled(data, last_n_months=None):
+    """
+    Generate a styled price-evolution line chart matching the slide-3 design:
+    white background, light-gray horizontal grid, colored lines, top legend.
+    Pass last_n_months to restrict to the final N data points.
+    """
+    if "chartDataDto" not in data or not data["chartDataDto"]:
+        return None
+
+    chart_data = data["chartDataDto"]
+
+    if "xAxis" not in chart_data or not chart_data["xAxis"]:
+        return None
+    if "series" not in chart_data or not chart_data["series"]:
+        return None
+    if "data" not in chart_data["xAxis"][0] or not chart_data["xAxis"][0]["data"]:
+        return None
+
+    raw_dates = chart_data["xAxis"][0]["data"]
+    try:
+        all_dates = pd.to_datetime(raw_dates, format="%Y-%m-%d")
+    except Exception:
+        try:
+            all_dates = pd.to_datetime(raw_dates)
+        except Exception as e:
+            print(f"Invalid date format: {e}")
+            return None
+
+    # Slice by calendar months, not by data-point count
+    if last_n_months and len(all_dates) > 0:
+        start_cutoff = all_dates[-1] - pd.DateOffset(months=last_n_months)
+        mask = all_dates >= start_cutoff
+        slice_start = int(mask.argmax()) if mask.any() else 0
+    else:
+        slice_start = 0
+    dates = all_dates[slice_start:]
+
+    # Colors matching the screenshot design
+    line_colors = ["#0b3a66", "#1a8a5b", "#c33333", "#7e7e7e"]
+
+    fig, ax = plt.subplots(figsize=(9, 3.6), dpi=150)
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("white")
+
+    plotted = 0
+    for idx, series in enumerate(chart_data["series"]):
+        if "data" not in series or not series["data"]:
+            continue
+        try:
+            y = np.array(series["data"][slice_start:], dtype=np.float64)
+        except Exception:
+            continue
+        color = line_colors[idx % len(line_colors)]
+        ax.plot(dates[: len(y)], y, color=color, linewidth=1.5,
+                label=series.get("label", f"Series {idx + 1}"), zorder=3)
+        plotted += 1
+
+    if plotted == 0:
+        plt.close()
+        return None
+
+    # Horizontal grid only
+    ax.yaxis.grid(True, color="#eef0f4", linewidth=1, zorder=0)
+    ax.xaxis.grid(False)
+    ax.set_axisbelow(True)
+
+    # Spines
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_color("#e5e7eb")
+    ax.spines["bottom"].set_color("#e5e7eb")
+
+    # X-axis: monthly ticks for 12-month view, every 4 months for full range
+    tick_interval = 1 if last_n_months else 4
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=tick_interval))
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%m/%y"))
+    ax.tick_params(axis="x", labelsize=7, colors="#9ca3af", length=0, pad=4)
+    ax.tick_params(axis="y", labelsize=7, colors="#9ca3af", length=0, pad=4)
+    ax.set_ylabel("€/MWh", fontsize=7, color="#9ca3af", labelpad=6)
+
+    # Legend at top-left
+    import matplotlib.lines as mlines
+    legend_handles = [
+        mlines.Line2D([], [], color=line_colors[i % len(line_colors)],
+                      linewidth=2, label=s.get("label", f"Series {i + 1}"))
+        for i, s in enumerate(chart_data["series"]) if s.get("data")
+    ]
+    ax.legend(
+        handles=legend_handles,
+        loc="upper center",
+        bbox_to_anchor=(0.5, 1.22),
+        ncol=len(legend_handles),
+        frameon=False,
+        fontsize=13,
+        handlelength=1.4,
+        handletextpad=0.6,
+        columnspacing=1.5,
+    )
+
+    plt.tight_layout(pad=0.4)
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format="png", dpi=150, bbox_inches="tight", facecolor="white")
+    plt.close()
+    buf.seek(0)
+
+    return f"data:image/png;base64,{base64.b64encode(buf.read()).decode('utf-8')}"
+
+
 def build_comparatif_dto(comparatif, request, data):
     print("Inside BuildComparatifDTO")
 
@@ -998,6 +1107,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "createdOn": created_on,
         "energyType": comparatif.get("energyType"),
         "puissance": comparatif.get("puissance"),
+        "powerInKVA": comparatif.get("powerInKVA"),
         "contractStartDate": comparatif.get("contractStartDate"),
         "hph": comparatif.get("hph"),
         "hch": comparatif.get("hch"),
@@ -1377,7 +1487,7 @@ def enedis_Chart(comparatif_dto):
     energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
     segmentation = comparatif_dto.get("segmentation", "")
     tarif_type = comparatif_dto.get("tarifType", "")
-    parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")
+    parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")    
 
     # Convert to uppercase for consistent comparison - SAFE VERSION
     energy_type_upper = safe_strip_upper(energy_type)
@@ -1517,10 +1627,172 @@ def enedis_Chart(comparatif_dto):
 
     return base_response
 
-def build_presentation_data_energy_offer(data, request):
+@csrf_exempt
+@require_http_methods(["POST"])
+def energy_offer_summary(request):
+    """
+    POST API endpoint that accepts data, saves HTML file, and returns the file path.
+    Similar to volt_consulting_presentation_Electricitry but saves HTML instead of PDF.
+    """
+    try:
+        # 1️⃣ Parse incoming data
+        data = parse_request_data(request)
+        
+        # Get comparatif data if available
+        comparatif = data.get("comparatifClientHistoryPdfDto", {})
+        
+        # 2️⃣ Generate chart (if available)
+        chart_base64 = generate_price_chart_styled(data)
+        chart_12m_base64 = generate_price_chart_styled(data, last_n_months=12)
+        enedis_chart_base64 = generate_enedis_bar_chart(
+            comparatif.get("enedisDataPastYear", {})
+        )
+
+        # 3️⃣ Build Comparatif DTO
+        comparatif_dto = build_comparatif_dto_Electricity(comparatif, request, data)
+
+        # 4️⃣ Build presentation data
+        presentation_data = build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64, chart_12m_base64, comparatif_dto, request)
+        
+        # 5️⃣ Render HTML
+        html_content = render_to_string("index.html", {"data": presentation_data})
+        
+        # 6️⃣ Save HTML file to server and return path
+        html_url, html_filename = save_html_file(html_content, request, data, comparatif)
+        
+        return JsonResponse({
+            "status": "success",
+            "path": html_url,
+            "name": html_filename,
+            "title": html_filename,
+            "mime_type": "text/html",
+            "message": "HTML file generated successfully"
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": f"An error occurred: {str(e)}",
+        }, status=500)
+
+
+def save_html_file(html_content, request, data, comparatif):
+    """
+    Save HTML content as an HTML file on the server.
+    Returns the URL and filename of the saved HTML file.
+    Similar to generate_pdf_Electricity but for HTML files.
+    """
+    print("Inside SaveHTMLFile")
+    host = request.get_host().split(":")[0]
+
+    # Choose base dirs (filesystem vs URL)
+    if host == "volt-crm.caansoft.com":
+        base_dir = settings.STAGING_MEDIA_ROOT
+        base_url = settings.STAGING_MEDIA_URL
+    elif host == "crm.volt-consulting.com":
+        base_dir = settings.PRODUCTION_MEDIA_ROOT
+        base_url = settings.PRODUCTION_MEDIA_URL
+    else:
+        base_dir = settings.MEDIA_ROOT
+        base_url = settings.MEDIA_URL
+
+    # Dynamic path: client/<id>/energy_offer/
+    relative_path = os.path.join("clients", str(data.get("clientId")), "energy_offer")
+    html_dir = os.path.join(base_dir, relative_path)
+    os.makedirs(html_dir, exist_ok=True)
+
+    # Generate filename (similar to create_comparatif_filename pattern)
+    html_filename = create_energy_offer_filename(
+        data.get("clientSociety"),
+        data.get("clientTradeName"),
+        data.get("comparatifClientHistoryPdfDto", {}).get("energyType")
+    )
+    html_path = os.path.join(html_dir, html_filename)
+
+    # Save HTML file
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html_content)
+
+    # Build public URL
+    html_url = request.build_absolute_uri(
+        os.path.join(base_url, relative_path, html_filename)
+    )
+
+    print(f"HTML file saved: {html_path}")
+    print(f"HTML URL: {html_url}")
+
+    return html_url, html_filename
+
+
+def create_energy_offer_filename(society: str, trade_name: str, energy_type: str) -> str:
+    """
+    Create filename for energy offer HTML file.
+    Similar to create_comparatif_filename but for HTML files.
+    """
+    # 1️⃣ Clean society or fallback to trade_name
+    if society:
+        clean_society = re.sub(r"\s+", "", str(society))
+    else:
+        clean_society = re.sub(r"\s+", "", str(trade_name))
+    
+    # Remove path separators and problematic characters
+    clean_society = re.sub(r'[^a-zA-Z0-9_]', '_', clean_society)
+    clean_society = re.sub(r'_+', '_', clean_society)
+    clean_society = clean_society.strip('_')
+    
+    # 2️⃣ Energy type suffix
+    additional_text = "_elec" if energy_type.upper() == "ELECTRICITY" else "_gaz"
+    
+    # 3️⃣ Date part (YYYY-MM-DD)
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    
+    # 4️⃣ Final filename
+    filename = f"Energy_Offer_{clean_society}{additional_text}_{date_str}.html"
+    return filename
+
+
+def _compute_chart_date_ranges(data):
+    """Return {'all_data': 'YYYY – AUJOURD\'HUI', 'last_12m': 'MMM YYYY – MMM YYYY'}."""
+    result = {"all_data": "", "last_12m": ""}
+    chart_dto = data.get("chartDataDto", {})
+    if not chart_dto or "xAxis" not in chart_dto or not chart_dto["xAxis"]:
+        return result
+    x_raw = chart_dto["xAxis"][0].get("data", [])
+    if not x_raw:
+        return result
+    try:
+        all_dates = pd.to_datetime(x_raw, format="%Y-%m-%d")
+    except Exception:
+        try:
+            all_dates = pd.to_datetime(x_raw)
+        except Exception:
+            return result
+    if len(all_dates) == 0:
+        return result
+
+    french_months = {
+        1: "JANVIER", 2: "FÉVRIER", 3: "MARS", 4: "AVRIL",
+        5: "MAI", 6: "JUIN", 7: "JUILLET", 8: "AOÛT",
+        9: "SEPTEMBRE", 10: "OCTOBRE", 11: "NOVEMBRE", 12: "DÉCEMBRE",
+    }
+    result["all_data"] = f"{all_dates[0].year} – AUJOURD'HUI"
+    # Use calendar month cutoff (same logic as the chart function)
+    start_cutoff = all_dates[-1] - pd.DateOffset(months=12)
+    mask = all_dates >= start_cutoff
+    last_12 = all_dates[mask] if mask.any() else all_dates[-12:]
+    s, e = last_12[0], last_12[-1]
+    result["last_12m"] = (
+        f"{french_months[s.month]} {s.year} – {french_months[e.month]} {e.year}"
+    )
+    return result
+
+
+def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64, chart_12m_base64, comparatif_dto, request):
     """
     Build presentation data for the energy offer summary page.
-    This follows the same pattern as build_presentation_data_Electricity.
+    Follows the same pattern as build_presentation_data_Electricity.
     """
     print("Inside BuildPresentationDataEnergyOffer")
 
@@ -1536,53 +1808,78 @@ def build_presentation_data_energy_offer(data, request):
         except AttributeError:
             return str(value) if value is not None else ""
 
+    # Get ratioHTVA and differenceHTVA values
+    ratio_htva = comparatif_dto.get("ratioHTVA")
+    difference_htva = comparatif_dto.get("differenceHTVA")
+    
+    # Initialize black, black1, black3 based on conditions
+    black = ""
+    black1 = ""
+    black3 = ""
+    
+    # Condition for black (ratioHTVA):
+    # Show only if ratioHTVA is not None, not empty, and ≤ 0
+    if ratio_htva is not None and ratio_htva != "":
+        try:
+            ratio_num = float(ratio_htva)
+            if ratio_num <= 0:
+                black = f"{ratio_htva}%"
+        except (ValueError, TypeError):
+            pass
+    
+    # Condition for black1 (differenceHTVA):
+    # Show only if differenceHTVA is not None, not empty, and ≤ 0
+    if difference_htva is not None and difference_htva != "":
+        try:
+            diff_num = float(difference_htva)
+            if diff_num <= 0:
+                black1 = f"{difference_htva}€"
+        except (ValueError, TypeError):
+            pass
+    
+    # Condition for black3 ("économisé/an"):
+    if black != "" and black1 != "":
+        black3 = "économisé/an"
+
     return {
-        "energy_type": "ELECTRICITY",
-        "created_on": datetime.now().strftime("%d/%m/%Y"),
-        "created_time": datetime.now().strftime("%H:%M"),
+        "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
+        "headingone": "APPEL D'OFFRE",
         "clientSociety": safe_value(data.get("clientSociety")),
+        "clientSiret": safe_value(data.get("clientSiret")),
         "clientFirstName": safe_value(data.get("clientFirstName")),
         "clientLastName": safe_value(data.get("clientLastName")),
-        "clientAddress": safe_value(data.get("clientBusinessAddress", {}).get("address", "")),
-        "clientContact": safe_value(data.get("clientEmail")),
-        "clientPhone": safe_value(data.get("clientPhoneNumber")),
-        "pdl": safe_value(data.get("pdl")),
-        "images": build_images_v2(None),
+        "clientEmail": safe_value(data.get("clientEmail")),
+        "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
+        "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
+        "currentContractExpiryDate": (
+            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
+            if comparatif_dto.get("currentContractExpiryDate") else ""
+        ),
+        "black": black,
+        "black1": black1,
+        "black3": black3,
+        "image": build_image_section(data, chart_base64),
+        "has_chart": chart_base64 is not None,
+        "imageOne": {
+            "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
+        },
+        "imageTwo": {
+            "chart_12m": chart_12m_base64 if chart_12m_base64 else ""
+        },
+        "chart_date_ranges": _compute_chart_date_ranges(data),
+        "images": build_images(data, request),
+        "company_presentation": build_company_presentation(data),
+        "comparatifClientHistoryPdfDto": comparatif_dto,
+        "budget_global": build_budget_section(data),
+        "tender_results": build_tender_results(data),
+        "comparison_table": build_comparison_table_Electricity(data),
+        "tender_table": build_tender_table_Electricity(data, comparatif_dto),
+        "change_section": build_change_section(data),
+        "contact_info": build_contact_info(data),
+        "enedis_info": enedis_Chart(comparatif_dto),
+        "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
     }
-
-@csrf_exempt
-@require_http_methods(["GET", "POST"])
-def energy_offer_summary(request):
-    """
-    Return HTML directly - Simple and works without WeasyPrint
-    """
-    try:
-        # 1️⃣ Parse incoming data
-        data = parse_request_data(request)
-
-        # 2️⃣ Build presentation data using the new function
-        presentation_data = build_presentation_data_energy_offer(data, request)
-
-        presentation_data = {
-            "energy_type": "ELECTRICITY",
-            "created_on": datetime.now().strftime("%d/%m/%Y"),
-            "created_time": datetime.now().strftime("%H:%M"),
-            "clientSociety": data.get("clientSociety", ""),
-            "clientFirstName": data.get("clientFirstName", ""),
-            "clientLastName": data.get("clientLastName", ""),
-            "client_address": "123 Test Street, Paris",
-            "client_contact": "test@volt-consulting.com",
-            "pdl": "12345678901234",
-            "images": build_images_v2(request),
-        }        
-
-        html_content = render_to_string("index.html", {"data": presentation_data})
-        
-        # Simple HTML response
-        return HttpResponse(html_content, content_type='text/html')
-        
-    except Exception as e:
-        return HttpResponse(f"Error: {str(e)}", status=500)
 
 def generate_simple_pdf(html_content, request, data, comparatif):
     """Simple PDF generator without complex blank page removal"""
@@ -1613,3 +1910,129 @@ def generate_simple_pdf(html_content, request, data, comparatif):
     )
     
     return pdf_url, pdf_filename
+
+def generate_enedis_bar_chart(chart_data):
+    print("Inside GenerateEnedisBarChart")
+
+    if not chart_data or not isinstance(chart_data, dict):
+        return None
+
+    months = chart_data.get("months", [])
+    consumption_data = chart_data.get("consumptionData", {})
+
+    if not months or not consumption_data:
+        return None
+
+    has_data = False
+    for values in consumption_data.values():
+        if values and any(v > 0 for v in values):
+            has_data = True
+            break
+
+    if not has_data:
+        return None
+
+    label_colors = {
+        "HCE": "#2e7d45",
+        "HPE": "#f0b429",
+        "HPH": "#b8c2cc",
+        "HCH": "#b8c2cc",
+        "HP":  "#f0b429",
+        "HC":  "#2e7d45",
+        "BASE": "#6366f1",
+    }
+
+    preferred_order = ["HPH", "HCH", "HPE", "HCE", "HP", "HC", "BASE"]
+    categories = []
+    data_values = []
+    for label in preferred_order:
+        if label in consumption_data:
+            vals = consumption_data[label]
+            if vals and any(v > 0 for v in vals):
+                categories.append(label)
+                data_values.append(vals)
+    for label, vals in consumption_data.items():
+        if label not in preferred_order and vals and any(v > 0 for v in vals):
+            categories.append(label)
+            data_values.append(vals)
+
+    n_months = len(months)
+    x = np.arange(n_months)
+    bar_width = 0.62
+
+    # Create figure with transparent background (like generate_enedis_chart)
+    fig, ax = plt.subplots(figsize=(11, 3.6), dpi=150)
+    
+    # Make backgrounds transparent
+    fig.patch.set_alpha(0)
+    ax.patch.set_alpha(0)
+
+    # ── Stacked bars ───────────────────────────────────────────────────────
+    bottoms = np.zeros(n_months)
+    bar_handles = []
+    for label, values in zip(categories, data_values):
+        vals = np.array(values, dtype=float)
+        color = label_colors.get(label, "#aaaaaa")
+        bars = ax.bar(x, vals, bar_width, bottom=bottoms, color=color,
+                      zorder=3, linewidth=0)
+        bar_handles.append((bars[0], label, color))
+        bottoms += vals
+
+    # ── Value labels — French comma format ────────────────────────────────
+    if len(bottoms) > 0 and bottoms.max() > 0:
+        for i, total in enumerate(bottoms):
+            if total > 0:
+                label_text = f"{total:.1f}".replace(".", ",")
+                ax.text(
+                    x[i], total + (bottoms.max() * 0.015),
+                    label_text,
+                    ha="center", va="bottom",
+                    fontsize=7.5, color="#374151", fontweight="600",
+                )
+
+    # ── Legend ─────────────────────────────────────────────────────────────
+    import matplotlib.patches as mpatches
+    legend_patches = [
+        mpatches.Patch(facecolor=color, label=label, linewidth=0)
+        for _, label, color in bar_handles
+    ]
+    legend = ax.legend(
+        handles=legend_patches,
+        loc="upper left",
+        bbox_to_anchor=(0.0, 1.18),
+        ncol=len(legend_patches),
+        frameon=False,
+        fontsize=8,
+        handlelength=1.0,
+        handleheight=0.85,
+        handletextpad=0.45,
+        columnspacing=1.0,
+    )
+    for text in legend.get_texts():
+        text.set_color("#374151")
+
+    # ── X-axis ─────────────────────────────────────────────────────────────
+    ax.set_xticks(x)
+    ax.set_xticklabels(months, fontsize=8, color="#6b7280", rotation=0)
+    ax.tick_params(axis="x", length=0, pad=5)
+
+    # ── Y-axis ─────────────────────────────────────────────────────────────
+    ax.set_ylabel("Consommation (MWh)", fontsize=8, color="#9ca3af", labelpad=6)
+    ax.tick_params(axis="y", length=0)
+
+    # ── Spines ─────────────────────────────────────────────────────────────
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.spines["bottom"].set_color("#e5e7eb")
+
+    plt.tight_layout(pad=0.4)
+
+    # IMPORTANT: Use transparent=True exactly like generate_enedis_chart
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format="png", bbox_inches="tight", transparent=True, dpi=150)
+    plt.close()
+    buffer.seek(0)
+
+    img_base64 = base64.b64encode(buffer.read()).decode("utf-8")
+    return f"data:image/png;base64,{img_base64}"

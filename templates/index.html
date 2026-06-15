@@ -2018,7 +2018,8 @@
                                 <span
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">PDL
                                     :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{data.pdl}}</span>
+                                <span
+                                    style="font-size: 11px; color: var(--gray-700);">{{data.comparatifClientHistoryPdfDto.pdl}}</span>
                             </div>
                         </div>
                     </div>
@@ -2367,127 +2368,27 @@
                 <!-- Charts column -->
                 <div class="col gap-14">
                     <div class="chart" style="padding:12px 14px;">
-                        <div class="row items-baseline gap-10">
-                            <div class="chart-title" style="font-size:12px;">ÉVOLUTION DES PRIX DE L'ÉLECTRICITÉ</div>
-                            <div class="chart-sub" style="font-size:8px;">(BASE 2021 — AUJOURD'HUI)</div>
-                        </div>
-                        <div class="chart-legend" style="gap:12px; font-size:8px; margin:6px 0 4px 0;">
-                            <span><span class="dot" style="background:#0b3a66; width:8px; height:8px;"></span>FR Cal2027
-                                base</span>
-                            <span><span class="dot" style="background:#1a8a5b; width:8px; height:8px;"></span>FR Cal2028
-                                base</span>
-                            <span><span class="dot" style="background:#c33; width:8px; height:8px;"></span>FR Cal2029
-                                base</span>
-                            <span><span class="dot" style="background:#7e7e7e; width:8px; height:8px;"></span>FR Cal2030
-                                base</span>
-                        </div>
-                        <svg viewBox="0 0 700 190" width="100%" height="170" preserveAspectRatio="none"
-                            style="display:block;">
-                            <g stroke="#eef0f4" stroke-width="1">
-                                <line x1="40" x2="690" y1="20" y2="20" />
-                                <line x1="40" x2="690" y1="54" y2="54" />
-                                <line x1="40" x2="690" y1="88" y2="88" />
-                                <line x1="40" x2="690" y1="122" y2="122" />
-                                <line x1="40" x2="690" y1="156" y2="156" />
-                            </g>
-                            <g font-family="Inter" font-size="7.5" fill="#9ca3af">
-                                <text x="6" y="22">€/MWh</text>
-                                <text x="6" y="57">300</text>
-                                <text x="6" y="91">200</text>
-                                <text x="6" y="125">100</text>
-                                <text x="6" y="159">0</text>
-                            </g>
-                            <g>
-                                <rect x="350" y="15" width="130" height="30" rx="3" fill="#fff3f3" stroke="#f4cfd3" />
-                                <text x="356" y="27" font-family="Inter" font-size="7.5" font-weight="700"
-                                    fill="#c33">Pic historique 2022</text>
-                                <text x="356" y="37" font-family="Inter" font-size="7" fill="#5b6470">depuis baisse
-                                    progressive</text>
-                            </g>
-                            <path
-                                d="M40,135 L80,133 L120,128 L160,115 L200,82 L240,42 L260,36 L290,54 L330,82 L380,105 L430,117 L480,121 L530,125 L580,129 L620,133 L660,137"
-                                fill="none" stroke="#0b3a66" stroke-width="1.5" />
-                            <path
-                                d="M40,138 L80,136 L120,132 L160,119 L200,88 L240,50 L260,44 L290,62 L330,88 L380,109 L430,121 L480,125 L530,129 L580,132 L620,138 L660,141"
-                                fill="none" stroke="#1a8a5b" stroke-width="1.5" />
-                            <path
-                                d="M40,142 L80,140 L120,135 L160,123 L200,94 L240,58 L260,52 L290,68 L330,92 L380,113 L430,125 L480,129 L530,133 L580,136 L620,142 L660,145"
-                                fill="none" stroke="#c33" stroke-width="1.5" />
-                            <path
-                                d="M40,145 L80,143 L120,138 L160,128 L200,100 L240,66 L260,60 L290,76 L330,98 L380,117 L430,129 L480,133 L530,137 L580,140 L620,145 L660,148"
-                                fill="none" stroke="#7e7e7e" stroke-width="1.5" />
-                            <g font-family="Inter" font-size="7" fill="#9ca3af">
-                                <text x="40" y="175">11/21</text><text x="120" y="175">04/22</text><text x="200"
-                                    y="175">09/22</text><text x="290" y="175">02/23</text><text x="370"
-                                    y="175">07/23</text><text x="440" y="175">12/23</text><text x="510"
-                                    y="175">05/24</text><text x="580" y="175">10/24</text><text x="650"
-                                    y="175">01/26</text>
-                            </g>
-                        </svg>
+                        <div class="chart-title" style="font-size:12px;">ÉVOLUTION DES PRIX DE L'ÉLECTRICITÉ</div>
+                        {% if data.chart_date_ranges.all_data %}
+                        <div class="chart-sub" style="font-size:8px; margin-top:3px;">({{ data.chart_date_ranges.all_data }})</div>
+                        {% endif %}
+                        {% if data.image.chart %}
+                        <img src="{{ data.image.chart }}" alt="Évolution des prix de l'électricité" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
+                        {% else %}
+                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        {% endif %}
                     </div>
 
                     <div class="chart" style="padding:12px 14px;">
-                        <div class="row items-baseline gap-10">
-                            <div class="chart-title" style="font-size:12px;">ÉVOLUTION DES PRIX SUR LES 12 DERNIERS MOIS
-                            </div>
-                            <div class="chart-sub" style="font-size:8px;">(AVRIL 2025 – AVRIL 2026)</div>
-                        </div>
-                        <div class="chart-legend" style="gap:12px; font-size:8px; margin:6px 0 4px 0;">
-                            <span><span class="dot" style="background:#0b3a66; width:8px; height:8px;"></span>FR Cal2027
-                                base</span>
-                            <span><span class="dot" style="background:#1a8a5b; width:8px; height:8px;"></span>FR Cal2028
-                                base</span>
-                            <span><span class="dot" style="background:#c33; width:8px; height:8px;"></span>FR Cal2029
-                                base</span>
-                            <span><span class="dot" style="background:#7e7e7e; width:8px; height:8px;"></span>FR Cal2030
-                                base</span>
-                        </div>
-                        <svg viewBox="0 0 700 190" width="100%" height="170" preserveAspectRatio="none"
-                            style="display:block;">
-                            <g stroke="#eef0f4" stroke-width="1">
-                                <line x1="40" x2="690" y1="20" y2="20" />
-                                <line x1="40" x2="690" y1="54" y2="54" />
-                                <line x1="40" x2="690" y1="88" y2="88" />
-                                <line x1="40" x2="690" y1="122" y2="122" />
-                                <line x1="40" x2="690" y1="156" y2="156" />
-                            </g>
-                            <g font-family="Inter" font-size="7.5" fill="#9ca3af">
-                                <text x="6" y="22">€/MWh</text>
-                                <text x="6" y="57">70</text><text x="6" y="91">60</text><text x="6"
-                                    y="125">50</text><text x="6" y="159">40</text>
-                            </g>
-                            <path
-                                d="M40,66 L100,72 L160,81 L220,94 L280,111 L340,126 L400,138 L460,131 L520,104 L580,80 L640,62 L680,58"
-                                fill="none" stroke="#0b3a66" stroke-width="1.5" />
-                            <path
-                                d="M40,70 L100,76 L160,85 L220,98 L280,114 L340,129 L400,140 L460,134 L520,108 L580,84 L640,66 L680,62"
-                                fill="none" stroke="#1a8a5b" stroke-width="1.5" />
-                            <path
-                                d="M40,74 L100,80 L160,89 L220,101 L280,117 L340,131 L400,142 L460,137 L520,111 L580,88 L640,70 L680,66"
-                                fill="none" stroke="#c33" stroke-width="1.5" />
-                            <path
-                                d="M40,78 L100,84 L160,93 L220,104 L280,120 L340,133 L400,144 L460,140 L520,114 L580,92 L640,74 L680,70"
-                                fill="none" stroke="#7e7e7e" stroke-width="1.5" />
-                            <g>
-                                <rect x="280" y="18" width="150" height="26" rx="3" fill="#0b3a66" />
-                                <text x="288" y="30" font-family="Inter" font-size="7.5" font-weight="700"
-                                    fill="#fff">Rebond depuis fév. 2026</text>
-                                <text x="288" y="39" font-family="Inter" font-size="6.5" fill="#cad7e6">suite conflit
-                                    USA-Iran</text>
-                            </g>
-                            <g>
-                                <text x="270" y="175" font-family="Inter" font-size="7.5" font-weight="700"
-                                    fill="#1a8a5b">Baisse continue</text>
-                                <text x="270" y="183" font-family="Inter" font-size="6.5" fill="#1a8a5b">jusqu'en fév.
-                                    2026</text>
-                            </g>
-                            <g font-family="Inter" font-size="7" fill="#9ca3af">
-                                <text x="40" y="200">04/25</text><text x="120" y="200">06/25</text><text x="200"
-                                    y="200">08/25</text><text x="280" y="200">10/25</text><text x="360"
-                                    y="200">12/25</text><text x="440" y="200">02/26</text><text x="520"
-                                    y="200">04/26</text><text x="600" y="200">06/26</text>
-                            </g>
-                        </svg>
+                        <div class="chart-title" style="font-size:12px;">ÉVOLUTION DES PRIX SUR LES 12 DERNIERS MOIS</div>
+                        {% if data.chart_date_ranges.last_12m %}
+                        <div class="chart-sub" style="font-size:8px; margin-top:3px;">({{ data.chart_date_ranges.last_12m }})</div>
+                        {% endif %}
+                        {% if data.imageTwo.chart_12m %}
+                        <img src="{{ data.imageTwo.chart_12m }}" alt="Évolution des prix 12 derniers mois" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
+                        {% else %}
+                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        {% endif %}
                     </div>
 
                     <!-- Quote box -->
@@ -2585,8 +2486,7 @@
             </div>
 
             <!-- MAIN ROW: left column (info pills + consumption blocks + chart) | right column (analysis card, full height) -->
-            <div
-                style="display:grid; grid-template-columns: 1fr 300px; gap:24px; margin-top:4px; align-items: stretch;">
+            <div style="display:grid; grid-template-columns: 1fr 300px; gap:24px; margin-top:4px; align-items: stretch;">
 
                 <!-- LEFT COLUMN -->
                 <div>
@@ -2598,7 +2498,8 @@
                                     <use href="#i-meter" />
                                 </svg></span>
                             <div class="col gap-1"><span class="label" style="font-size:7px;">Compteur (PRM)</span><span
-                                    class="value" style="font-size:11px;">30002451034322</span></div>
+                                    class="value"
+                                    style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</span></div>
                         </div>
                         <div class="info-pill"
                             style="padding:6px 6px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
@@ -2606,7 +2507,8 @@
                                     <use href="#i-calendar" />
                                 </svg></span>
                             <div class="col gap-1"><span class="label" style="font-size:7px;">Début contrat</span><span
-                                    class="value" style="font-size:11px;">01/01/2029</span></div>
+                                    class="value"
+                                    style="font-size:11px;">{{data.enedis_info.contract_start_date}}</span></div>
                         </div>
                         <div class="info-pill"
                             style="padding:6px 6px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
@@ -2614,7 +2516,9 @@
                                     <use href="#i-pie" />
                                 </svg></span>
                             <div class="col gap-1"><span class="label" style="font-size:7px;">Segment</span><span
-                                    class="value" style="font-size:11px;">C4</span></div>
+                                    class="value"
+                                    style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</span>
+                            </div>
                         </div>
                         <div class="info-pill"
                             style="padding:6px 6px; border:1px solid var(--gray-200); border-radius:0 8px 8px 0; margin:0;">
@@ -2622,309 +2526,188 @@
                                     <use href="#i-bolt" />
                                 </svg></span>
                             <div class="col gap-1"><span class="label" style="font-size:7px;">Puissance</span><span
-                                    class="value" style="font-size:11px;">156 kVA</span></div>
+                                    class="value"
+                                    style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Consumption blocks -->
-                    <div
-                        style="display:grid; grid-template-columns: repeat(4, 1fr) 231px; gap:0px; margin-bottom:18px;">
-                        <div class="cons-block"
-                            style="gap:3px; border:1px solid var(--gray-200); border-right:none; padding:8px 6px; background:#fff;">
-                            <div class="key"><span class="dot"
-                                    style="background:var(--navy-900); width:22px; height:22px;"><svg width="12"
-                                        height="12" stroke="currentColor" stroke-width="2.2" fill="none"
-                                        viewBox="0 0 24 24">
-                                        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-                                        <circle cx="12" cy="12" r="4" />
-                                    </svg></span> HPH</div>
-                            <span class="hint" style="font-size:9px;">(Heures Pleines Hiver)</span>
-                            <div class="val" style="font-size:22px;">65 862 MWh</div>
-                            <div class="sub" style="font-size:10px;">Nov → Mars · Journée</div>
-                        </div>
-                        <div class="cons-block"
-                            style="gap:3px; border:1px solid var(--gray-200); border-right:none; padding:8px 6px; background:#fff;">
-                            <div class="key"><span class="dot"
-                                    style="background:var(--navy-900); width:22px; height:22px;"><svg width="12"
-                                        height="12">
-                                        <use href="#i-moon" />
-                                    </svg></span> HCH</div>
-                            <span class="hint" style="font-size:9px;">(Heures Creuses Hiver)</span>
-                            <div class="val" style="font-size:22px;">30 557 MWh</div>
-                            <div class="sub" style="font-size:10px;">Nov → Mars · Nuit / Week-end</div>
-                        </div>
-                        <div class="cons-block"
-                            style="gap:3px; border:1px solid var(--gray-200); border-right:none; padding:8px 6px; background:#fff;">
-                            <div class="key"><span class="dot"
-                                    style="background:var(--amber-500); width:22px; height:22px;"><svg width="12"
-                                        height="12">
-                                        <use href="#i-sun" />
-                                    </svg></span> HPE</div>
-                            <span class="hint" style="font-size:9px;">(Heures Pleines Été)</span>
-                            <div class="val" style="font-size:22px;">121 451 MWh</div>
-                            <div class="sub" style="font-size:10px;">Avr → Oct · Journée</div>
-                        </div>
-                        <div class="cons-block"
-                            style="gap:3px; border:1px solid var(--gray-200); padding:8px 6px; background:#fff;">
-                            <div class="key"><span class="dot"
-                                    style="background:var(--green-600); width:22px; height:22px;"><svg width="12"
-                                        height="12">
-                                        <use href="#i-moon" />
-                                    </svg></span> HCE</div>
-                            <span class="hint" style="font-size:9px;">(Heures Creuses Été)</span>
-                            <div class="val" style="font-size:22px;">44 030 MWh</div>
-                            <div class="sub" style="font-size:10px;">Avr → Oct · Nuit / Week-end</div>
-                        </div>
-                        <div class="total-annual" style="padding:12px 14px; margin-left:12px;">
-                            <div class="head" style="font-size:9px;"><svg width="12" height="12">
-                                    <use href="#i-trend-up" />
-                                </svg> TOTAL ANNUEL</div>
-                            <div class="big" style="font-size:32px;">261,9 MWh</div>
+                    <!-- Consumption blocks - DYNAMIC based on tender_table.columns6 -->
+                    <div style="display:flex; flex-wrap:wrap; gap:0px; margin-bottom:18px; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden;">
+                        {% for col in data.tender_table.columns6 %}
+                            {% if col == "HPH" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="4"/></svg></span> HPH</div>
+                                <span class="hint" style="font-size:9px;">(Heures Pleines Hiver)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hph}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Nov → Mars · Journée</div>
+                            </div>
+                            {% elif col == "HCH" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HCH</div>
+                                <span class="hint" style="font-size:9px;">(Heures Creuses Hiver)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hch}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Nov → Mars · Nuit / Week-end</div>
+                            </div>
+                            {% elif col == "HPE" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--amber-500); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-sun"/></svg></span> HPE</div>
+                                <span class="hint" style="font-size:9px;">(Heures Pleines Été)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hpe}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Avr → Oct · Journée</div>
+                            </div>
+                            {% elif col == "HCE" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--green-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HCE</div>
+                                <span class="hint" style="font-size:9px;">(Heures Creuses Été)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hce}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Avr → Oct · Nuit / Week-end</div>
+                            </div>
+                            {% elif col == "POINTE" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--red-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-bolt"/></svg></span> POINTE</div>
+                                <span class="hint" style="font-size:9px;">(Pointe Hiver)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_pointe}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Heures de pointe</div>
+                            </div>
+                            {% elif col == "HP" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-sun"/></svg></span> HP</div>
+                                <span class="hint" style="font-size:9px;">(Heures Pleines)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hp}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Journée</div>
+                            </div>
+                            {% elif col == "HC" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--green-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HC</div>
+                                <span class="hint" style="font-size:9px;">(Heures Creuses)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hc}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Nuit / Week-end</div>
+                            </div>
+                            {% elif col == "BASE" %}
+                            <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
+                                <div class="key"><span class="dot" style="background:var(--teal-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-bolt"/></svg></span> BASE</div>
+                                <span class="hint" style="font-size:9px;">(Base)</span>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_base}} MWh</div>
+                                <div class="sub" style="font-size:10px;">Tarif Base</div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Total Annual Card -->
+                        <div class="total-annual" style="padding:12px 14px; margin:0; min-width:180px;">
+                            <div class="head" style="font-size:9px;"><svg width="12" height="12"><use href="#i-trend-up"/></svg> TOTAL ANNUEL</div>
+                            <div class="big" style="font-size:32px;">{{data.enedis_info.enedis_rate_sum}} MWh</div>
                             <div class="desc" style="font-size:10px;">Base de calcul de l'appel d'offres</div>
                         </div>
                     </div>
 
-                    <!-- Bar chart -->
-                    <div class="chart" style="margin-top:18px; padding:10px 12px;">
+                    <!-- Dynamic Bar Chart from enedisDataPastYear -->
+                    <div class="chart" style="margin-top:12px; padding:8px 10px;">
                         <div class="row items-baseline justify-between">
-                            <div class="chart-title" style="font-size:11px;">RÉPARTITION MENSUELLE DE LA CONSOMMATION —
-                                12 DERNIERS MOIS</div>
-                            <div class="row items-center gap-6" style="font-size:10px;"><span
-                                    class="icon-circle sm ic-navy" style="width:20px; height:20px;"><svg>
-                                        <use href="#i-info" />
-                                    </svg></span><span>Données ENEDIS</span></div>
+                            <div class="chart-title" style="font-size:10px;">RÉPARTITION MENSUELLE DE LA CONSOMMATION — 12 DERNIERS MOIS</div>
+                            <div class="row items-center gap-6" style="font-size:9px;">
+                                <span class="icon-circle sm ic-navy" style="width:18px; height:18px;"><svg><use href="#i-info"/></svg></span>
+                                <span>Données ENEDIS</span>
+                            </div>
                         </div>
-                        <div class="chart-legend" style="gap:10px; font-size:8px; margin:6px 0 4px 0;">
-                            <span><span class="dot"
-                                    style="background:var(--green-600); width:7px; height:7px;"></span>HCE</span>
-                            <span><span class="dot"
-                                    style="background:var(--amber-500); width:7px; height:7px;"></span>HPE</span>
-                            <span><span class="dot" style="background:#a8b9d0; width:7px; height:7px;"></span>HPH</span>
+
+                        <!-- Dynamic Legend based on available consumption data -->
+                        <div class="chart-legend" style="gap:8px; font-size:7px; margin:4px 0 2px 0;">
+                            {% if data.imageOne.enedis_chart %}
+                                {% if data.comparatifClientHistoryPdfDto.enedisDataPastYear.consumptionData %}
+                                    {% for label, values in data.comparatifClientHistoryPdfDto.enedisDataPastYear.consumptionData.items %}
+                                        {% if label == "HCE" %}
+                                        <span><span class="dot" style="background:#A8C40F; width:6px; height:6px;"></span>HCE</span>
+                                        {% elif label == "HPE" %}
+                                        <span><span class="dot" style="background:#FDD36A; width:6px; height:6px;"></span>HPE</span>
+                                        {% elif label == "HPH" %}
+                                        <span><span class="dot" style="background:#002B5C; width:6px; height:6px;"></span>HPH</span>
+                                        {% elif label == "HCH" %}
+                                        <span><span class="dot" style="background:#BFC4CC; width:6px; height:6px;"></span>HCH</span>
+                                        {% elif label == "HP" %}
+                                        <span><span class="dot" style="background:#F77F00; width:6px; height:6px;"></span>HP</span>
+                                        {% elif label == "HC" %}
+                                        <span><span class="dot" style="background:#0081A7; width:6px; height:6px;"></span>HC</span>
+                                        {% elif label == "BASE" %}
+                                        <span><span class="dot" style="background:#9B5DE5; width:6px; height:6px;"></span>BASE</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endif %}
                         </div>
-                        <svg viewBox="0 0 850 240" width="100%" height="200" preserveAspectRatio="none">
-                            <g stroke="#eef0f4" stroke-width="1">
-                                <line x1="48" x2="840" y1="20" y2="20" />
-                                <line x1="48" x2="840" y1="58" y2="58" />
-                                <line x1="48" x2="840" y1="96" y2="96" />
-                                <line x1="48" x2="840" y1="134" y2="134" />
-                                <line x1="48" x2="840" y1="172" y2="172" />
-                            </g>
-                            <g font-family="Inter" font-size="8" fill="#9ca3af"><text x="6" y="22">40</text><text x="6"
-                                    y="60">30</text><text x="6" y="98">20</text><text x="6" y="136">10</text><text x="6"
-                                    y="174">0</text><text x="6" y="10">Consommation (MWh)</text></g>
-                            <g>
-                                <rect x="60" y="108" width="40" height="84" fill="var(--amber-500)" />
-                                <rect x="60" y="88" width="40" height="20" fill="var(--green-600)" /><text x="80" y="82"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">19,6</text><text x="80" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">05/25</text>
-                            </g>
-                            <g>
-                                <rect x="125" y="100" width="40" height="92" fill="var(--amber-500)" />
-                                <rect x="125" y="82" width="40" height="18" fill="var(--green-600)" /><text x="145"
-                                    y="75" font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">22,0</text><text x="145" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">06/25</text>
-                            </g>
-                            <g>
-                                <rect x="190" y="84" width="40" height="108" fill="var(--amber-500)" />
-                                <rect x="190" y="64" width="40" height="20" fill="var(--green-600)" /><text x="210"
-                                    y="57" font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">26,7</text><text x="210" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">07/25</text>
-                            </g>
-                            <g>
-                                <rect x="255" y="60" width="40" height="132" fill="var(--amber-500)" />
-                                <rect x="255" y="40" width="40" height="20" fill="var(--green-600)" /><text x="275"
-                                    y="33" font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">31,9</text><text x="275" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">08/25</text>
-                            </g>
-                            <g>
-                                <rect x="320" y="80" width="40" height="112" fill="var(--amber-500)" />
-                                <rect x="320" y="60" width="40" height="20" fill="var(--green-600)" /><text x="340"
-                                    y="53" font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">27,4</text><text x="340" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">09/25</text>
-                            </g>
-                            <g>
-                                <rect x="385" y="112" width="40" height="80" fill="var(--amber-500)" />
-                                <rect x="385" y="94" width="40" height="18" fill="var(--green-600)" /><text x="405"
-                                    y="87" font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">19,2</text><text x="405" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">10/25</text>
-                            </g>
-                            <g>
-                                <rect x="450" y="116" width="40" height="76" fill="var(--amber-500)" />
-                                <rect x="450" y="106" width="40" height="10" fill="var(--green-600)" />
-                                <rect x="450" y="90" width="40" height="16" fill="#a8b9d0" /><text x="470" y="83"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">18,3</text><text x="470" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">11/25</text>
-                            </g>
-                            <g>
-                                <rect x="515" y="110" width="40" height="82" fill="#a8b9d0" /><text x="535" y="103"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">19,0</text><text x="535" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">12/25</text>
-                            </g>
-                            <g>
-                                <rect x="580" y="98" width="40" height="94" fill="#a8b9d0" /><text x="600" y="91"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">22,5</text><text x="600" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">01/26</text>
-                            </g>
-                            <g>
-                                <rect x="645" y="106" width="40" height="86" fill="#a8b9d0" /><text x="665" y="99"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">19,7</text><text x="665" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">02/26</text>
-                            </g>
-                            <g>
-                                <rect x="710" y="116" width="40" height="76" fill="#a8b9d0" /><text x="730" y="109"
-                                    font-family="Inter" font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">17,6</text><text x="730" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">03/26</text>
-                            </g>
-                            <g>
-                                <rect x="775" y="116" width="40" height="44" fill="#a8b9d0" />
-                                <rect x="775" y="116" width="40" height="32" fill="var(--amber-500)"
-                                    transform="translate(0,44)" /><text x="795" y="109" font-family="Inter"
-                                    font-size="10" font-weight="700" fill="#111827"
-                                    text-anchor="middle">17,7</text><text x="795" y="215" font-family="Inter"
-                                    font-size="8" fill="#6b7280" text-anchor="middle">04/26</text>
-                            </g>
-                        </svg>
+
+                        <!-- Display the generated bar chart -->
+                        {% if data.imageOne.enedis_chart %}
+                        <img src="{{ data.imageOne.enedis_chart }}" alt="Consommation Mensuelle ENEDIS" style="width:100%; height:auto; margin-top:2px; max-height:180px;">
+                        {% else %}
+                        <div style="text-align:center; padding:20px; color:#999; font-size:11px;">Aucune donnée de consommation disponible</div>
+                        {% endif %}
                     </div>
                 </div>
 
-                <!-- RIGHT COLUMN: analysis card with divider lines - blueish icons, neutral bottom callout -->
-                <div class="card"
-                    style="padding:0; display: flex; flex-direction: column; height: 100%; background: transparent; border: none; box-shadow: none;">
-                    <!-- NOTRE ANALYSE header section - dark teal background -->
-                    <div
-                        style="background: var(--teal-900); padding: 14px 16px; border-radius: 9px 9px 0 0; height: 3.5rem;">
+                <!-- RIGHT COLUMN: analysis card with divider lines -->
+                <div class="card" style="padding:0; display: flex; flex-direction: column; height: 100%; background: transparent; border: none; box-shadow: none;">
+                    <div style="background: var(--teal-900); padding: 14px 16px; border-radius: 9px 9px 0 0; height: 3.5rem;">
                         <div class="kicker" style="color:#fff; font-size:10px; margin:0;">NOTRE ANALYSE</div>
                     </div>
-
-                    <!-- White background content section -->
-                    <div style="background: #ffffff; padding: 14px 16px; border-radius: 14px 14px 14px 14px; display: flex; flex-direction: column; flex: 1; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative;
-    bottom: 13px;">
-
-                        <!-- Point 1 -->
+                    <div style="background: #ffffff; padding: 14px 16px; border-radius: 14px 14px 14px 14px; display: flex; flex-direction: column; flex: 1; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; bottom: 13px;">
                         <div class="row items-start gap-10" style="margin-top:4px;">
-                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg>
-                                    <use href="#i-chart-bar" style="color: var(--navy-600);" />
-                                </svg></span>
+                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE
-                                    CONSOMMATION</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">
-                                    Votre consommation présente des variations au cours de l'année, en fonction de votre
-                                    activité et des périodes.</p>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Votre consommation présente des variations au cours de l'année, en fonction de votre activité et des périodes.</p>
                             </div>
                         </div>
-
-                        <!-- Divider line -->
-                        <div style="height: 1px; background: var(--gray-200); margin: 14px 0;"></div>
-
-                        <!-- Point 2 -->
+                        <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
                         <div class="row items-start gap-10">
-                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg>
-                                    <use href="#i-calendar" style="color: var(--navy-600);" />
-                                </svg></span>
+                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-calendar" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX
-                                    FLUCTUATIONS</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Ce
-                                    type de profil implique une exposition aux fluctuations du marché de l'énergie,
-                                    notamment sur les périodes de forte consommation.</p>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Ce type de profil implique une exposition aux fluctuations du marché de l'énergie, notamment sur les périodes de forte consommation.</p>
                             </div>
                         </div>
-
-                        <!-- Divider line -->
-                        <div style="height: 1px; background: var(--gray-200); margin: 14px 0;"></div>
-
-                        <!-- Point 3 -->
+                        <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
                         <div class="row items-start gap-10">
-                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg>
-                                    <use href="#i-shield" style="color: var(--navy-600);" />
-                                </svg></span>
+                            <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE
-                                </div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Une
-                                    stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de
-                                    limiter l'impact des variations de prix.</p>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
                             </div>
                         </div>
-
-                        <!-- Bottom callout - light blue/grey background, blueish icon -->
-                        <div class="row items-center gap-8"
-                            style="margin-top:16px; background: #eef2f7; padding:10px 12px; border-radius:6px;">
-                            <span class="icon-circle md" style="background: #d1dbe8; width:28px; height:28px;"><svg>
-                                    <use href="#i-arrow-right" style="color: var(--navy-700);" />
-                                </svg></span>
-                            <span style="font-size:10px; color: var(--gray-700); font-weight: 500;">Cette analyse a
-                                servi de base à la construction de notre recommandation présentée précédemment.</span>
+                        <div class="row items-center gap-8" style="margin-top:14px; background: #eef2f7; padding:8px 10px; border-radius:6px;">
+                            <span class="icon-circle md" style="background: #d1dbe8; width:26px; height:26px;"><svg><use href="#i-arrow-right" style="color: var(--navy-700);"/></svg></span>
+                            <span style="font-size:9px; color: var(--gray-700); font-weight: 500;">Cette analyse a servi de base à la construction de notre recommandation présentée précédemment.</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom row with border around boxes and thinner/shorter vertical blue line separator -->
-            <div class="row items-center gap-0" style="margin-top:16px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; bottom: 27px;
-                position: relative;
-                width: 69%;
-                height: 60px;">
-                <!-- Left box -->
-                <div class="row items-center gap-10" style="flex: 1; padding: 12px 16px; background: #ffffff;">
-                    <span class="icon-circle md"
-                        style="background:#e6f4ec; width:32px; height:32px; flex-shrink: 0;"><svg>
-                            <use href="#i-bulb" />
-                        </svg></span>
-                    <div style="font-size:11px; color: var(--gray-700); line-height: 1.4;">Les conditions de marché
-                        évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix
-                            aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
+            <!-- Bottom row - increased height from 60px to 80px, padding increased for better readability -->
+            <div class="row items-center gap-0" style="margin-top:4px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; width: 69%; height: 80px; position: absolute; bottom: 54px;">
+                <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
+                    <span class="icon-circle md" style="background:#e6f4ec; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-bulb"/></svg></span>
+                    <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Les conditions de marché évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
                 </div>
-
-                <!-- Vertical blue line separator - thinner (1px) and shorter (40px) -->
-                <div
-                    style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 12px;">
-                    <div style="width: 1px; background: var(--teal-900); height: 40px;"></div>
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 12px;">
+                    <div style="width: 1px; background: var(--teal-900); height: 50px;"></div>
                 </div>
-
-                <!-- Right box -->
-                <div class="row items-center gap-10" style="flex: 1; padding: 12px 16px; background: #ffffff;">
-                    <span class="icon-circle md"
-                        style="background:#fff3df; width:32px; height:32px; flex-shrink: 0;"><svg>
-                            <use href="#i-calendar" />
-                        </svg></span>
-                    <div style="font-size:11px; color: var(--gray-700); line-height: 1.4;">Offre valable à l'instant
-                        T<br />et susceptible d'évoluer rapidement.</div>
+                <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
+                    <span class="icon-circle md" style="background:#fff3df; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-calendar"/></svg></span>
+                    <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Offre valable à l'instant T<br />et susceptible d'évoluer rapidement.</div>
                 </div>
             </div>
 
             <div class="footer-bar">
-                <span class="lock"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none"
-                        viewBox="0 0 24 24">
-                        <rect x="4" y="10" width="16" height="11" rx="2" />
-                        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                    </svg> DOCUMENT CONFIDENTIEL</span>
+                <span class="lock"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> DOCUMENT CONFIDENTIEL</span>
                 <div class="divider"></div>
-                <span class="lock" style="color:#f7c042;"><svg width="12" height="12" stroke="currentColor"
-                        stroke-width="2.2" fill="none" viewBox="0 0 24 24">
-                        <path d="M12 3 2 21h20L12 3z" />
-                        <path d="M12 10v5" />
-                        <path d="M12 18v.5" />
-                    </svg> Marché de l'énergie volatil — opportunité à valider rapidement.</span>
+                <span class="lock" style="color:#f7c042;"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18v.5"/></svg> Marché de l'énergie volatil — opportunité à valider rapidement.</span>
                 <div class="divider"></div>
-                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement
-                    à son destinataire.</span>
+                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
 
-        <!-- SLIDE 5  -->
+        <!-- SLIDE 5 PAGE 1 -->
         <section data-screen-label="05 Détail de notre analyse marché">
             <div
                 style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
@@ -2951,7 +2734,7 @@
                                     <use href="#i-meter" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
-                                <div class="value" style="font-size:11px;">30002451034322</div>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
                             </div>
                         </div>
                         <div class="info-pill" style="padding:6px 8px;">
@@ -2959,7 +2742,7 @@
                                     <use href="#i-calendar" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
-                                <div class="value" style="font-size:11px;">01/01/2029</div>
+                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
                             </div>
                         </div>
                         <div class="info-pill" style="padding:6px 8px;">
@@ -2967,7 +2750,7 @@
                                     <use href="#i-pie" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Segment</span>
-                                <div class="value" style="font-size:11px;">C4</div>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
                             </div>
                         </div>
                         <div class="info-pill" style="padding:6px 8px;">
@@ -2975,7 +2758,7 @@
                                     <use href="#i-bolt" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
-                                <div class="value" style="font-size:11px;">156 kVA</div>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
                             </div>
                         </div>
                     </div>
@@ -2988,7 +2771,7 @@
                                 <use href="#i-target" />
                             </svg></span>
                         <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
-                            <span style="color:var(--green-600);">FOURNISSEUR A</span></span>
+                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
                         <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
                             compétitive dans les conditions actuelles du marché.</span>
                     </div>
@@ -3002,7 +2785,7 @@
                                 </svg></span>
                             <div>
                                 <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
-                                <strong style="font-size:12px; color:var(--navy-900);">250 MWh</strong>
+                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
                             </div>
                         </div>
                         <div class="row items-center gap-6"
@@ -3018,105 +2801,88 @@
                         </div>
                     </div>
 
-                    <!-- Comparison table -->
+                    <!-- Comparison table — page 1: rows 1–4 -->
                     <table class="cmp-table" style="margin-top:10px; font-size:9px;">
                         <thead>
                             <tr>
                                 <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
-                                <th colspan="4" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
                                     L'ÉNERGIE (€/MWh)</th>
-                                <th colspan="4" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
                                     (€/MWh)</th>
                                 <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT<br />(€/AN)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL<br />HORS TURPE
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
                                 </th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
                             </tr>
                             <tr>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HPH</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HCH</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HPE</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HCE</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HPH</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HCH</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HPE</th>
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">HCE</th>
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="row-rec" style="background:#f1faf4;">
-                                <td class="vendor" style="padding:5px 4px;"><strong>Fournisseur A</strong><br><span
-                                        class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span></td>
-                                <td style="padding:4px 2px;">117,32</td>
-                                <td style="padding:4px 2px;">89,25</td>
-                                <td style="padding:4px 2px;">61,61</td>
-                                <td style="padding:4px 2px;">60,90</td>
-                                <td style="padding:4px 2px;">0,99</td>
-                                <td style="padding:4px 2px;">0,99</td>
-                                <td style="padding:4px 2px;">0,99</td>
-                                <td style="padding:4px 2px;">0,99</td>
-                                <td style="padding:4px 2px;">10,27</td>
-                                <td style="padding:4px 2px;">0</td>
-                                <td style="padding:4px 2px;">Prix fixe<br>36m</td>
-                                <td class="green-text" style="font-weight:700;">62,15 €</td>
-                                <td class="green-text" style="font-weight:700;">15 537 €</td>
-                                <td class="savings" style="color:var(--green-600); font-weight:700;">-25,2%<br>-5 232 €
+                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:":4" %}
+                            <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
+                                <td class="vendor" style="padding:5px 4px;">
+                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                    <img src="{{ r.partnerPhoto.path }}"
+                                         alt="{{ r.partnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% elif r.newPartnerLogoName %}
+                                    <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
+                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% else %}
+                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
+                                    {% endif %}
+                                    {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
+                                    {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
                                 </td>
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% if r.typeCapa == "CAPAINCLUS" %}
+                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
+                                {% else %}
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
                             </tr>
-                            <tr>
-                                <td style="padding:5px 4px;">Fournisseur B</td>
-                                <td style="padding:4px 2px;">117,11</td>
-                                <td style="padding:4px 2px;">90,37</td>
-                                <td style="padding:4px 2px;">56,74</td>
-                                <td style="padding:4px 2px;">63,41</td>
-                                <td style="padding:4px 2px;">3,60</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">11,03</td>
-                                <td style="padding:4px 2px;">150</td>
-                                <td style="padding:4px 2px;">Prix fixe<br>36m</td>
-                                <td style="padding:4px 2px;">64,42 €</td>
-                                <td style="padding:4px 2px;">16 105 €</td>
-                                <td style="padding:4px 2px; color:var(--green-600);">-23,8%<br>-4 663 €</td>
-                            </tr>
-                            <tr>
-                                <td style="padding:5px 4px;">Fournisseur C</td>
-                                <td style="padding:4px 2px;">120,67</td>
-                                <td style="padding:4px 2px;">94,29</td>
-                                <td style="padding:4px 2px;">57,04</td>
-                                <td style="padding:4px 2px;">68,95</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">0,50</td>
-                                <td style="padding:4px 2px;">11,20</td>
-                                <td style="padding:4px 2px;">0</td>
-                                <td style="padding:4px 2px;">Prix fixe<br>36m</td>
-                                <td style="padding:4px 2px;">64,91 €</td>
-                                <td style="padding:4px 2px;">16 227 €</td>
-                                <td style="padding:4px 2px; color:var(--green-600);">-22,8%<br>-4 540 €</td>
-                            </tr>
-                            <tr style="border-top:1px solid var(--gray-200);">
-                                <td style="padding:5px 4px;">Référence marché</td>
-                                <td style="padding:4px 2px;">213,56</td>
-                                <td style="padding:4px 2px;">198,36</td>
-                                <td style="padding:4px 2px;">162,37</td>
-                                <td style="padding:4px 2px;">147,55</td>
-                                <td style="padding:4px 2px;">4,92</td>
-                                <td style="padding:4px 2px;">4,92</td>
-                                <td style="padding:4px 2px;">4,92</td>
-                                <td style="padding:4px 2px;">4,92</td>
-                                <td style="padding:4px 2px;">0</td>
-                                <td style="padding:4px 2px;">1 578,84</td>
-                                <td style="padding:4px 2px;">Prix fixe<br>24m</td>
-                                <td style="padding:4px 2px;">83,08 €</td>
-                                <td style="padding:4px 2px;">20 771 €</td>
-                                <td style="padding:4px 2px; color:var(--gray-500);">—</td>
-                            </tr>
+                            {% empty %}
+                            <tr><td colspan="15" style="text-align:center; padding:8px; color:var(--gray-500);">Aucune donnée disponible</td></tr>
+                            {% endfor %}
                         </tbody>
                     </table>
 
@@ -3142,25 +2908,24 @@
                                 style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
                                     <use href="#i-bulb" />
                                 </svg></span>
-                            <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
-                                    style="font-size:8px;">L'offre Fournisseur A représente la meilleure opportunité du
-                                    marché avec une économie annuelle de 5 232 € soit −25,2 %.</span></div>
+                            {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
+                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
+                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                {% endwith %}
                         </div>
                     </div>
                 </div>
 
-                <!-- RIGHT SIDEBAR - with light grey borders and dark navy heading backgrounds -->
+                <!-- RIGHT SIDEBAR -->
                 <div style="display: flex; flex-direction: column; height: 100%;">
                     <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
 
-                        <!-- Box 1: DÉFINITION DES POSTES - dark navy heading background -->
+                        <!-- Box 1: DÉFINITION DES POSTES -->
                         <div
                             style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
-                            <!-- Heading with background color #011337 -->
                             <div class="kicker"
                                 style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
                                 DÉFINITION DES POSTES</div>
-                            <!-- Content area with padding -->
                             <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
                                 <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
                                         style="width: 26px; height: 26px;"><svg style="width:13px;">
@@ -3204,7 +2969,7 @@
                             </div>
                         </div>
 
-                        <!-- Box 2: POURQUOI CETTE ANALYSE ? - light grey border, heading can stay as is or also have background -->
+                        <!-- Box 2: POURQUOI CETTE ANALYSE ? -->
                         <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
                             <div class="kicker"
                                 style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
@@ -3267,6 +3032,646 @@
                     <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
                 </div>
         </section>
+
+        <!-- SLIDE 5 PAGE 2 — only rendered when more than 4 providers -->
+        {% if data.comparatifClientHistoryPdfDto.allProvidersForTables|length > 4 %}
+        <section data-screen-label="05 Détail de notre analyse marché">
+            <div
+                style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
+                <!-- LEFT SIDE -->
+                <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                    <div class="row items-start justify-between gap-24" style="margin-bottom:6px;">
+                        <div>
+                            <h1 class="page-title" style="font-size:28px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
+                            <h2 class="page-subtitle" style="font-size:16px;">COMPARATIF TECHNIQUE DES OFFRES
+                                ÉLECTRICITÉ</h2>
+                            <p class="lede" style="margin-top:4px; font-size:11px; max-width:840px;">Nous avons consulté
+                                plusieurs fournisseurs
+                                et comparé leurs conditions tarifaires pour vous proposer l'offre la plus compétitive et
+                                sécurisante.</p>
+                        </div>
+                        <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
+                            shape="rect" style="height: 55px;"></image-slot>
+                    </div>
+
+                    <!-- Info pills row -->
+                    <div class="info-row" style="margin-top:8px; grid-template-columns: repeat(4, 1fr); gap:8px;">
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-meter" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-calendar" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
+                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-pie" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Segment</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-bolt" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation banner -->
+                    <div class="banner"
+                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:10px; color:var(--navy-900); padding:8px 12px; gap:10px;">
+                        <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                <use href="#i-target" />
+                            </svg></span>
+                        <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
+                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
+                        <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
+                            compétitive dans les conditions actuelles du marché.</span>
+                    </div>
+
+                    <!-- Method notes row -->
+                    <div class="row gap-16" style="margin-top:8px;">
+                        <div class="row items-center gap-6"
+                            style="flex:1; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                                    <use href="#i-chart-line" />
+                                </svg></span>
+                            <div>
+                                <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
+                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
+                            </div>
+                        </div>
+                        <div class="row items-center gap-6"
+                            style="flex:1.5; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                                    <use href="#i-info" />
+                                </svg></span>
+                            <div>
+                                <div class="label" style="font-size:7px;">MÉTHODE DE CALCUL DU PRIX MOYEN MOLÉCULE</div>
+                                <span style="font-size:9px; color:var(--gray-600);">Budget total molécule (hors capacité
+                                    et hors CEE) ÷ Consommation annuelle (MWh)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison table — page 2: rows 5–8 -->
+                    <table class="cmp-table" style="margin-top:10px; font-size:9px;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
+                                    L'ÉNERGIE (€/MWh)</th>
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
+                                    (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
+                                </th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
+                            </tr>
+                            <tr>
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:"4:8" %}
+                            <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
+                                <td class="vendor" style="padding:5px 4px;">
+                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                    <img src="{{ r.partnerPhoto.path }}"
+                                         alt="{{ r.partnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% elif r.newPartnerLogoName %}
+                                    <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
+                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% else %}
+                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
+                                    {% endif %}
+                                    {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
+                                    {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
+                                </td>
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% if r.typeCapa == "CAPAINCLUS" %}
+                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
+                                {% else %}
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Bottom hints (repeated on every continuation page) -->
+                    <div class="row gap-12" style="margin-top:10px;">
+                        <div class="row items-start gap-6" style="flex:1;">
+                            <div class="icon-circle sm ic-navy"
+                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">1</div>
+                            <div><strong style="font-size:9px;">Prix moyen molécule</strong><br><span
+                                    style="font-size:8px; color:var(--gray-600);">Budget total molécule (hors capacité
+                                    et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
+                        </div>
+                        <div class="row items-start gap-6" style="flex:1;">
+                            <div class="icon-circle sm ic-navy"
+                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">2</div>
+                            <div><strong style="font-size:9px;">Budget total fournisseur</strong><br><span
+                                    style="font-size:8px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
+                                    sur l'année toutes périodes, hors Turpe et taxe</span></div>
+                        </div>
+                        <div class="row items-start gap-6"
+                            style="flex:1.2; background:#e6f4ec; padding:6px 8px; border-radius:8px;">
+                            <span class="icon-circle sm"
+                                style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
+                                    <use href="#i-bulb" />
+                                </svg></span>
+                            {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
+                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
+                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                {% endwith %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR -->
+                <div style="display: flex; flex-direction: column; height: 100%;">
+                    <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
+                        <div
+                            style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
+                            <div class="kicker"
+                                style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
+                                DÉFINITION DES POSTES</div>
+                            <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-bolt" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Prix du MWh selon
+                                            les différentes périodes (heures pleines / heures creuses, hiver / été).
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-shield" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">CAPACITÉ</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Coût de sécurisation
+                                            de l'approvisionnement électrique, notamment lors des périodes de forte
+                                            consommation en hiver.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-file" />
+                                        </svg></span>
+                                    <div><strong style="font-size:7px;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Dispositif
+                                            règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
+                                            d'économies d'énergie.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-user" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Abonnement annuel
+                                            facturé par le fournisseur pour votre contrat.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
+                            <div class="kicker"
+                                style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
+                                POURQUOI CETTE ANALYSE ?</div>
+                            <div class="col gap-10" style="margin-top:12px; padding: 0 16px 14px 16px;">
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-eye" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">TRANSPARENCE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous vous présentons
+                                            les données clés pour une décision en toute connaissance de cause.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-chart-bar" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous réalisons un
+                                            appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-shield" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">SÉCURISATION</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous privilégions
+                                            les conditions stables et compétitives pour protéger votre budget.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer-bar" style="margin-top: 12px;">
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4M12 16v.5" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg> OFFRE VALABLE À L'INSTANT T</span>
+                    <span class="strong">Sous réserve d'évolution du marché.</span>
+                    <div class="divider"></div>
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <path d="M12 3 2 21h20L12 3z" />
+                        </svg> MARCHÉ DE L'ÉNERGIE VOLATIL</span>
+                    <span class="strong">Opportunité à valider rapidement.</span>
+                    <div class="divider"></div>
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <rect x="4" y="10" width="16" height="11" rx="2" />
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                        </svg> DOCUMENT CONFIDENTIEL</span>
+                    <div class="divider"></div>
+                    <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
+                </div>
+        </section>
+        {% endif %}
+
+        <!-- SLIDE 5 PAGE 3 — only rendered when more than 8 providers -->
+        {% if data.comparatifClientHistoryPdfDto.allProvidersForTables|length > 8 %}
+        <section data-screen-label="05 Détail de notre analyse marché">
+            <div
+                style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
+                <!-- LEFT SIDE -->
+                <div style="display: flex; flex-direction: column; justify-content: space-around;">
+                    <div class="row items-start justify-between gap-24" style="margin-bottom:6px;">
+                        <div>
+                            <h1 class="page-title" style="font-size:28px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
+                            <h2 class="page-subtitle" style="font-size:16px;">COMPARATIF TECHNIQUE DES OFFRES
+                                ÉLECTRICITÉ</h2>
+                            <p class="lede" style="margin-top:4px; font-size:11px; max-width:840px;">Nous avons consulté
+                                plusieurs fournisseurs
+                                et comparé leurs conditions tarifaires pour vous proposer l'offre la plus compétitive et
+                                sécurisante.</p>
+                        </div>
+                        <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
+                            shape="rect" style="height: 55px;"></image-slot>
+                    </div>
+
+                    <!-- Info pills row -->
+                    <div class="info-row" style="margin-top:8px; grid-template-columns: repeat(4, 1fr); gap:8px;">
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-meter" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-calendar" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
+                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-pie" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Segment</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
+                            </div>
+                        </div>
+                        <div class="info-pill" style="padding:6px 8px;">
+                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                    <use href="#i-bolt" />
+                                </svg></span>
+                            <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
+                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation banner -->
+                    <div class="banner"
+                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:10px; color:var(--navy-900); padding:8px 12px; gap:10px;">
+                        <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                                <use href="#i-target" />
+                            </svg></span>
+                        <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
+                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
+                        <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
+                            compétitive dans les conditions actuelles du marché.</span>
+                    </div>
+
+                    <!-- Method notes row -->
+                    <div class="row gap-16" style="margin-top:8px;">
+                        <div class="row items-center gap-6"
+                            style="flex:1; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                                    <use href="#i-chart-line" />
+                                </svg></span>
+                            <div>
+                                <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
+                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
+                            </div>
+                        </div>
+                        <div class="row items-center gap-6"
+                            style="flex:1.5; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                                    <use href="#i-info" />
+                                </svg></span>
+                            <div>
+                                <div class="label" style="font-size:7px;">MÉTHODE DE CALCUL DU PRIX MOYEN MOLÉCULE</div>
+                                <span style="font-size:9px; color:var(--gray-600);">Budget total molécule (hors capacité
+                                    et hors CEE) ÷ Consommation annuelle (MWh)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison table — page 3: rows 9–12 -->
+                    <table class="cmp-table" style="margin-top:10px; font-size:9px;">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
+                                    L'ÉNERGIE (€/MWh)</th>
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
+                                    (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
+                                </th>
+                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
+                            </tr>
+                            <tr>
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
+                                {% for col in data.tender_table.columns6 %}
+                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:"8:12" %}
+                            <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
+                                <td class="vendor" style="padding:5px 4px;">
+                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
+                                    <img src="{{ r.partnerPhoto.path }}"
+                                         alt="{{ r.partnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% elif r.newPartnerLogoName %}
+                                    <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
+                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
+                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                    {% else %}
+                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
+                                    {% endif %}
+                                    {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
+                                    {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
+                                </td>
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% if r.typeCapa == "CAPAINCLUS" %}
+                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
+                                {% else %}
+                                {% for col in data.tender_table.columns6 %}
+                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
+                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
+                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
+                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <!-- Bottom hints -->
+                    <div class="row gap-12" style="margin-top:10px;">
+                        <div class="row items-start gap-6" style="flex:1;">
+                            <div class="icon-circle sm ic-navy"
+                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">1</div>
+                            <div><strong style="font-size:9px;">Prix moyen molécule</strong><br><span
+                                    style="font-size:8px; color:var(--gray-600);">Budget total molécule (hors capacité
+                                    et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
+                        </div>
+                        <div class="row items-start gap-6" style="flex:1;">
+                            <div class="icon-circle sm ic-navy"
+                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">2</div>
+                            <div><strong style="font-size:9px;">Budget total fournisseur</strong><br><span
+                                    style="font-size:8px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
+                                    sur l'année toutes périodes, hors Turpe et taxe</span></div>
+                        </div>
+                        <div class="row items-start gap-6"
+                            style="flex:1.2; background:#e6f4ec; padding:6px 8px; border-radius:8px;">
+                            <span class="icon-circle sm"
+                                style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
+                                    <use href="#i-bulb" />
+                                </svg></span>
+                            {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
+                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
+                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                {% endwith %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDEBAR -->
+                <div style="display: flex; flex-direction: column; height: 100%;">
+                    <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
+                        <div
+                            style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
+                            <div class="kicker"
+                                style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
+                                DÉFINITION DES POSTES</div>
+                            <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-bolt" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Prix du MWh selon
+                                            les différentes périodes (heures pleines / heures creuses, hiver / été).
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-shield" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">CAPACITÉ</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Coût de sécurisation
+                                            de l'approvisionnement électrique, notamment lors des périodes de forte
+                                            consommation en hiver.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-file" />
+                                        </svg></span>
+                                    <div><strong style="font-size:7px;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Dispositif
+                                            règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
+                                            d'économies d'énergie.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                            <use href="#i-user" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Abonnement annuel
+                                            facturé par le fournisseur pour votre contrat.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
+                            <div class="kicker"
+                                style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
+                                POURQUOI CETTE ANALYSE ?</div>
+                            <div class="col gap-10" style="margin-top:12px; padding: 0 16px 14px 16px;">
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-eye" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">TRANSPARENCE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous vous présentons
+                                            les données clés pour une décision en toute connaissance de cause.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-chart-bar" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous réalisons un
+                                            appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
+                                    </div>
+                                </div>
+                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
+                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                            <use href="#i-shield" />
+                                        </svg></span>
+                                    <div><strong style="font-size:10px;">SÉCURISATION</strong>
+                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous privilégions
+                                            les conditions stables et compétitives pour protéger votre budget.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="footer-bar" style="margin-top: 12px;">
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <path d="M12 8v4M12 16v.5" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg> OFFRE VALABLE À L'INSTANT T</span>
+                    <span class="strong">Sous réserve d'évolution du marché.</span>
+                    <div class="divider"></div>
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <path d="M12 3 2 21h20L12 3z" />
+                        </svg> MARCHÉ DE L'ÉNERGIE VOLATIL</span>
+                    <span class="strong">Opportunité à valider rapidement.</span>
+                    <div class="divider"></div>
+                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
+                            viewBox="0 0 24 24">
+                            <rect x="4" y="10" width="16" height="11" rx="2" />
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                        </svg> DOCUMENT CONFIDENTIEL</span>
+                    <div class="divider"></div>
+                    <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
+                </div>
+        </section>
+        {% endif %}
 
         <!-- SLIDE 6 -->
         <section data-screen-label="06 Résultat de l'appel d'offre"
