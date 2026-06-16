@@ -614,16 +614,21 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
     return filename
 
 
-def build_static_url(request, path):
-    """Build HTTP static URL for browser rendering (works in headless Chrome)."""
-    from django.templatetags.static import static
+# def build_static_url(request, path):
+#     """Build HTTP static URL for browser rendering (works in headless Chrome)."""
+#     from django.templatetags.static import static
     
-    # If request is available, build absolute URI
-    if request:
-        return request.build_absolute_uri(static(path))
-    # Fallback to relative static URL
-    return static(path)
+#     # If request is available, build absolute URI
+#     if request:
+#         return request.build_absolute_uri(static(path))
+#     # Fallback to relative static URL
+#     return static(path)
 
+def build_static_url(request, path):
+    print("Inside BuildStaticURL")
+    # return request.build_absolute_uri(static(path))
+    abs_path = os.path.join(settings.STATICFILES_DIRS[0], path)
+    return f"file://{abs_path}"
 
 def build_presentation_data(data, chart_base64, comparatif_dto, request):
     print("Inside BuildPresentationData")
