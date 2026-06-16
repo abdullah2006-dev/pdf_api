@@ -1094,6 +1094,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     try:
         dt = datetime.fromtimestamp(created_on_raw / 1000.0)
         created_on = dt.strftime("%d/%m/%Y")
+        created_on_time = dt.strftime("%Hh%M")
     except Exception as e:
         raise ValueError(f"Invalid createdOn value: {e}")
 
@@ -1101,6 +1102,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "title": data.get("contexte_title", "Contexte global"),
         "title2": data.get("enedis_title2", "Votre Consommation relevée par"),
         "createdOn": created_on,
+        "createdOnTime": created_on_time,
         "energyType": comparatif.get("energyType"),
         "puissance": comparatif.get("puissance"),
         "powerInKVA": comparatif.get("powerInKVA"),

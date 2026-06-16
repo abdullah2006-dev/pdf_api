@@ -1921,23 +1921,12 @@
                     <div class="col gap-10">
                         <!-- Combined dark box with two columns and a divider -->
                         <div class="darkpill"
-                            style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; padding: 10px 14px;">
-                            <!-- Left side: Étude réalisée -->
+                            style="display: flex; justify-content: center; padding: 10px 14px;">
+                            <!-- Étude réalisée -->
                             <div class="col gap-2" style="align-items: center; text-align: center;">
                                 <span class="label" style="font-size: 9px;">Étude réalisée le</span>
-                                <span class="value" style="font-size: 18px;">23/04/2026</span>
-                                <span style="font-size:9px; color:#a8c0db;">à 10h30</span>
-                            </div>
-
-                            <!-- Divider line -->
-                            <div style="width: 1px; background: rgba(255,255,255,0.2); margin: 0;"></div>
-
-                            <!-- Right side: Validité des prix -->
-                            <div class="col gap-2" style="align-items: center; text-align: center;">
-                                <span class="label" style="font-size: 9px;">Validité des prix</span>
-                                <span style="font-size:9px; color:#a8c0db; letter-spacing:0.04em;">jusqu'à
-                                    aujourd'hui</span>
-                                <span class="value" style="font-size: 20px;">17H00</span>
+                                <span class="value" style="font-size: 18px;">{{ data.comparatifClientHistoryPdfDto.createdOn }}</span>
+                                <span style="font-size:9px; color:#a8c0db;">à {{ data.comparatifClientHistoryPdfDto.createdOnTime }}</span>
                             </div>
                         </div>
 
@@ -1995,7 +1984,7 @@
                                 <span
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Site
                                     :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{data.clientSite}}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientBusinessAddress.street }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
