@@ -745,9 +745,11 @@ def build_images(data, request, use_http=False):
         "team_meeting": builder(request, "image/team-meeting.jpg"),
     })
 
-def build_static_url_http(path):
-    """Build HTTP static URL for browser rendering."""
+def build_static_url_http(request, path):
+    """HTTP URL — for browser-rendered templates (index.html via energy_offer_summary)."""
     from django.templatetags.static import static
+    if request:
+        return request.build_absolute_uri(static(path))
     return static(path)
 
 def build_company_presentation(data):
