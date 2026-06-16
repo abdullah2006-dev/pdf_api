@@ -614,15 +614,15 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
     return filename
 
 
-# def build_static_url(request, path):
-#     """Build HTTP static URL for browser rendering (works in headless Chrome)."""
-#     from django.templatetags.static import static
+def build_static_url(request, path):
+    """Build HTTP static URL for browser rendering (works in headless Chrome)."""
+    from django.templatetags.static import static
     
-#     # If request is available, build absolute URI
-#     if request:
-#         return request.build_absolute_uri(static(path))
-#     # Fallback to relative static URL
-#     return static(path)
+    # If request is available, build absolute URI
+    if request:
+        return request.build_absolute_uri(static(path))
+    # Fallback to relative static URL
+    return static(path)
 
 def build_static_url(request, path):
     print("Inside BuildStaticURL")
@@ -717,49 +717,38 @@ def build_image_section(data, chart_base64):
     return {**data.get("images", {}), "chart": chart_base64}
 
 
-def build_images(data, request):
+def build_images(data, request, use_http=False):
     """Build static & dynamic image paths."""
     print("Inside BuildImages")
+    builder = (lambda r, p: build_static_url_http(r, p)) if use_http else build_static_url
     return data.get("images", {
-        "left": build_static_url(request, "image/side2-removebg-preview.png"),
-        "right": build_static_url(request, "image/side-removebg-preview.png"),
-        "logo": build_static_url(request, "image/volt1-removebg-preview.png"),
-        "side333": data.get("side3", build_static_url(request, "image/side333-removebg-preview.png")),
-        "volt_image1": build_static_url(request, "image/volt_image1.png"),
-        "icon": data.get("icon", build_static_url(request, "image/buld-removebg-preview.png")),
-        "Screenshot1": data.get("Screenshot1",
-                                build_static_url(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
-        "Screenshot2": data.get("Screenshot2",
-                                 build_static_url(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
-        "black": build_static_url(request, "image/black-removebg-preview.png"),
-        "zero": data.get("zero", build_static_url(request, "image/zero-removebg-preview.png")),
-        "icon1": data.get("icon1", build_static_url(request, "image/icon-removebg-preview.png")),
-        "whitee": data.get("whitee", build_static_url(request, "image/whiteee.png")),
-        "con": data.get("con", build_static_url(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
-        "con5": data.get("con5", build_static_url(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
-        "Hmm": data.get("Hmm", build_static_url(request, "image/Hmm-removebg-preview.png")),
-        "last": data.get("last", build_static_url(request, "image/circle-black-removebg-preview.png")),
-        "double": data.get("double", build_static_url(request, "image/double-removebg-preview.png")),
-        "enedis": data.get("enedis", build_static_url(request, "image/enedis-removebg-preview.png")),
-        "contact_portrait": build_static_url(request, "image/contact-portrait.jpg"),
-        "hero_turbines": build_static_url(request, "image/hero-turbines.jpg"),
-        "team_meeting": build_static_url(request, "image/team-meeting.jpg"),
+        "left": builder(request, "image/side2-removebg-preview.png"),
+        "right": builder(request, "image/side-removebg-preview.png"),
+        "logo": builder(request, "image/volt1-removebg-preview.png"),
+        "side333": data.get("side3", builder(request, "image/side333-removebg-preview.png")),
+        "volt_image1": builder(request, "image/volt_image1.png"),
+        "icon": data.get("icon", builder(request, "image/buld-removebg-preview.png")),
+        "Screenshot1": data.get("Screenshot1", builder(request, "image/Screenshot_2025-08-18_135847-removebg-preview.png")),
+        "Screenshot2": data.get("Screenshot2", builder(request, "image/Screenshot_2025-08-18_131641-removebg-preview.png")),
+        "black": builder(request, "image/black-removebg-preview.png"),
+        "zero": data.get("zero", builder(request, "image/zero-removebg-preview.png")),
+        "icon1": data.get("icon1", builder(request, "image/icon-removebg-preview.png")),
+        "whitee": data.get("whitee", builder(request, "image/whiteee.png")),
+        "con": data.get("con", builder(request, "image/Screenshot_2025-08-18_164713-removebg-preview.png")),
+        "con5": data.get("con5", builder(request, "image/Screenshot_2025-08-18_164344-removebg-preview.png")),
+        "Hmm": data.get("Hmm", builder(request, "image/Hmm-removebg-preview.png")),
+        "last": data.get("last", builder(request, "image/circle-black-removebg-preview.png")),
+        "double": data.get("double", builder(request, "image/double-removebg-preview.png")),
+        "enedis": data.get("enedis", builder(request, "image/enedis-removebg-preview.png")),
+        "contact_portrait": builder(request, "image/contact-portrait.jpg"),
+        "hero_turbines": builder(request, "image/hero-turbines.jpg"),
+        "team_meeting": builder(request, "image/team-meeting.jpg"),
     })
 
 def build_static_url_http(path):
     """Build HTTP static URL for browser rendering."""
     from django.templatetags.static import static
     return static(path)
-
-def build_images_v2(request=None):
-    """Build static & dynamic image paths."""
-    print("Inside BuildImages")
-    return {        
-        "contact_portrait": build_static_url_http("image/contact-portrait.jpg"),
-        "hero_turbines": build_static_url_http("image/hero-turbines.jpg"),
-        "team_meeting": build_static_url_http("image/team-meeting.jpg"),
-        "logo": build_static_url_http("image/transparent-logo.png"),
-    }
 
 def build_company_presentation(data):
     """Company presentation section."""
@@ -1873,7 +1862,7 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
             "chart_12m": chart_12m_base64 if chart_12m_base64 else ""
         },
         "chart_date_ranges": _compute_chart_date_ranges(data),
-        "images": build_images(data, request),
+        "images": build_images(data, request, True),
         "company_presentation": build_company_presentation(data),
         "comparatifClientHistoryPdfDto": comparatif_dto,
         "budget_global": build_budget_section(data),
