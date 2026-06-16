@@ -705,7 +705,7 @@
             font-size: 12.5px;
             background: #fff;
             border-radius: var(--radius);
-            overflow: hidden;
+            /* overflow: hidden; */
             border: 1px solid var(--gray-200);
         }
 
@@ -2696,58 +2696,59 @@
             </div>
         </section>
 
-        <!-- SLIDE 5 PAGE 1 -->
+        <!-- Slide 5 -->
+        {% for page_providers in data.provider_page_chunks %}
         <section data-screen-label="05 Détail de notre analyse marché">
             <div
                 style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
                 <!-- LEFT SIDE -->
-                <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                    <div class="row items-start justify-between gap-24" style="margin-bottom:6px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div class="row items-start justify-between gap-24">
                         <div>
-                            <h1 class="page-title" style="font-size:28px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
-                            <h2 class="page-subtitle" style="font-size:16px;">COMPARATIF TECHNIQUE DES OFFRES
+                            <h1 class="page-title" style="font-size:24px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
+                            <h2 class="page-subtitle" style="font-size:14px;">COMPARATIF TECHNIQUE DES OFFRES
                                 ÉLECTRICITÉ</h2>
-                            <p class="lede" style="margin-top:4px; font-size:11px; max-width:840px;">Nous avons consulté
+                            <p class="lede" style="margin-top:2px; font-size:10px; max-width:840px;">Nous avons consulté
                                 plusieurs fournisseurs
                                 et comparé leurs conditions tarifaires pour vous proposer l'offre la plus compétitive et
                                 sécurisante.</p>
                         </div>
                         <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                            shape="rect" style="height: 55px;"></image-slot>
+                            shape="rect" style="height: 44px;"></image-slot>
                     </div>
 
                     <!-- Info pills row -->
-                    <div class="info-row" style="margin-top:8px; grid-template-columns: repeat(4, 1fr); gap:8px;">
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                    <div class="info-row" style="grid-template-columns: repeat(4, 1fr); gap:6px;">
+                        <div class="info-pill" style="padding:4px 6px;">
+                            <span class="icon-circle md ic-green" style="width: 20px; height: 20px;"><svg>
                                     <use href="#i-meter" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
+                                <div class="value" style="font-size:10px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
                             </div>
                         </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                        <div class="info-pill" style="padding:4px 6px;">
+                            <span class="icon-circle md ic-navy" style="width: 20px; height: 20px;"><svg>
                                     <use href="#i-calendar" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
-                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
+                                <div class="value" style="font-size:10px;">{{data.enedis_info.contract_start_date}}</div>
                             </div>
                         </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
+                        <div class="info-pill" style="padding:4px 6px;">
+                            <span class="icon-circle md ic-navy" style="width: 20px; height: 20px;"><svg>
                                     <use href="#i-pie" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Segment</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
+                                <div class="value" style="font-size:10px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
                             </div>
                         </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                        <div class="info-pill" style="padding:4px 6px;">
+                            <span class="icon-circle md ic-green" style="width: 20px; height: 20px;"><svg>
                                     <use href="#i-bolt" />
                                 </svg></span>
                             <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
+                                <div class="value" style="font-size:10px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
                             </div>
                         </div>
                     </div>
@@ -2755,31 +2756,31 @@
                     <!-- Content -->
                     <!-- Recommendation banner -->
                     <div class="banner"
-                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:10px; color:var(--navy-900); padding:8px 12px; gap:10px;">
-                        <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
+                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:8px; color:var(--navy-900); padding:5px 10px; gap:8px;">
+                        <span class="icon-circle md ic-green" style="width: 20px; height: 20px;"><svg>
                                 <use href="#i-target" />
                             </svg></span>
-                        <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
+                        <span style="font-size:11px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
                             <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
-                        <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
+                        <span style="flex:1; font-size:9px; color:var(--gray-600); font-weight:400;">L'offre la plus
                             compétitive dans les conditions actuelles du marché.</span>
                     </div>
 
                     <!-- Method notes row -->
-                    <div class="row gap-16" style="margin-top:8px;">
+                    <div class="row gap-10">
                         <div class="row items-center gap-6"
-                            style="flex:1; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                            style="flex:1; background:#f8f9fa; padding:4px 8px; border-radius:7px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 18px; height: 18px;"><svg>
                                     <use href="#i-chart-line" />
                                 </svg></span>
                             <div>
                                 <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
-                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
+                                <strong style="font-size:11px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
                             </div>
                         </div>
                         <div class="row items-center gap-6"
-                            style="flex:1.5; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
+                            style="flex:1.5; background:#f8f9fa; padding:4px 8px; border-radius:7px;">
+                            <span class="icon-circle sm ic-navy-soft" style="width: 18px; height: 18px;"><svg>
                                     <use href="#i-info" />
                                 </svg></span>
                             <div>
@@ -2790,22 +2791,22 @@
                         </div>
                     </div>
 
-                    <!-- Comparison table — page 1: rows 1–4 -->
-                    <table class="cmp-table" style="margin-top:10px; font-size:9px;">
+                    <!-- Comparison table -->
+                    <table class="cmp-table" style="font-size:9px;">
                         <thead>
                             <tr>
-                                <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
+                                <th rowspan="2" style="width:85px; font-size:7px; padding:4px 3px;">FOURNISSEUR</th>
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:3px 2px;">PRIX DE
                                     L'ÉNERGIE (€/MWh)</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
+                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:3px 2px;">CAPACITÉ
                                     (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">CEE<br />(€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">TYPE D'OFFRE</th>
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
                                 </th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
+                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">% ÉCONOMIE VS REFERENCE</th>
                             </tr>
                             <tr>
                                 {% for col in data.tender_table.columns6 %}
@@ -2817,9 +2818,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:":4" %}
+                            {% for r in page_providers %}
                             <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
-                                <td class="vendor" style="padding:5px 4px;">
+                                <td class="vendor" style="padding:3px 3px;">
                                     {% if r.partnerPhoto and r.partnerPhoto.path %}
                                     <img src="{{ r.partnerPhoto.path }}"
                                          alt="{{ r.partnerName|default:'-' }}"
@@ -2835,39 +2836,39 @@
                                     {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
                                 </td>
                                 {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% if col == "HPH" %}<td style="padding:3px 2px;">{{ r.hphRate|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:3px 2px;">{{ r.hchRate|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:3px 2px;">{{ r.hpeRate|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:3px 2px;">{{ r.hceRate|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:3px 2px;">{{ r.pteRate|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:3px 2px;">{{ r.fullHourRate|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:3px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:3px 2px;">{{ r.baseRate|default:"-" }}</td>
+                                {% else %}<td style="padding:3px 2px;">-</td>
                                 {% endif %}
                                 {% endfor %}
                                 {% if r.typeCapa == "CAPAINCLUS" %}
-                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
+                                {% for col in data.tender_table.columns6 %}<td style="padding:3px 2px;">inclus</td>{% endfor %}
                                 {% else %}
                                 {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
+                                {% if col == "HPH" %}<td style="padding:3px 2px;">{{ r.capaHph|default:"-" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:3px 2px;">{{ r.capaHch|default:"-" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:3px 2px;">{{ r.capaHpe|default:"-" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:3px 2px;">{{ r.capaHce|default:"-" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:3px 2px;">{{ r.capaPointe|default:"-" }}</td>
+                                {% elif col == "HP" %}<td style="padding:3px 2px;">{{ r.capaHp|default:"-" }}</td>
+                                {% elif col == "HC" %}<td style="padding:3px 2px;">{{ r.capaHc|default:"-" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:3px 2px;">{{ r.capaBase|default:"-" }}</td>
+                                {% else %}<td style="padding:3px 2px;">-</td>
                                 {% endif %}
                                 {% endfor %}
                                 {% endif %}
-                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
+                                <td style="padding:3px 2px;">{{ r.partCee|default:"-" }}</td>
+                                <td style="padding:3px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
+                                <td style="padding:3px 2px;">{{ r.contractType|default:"-" }}</td>
+                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
+                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
+                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="15" style="text-align:center; padding:8px; color:var(--gray-500);">Aucune donnée disponible</td></tr>
@@ -2876,30 +2877,30 @@
                     </table>
 
                     <!-- Bottom hints -->
-                    <div class="row gap-12" style="margin-top:10px;">
+                    <div class="row gap-10">
                         <div class="row items-start gap-6" style="flex:1;">
                             <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">1</div>
-                            <div><strong style="font-size:9px;">Prix moyen molécule</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Budget total molécule (hors capacité
+                                style="width: 16px; height: 16px; font-size:8px; font-weight:800;">1</div>
+                            <div><strong style="font-size:8px;">Prix moyen molécule</strong><br><span
+                                    style="font-size:7px; color:var(--gray-600);">Budget total molécule (hors capacité
                                     et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
                         </div>
                         <div class="row items-start gap-6" style="flex:1;">
                             <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">2</div>
-                            <div><strong style="font-size:9px;">Budget total fournisseur</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
+                                style="width: 16px; height: 16px; font-size:8px; font-weight:800;">2</div>
+                            <div><strong style="font-size:8px;">Budget total fournisseur</strong><br><span
+                                    style="font-size:7px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
                                     sur l'année toutes périodes, hors Turpe et taxe</span></div>
                         </div>
                         <div class="row items-start gap-6"
-                            style="flex:1.2; background:#e6f4ec; padding:6px 8px; border-radius:8px;">
+                            style="flex:1.2; background:#e6f4ec; padding:4px 8px; border-radius:7px;">
                             <span class="icon-circle sm"
-                                style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
+                                style="background:var(--green-600); width:16px; height:16px;"><svg style="width:9px;">
                                     <use href="#i-bulb" />
                                 </svg></span>
                             {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
-                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
-                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                <div><strong style="font-size:8px; color:var(--green-600);">À retenir</strong><br><span
+                                        style="font-size:7px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
                                 {% endwith %}
                         </div>
                     </div>
@@ -3021,653 +3022,14 @@
                     <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
                 </div>
         </section>
-
-        <!-- SLIDE 5 PAGE 2 — only rendered when more than 4 providers -->
-        {% if data.comparatifClientHistoryPdfDto.allProvidersForTables|length > 4 %}
-        <section data-screen-label="05 Détail de notre analyse marché">
-            <div
-                style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
-                <!-- LEFT SIDE -->
-                <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                    <div class="row items-start justify-between gap-24" style="margin-bottom:6px;">
-                        <div>
-                            <h1 class="page-title" style="font-size:28px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
-                            <h2 class="page-subtitle" style="font-size:16px;">COMPARATIF TECHNIQUE DES OFFRES
-                                ÉLECTRICITÉ</h2>
-                            <p class="lede" style="margin-top:4px; font-size:11px; max-width:840px;">Nous avons consulté
-                                plusieurs fournisseurs
-                                et comparé leurs conditions tarifaires pour vous proposer l'offre la plus compétitive et
-                                sécurisante.</p>
-                        </div>
-                        <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                            shape="rect" style="height: 55px;"></image-slot>
-                    </div>
-
-                    <!-- Info pills row -->
-                    <div class="info-row" style="margin-top:8px; grid-template-columns: repeat(4, 1fr); gap:8px;">
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-meter" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-calendar" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
-                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-pie" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Segment</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-bolt" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recommendation banner -->
-                    <div class="banner"
-                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:10px; color:var(--navy-900); padding:8px 12px; gap:10px;">
-                        <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                <use href="#i-target" />
-                            </svg></span>
-                        <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
-                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
-                        <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
-                            compétitive dans les conditions actuelles du marché.</span>
-                    </div>
-
-                    <!-- Method notes row -->
-                    <div class="row gap-16" style="margin-top:8px;">
-                        <div class="row items-center gap-6"
-                            style="flex:1; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
-                                    <use href="#i-chart-line" />
-                                </svg></span>
-                            <div>
-                                <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
-                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
-                            </div>
-                        </div>
-                        <div class="row items-center gap-6"
-                            style="flex:1.5; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
-                                    <use href="#i-info" />
-                                </svg></span>
-                            <div>
-                                <div class="label" style="font-size:7px;">MÉTHODE DE CALCUL DU PRIX MOYEN MOLÉCULE</div>
-                                <span style="font-size:9px; color:var(--gray-600);">Budget total molécule (hors capacité
-                                    et hors CEE) ÷ Consommation annuelle (MWh)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comparison table — page 2: rows 5–8 -->
-                    <table class="cmp-table" style="margin-top:10px; font-size:9px;">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
-                                    L'ÉNERGIE (€/MWh)</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
-                                    (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
-                                </th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
-                            </tr>
-                            <tr>
-                                {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
-                                {% endfor %}
-                                {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:"4:8" %}
-                            <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
-                                <td class="vendor" style="padding:5px 4px;">
-                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
-                                    <img src="{{ r.partnerPhoto.path }}"
-                                         alt="{{ r.partnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
-                                    {% elif r.newPartnerLogoName %}
-                                    <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
-                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
-                                    {% else %}
-                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
-                                    {% endif %}
-                                    {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
-                                    {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
-                                </td>
-                                {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
-                                {% endif %}
-                                {% endfor %}
-                                {% if r.typeCapa == "CAPAINCLUS" %}
-                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
-                                {% else %}
-                                {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
-                                {% endif %}
-                                {% endfor %}
-                                {% endif %}
-                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-                    <!-- Bottom hints (repeated on every continuation page) -->
-                    <div class="row gap-12" style="margin-top:10px;">
-                        <div class="row items-start gap-6" style="flex:1;">
-                            <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">1</div>
-                            <div><strong style="font-size:9px;">Prix moyen molécule</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Budget total molécule (hors capacité
-                                    et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
-                        </div>
-                        <div class="row items-start gap-6" style="flex:1;">
-                            <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">2</div>
-                            <div><strong style="font-size:9px;">Budget total fournisseur</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
-                                    sur l'année toutes périodes, hors Turpe et taxe</span></div>
-                        </div>
-                        <div class="row items-start gap-6"
-                            style="flex:1.2; background:#e6f4ec; padding:6px 8px; border-radius:8px;">
-                            <span class="icon-circle sm"
-                                style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
-                                    <use href="#i-bulb" />
-                                </svg></span>
-                            {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
-                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
-                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
-                                {% endwith %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT SIDEBAR -->
-                <div style="display: flex; flex-direction: column; height: 100%;">
-                    <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
-                        <div
-                            style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
-                            <div class="kicker"
-                                style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
-                                DÉFINITION DES POSTES</div>
-                            <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-bolt" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Prix du MWh selon
-                                            les différentes périodes (heures pleines / heures creuses, hiver / été).
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">CAPACITÉ</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Coût de sécurisation
-                                            de l'approvisionnement électrique, notamment lors des périodes de forte
-                                            consommation en hiver.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-file" />
-                                        </svg></span>
-                                    <div><strong style="font-size:7px;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Dispositif
-                                            règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
-                                            d'économies d'énergie.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-user" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Abonnement annuel
-                                            facturé par le fournisseur pour votre contrat.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
-                            <div class="kicker"
-                                style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
-                                POURQUOI CETTE ANALYSE ?</div>
-                            <div class="col gap-10" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-eye" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">TRANSPARENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous vous présentons
-                                            les données clés pour une décision en toute connaissance de cause.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-chart-bar" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous réalisons un
-                                            appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">SÉCURISATION</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous privilégions
-                                            les conditions stables et compétitives pour protéger votre budget.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="footer-bar" style="margin-top: 12px;">
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <path d="M12 8v4M12 16v.5" />
-                            <circle cx="12" cy="12" r="9" />
-                        </svg> OFFRE VALABLE À L'INSTANT T</span>
-                    <span class="strong">Sous réserve d'évolution du marché.</span>
-                    <div class="divider"></div>
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <path d="M12 3 2 21h20L12 3z" />
-                        </svg> MARCHÉ DE L'ÉNERGIE VOLATIL</span>
-                    <span class="strong">Opportunité à valider rapidement.</span>
-                    <div class="divider"></div>
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <rect x="4" y="10" width="16" height="11" rx="2" />
-                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                        </svg> DOCUMENT CONFIDENTIEL</span>
-                    <div class="divider"></div>
-                    <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
-                </div>
-        </section>
-        {% endif %}
-
-        <!-- SLIDE 5 PAGE 3 — only rendered when more than 8 providers -->
-        {% if data.comparatifClientHistoryPdfDto.allProvidersForTables|length > 8 %}
-        <section data-screen-label="05 Détail de notre analyse marché">
-            <div
-                style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
-                <!-- LEFT SIDE -->
-                <div style="display: flex; flex-direction: column; justify-content: space-around;">
-                    <div class="row items-start justify-between gap-24" style="margin-bottom:6px;">
-                        <div>
-                            <h1 class="page-title" style="font-size:28px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
-                            <h2 class="page-subtitle" style="font-size:16px;">COMPARATIF TECHNIQUE DES OFFRES
-                                ÉLECTRICITÉ</h2>
-                            <p class="lede" style="margin-top:4px; font-size:11px; max-width:840px;">Nous avons consulté
-                                plusieurs fournisseurs
-                                et comparé leurs conditions tarifaires pour vous proposer l'offre la plus compétitive et
-                                sécurisante.</p>
-                        </div>
-                        <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                            shape="rect" style="height: 55px;"></image-slot>
-                    </div>
-
-                    <!-- Info pills row -->
-                    <div class="info-row" style="margin-top:8px; grid-template-columns: repeat(4, 1fr); gap:8px;">
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-meter" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Compteur (PRM)</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.pdl}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-calendar" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Début nouveau contrat</span>
-                                <div class="value" style="font-size:11px;">{{data.enedis_info.contract_start_date}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-pie" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Segment</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.segmentation}}</div>
-                            </div>
-                        </div>
-                        <div class="info-pill" style="padding:6px 8px;">
-                            <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                    <use href="#i-bolt" />
-                                </svg></span>
-                            <div><span class="label" style="font-size:7px;">Puissance souscrite</span>
-                                <div class="value" style="font-size:11px;">{{data.comparatifClientHistoryPdfDto.powerInKVA}} kVA</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recommendation banner -->
-                    <div class="banner"
-                        style="background:#f0f9f4; border:1px solid #c2e3d2; border-radius:10px; color:var(--navy-900); padding:8px 12px; gap:10px;">
-                        <span class="icon-circle md ic-green" style="width: 24px; height: 24px;"><svg>
-                                <use href="#i-target" />
-                            </svg></span>
-                        <span style="font-size:12px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
-                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
-                        <span style="flex:1; font-size:10px; color:var(--gray-600); font-weight:400;">L'offre la plus
-                            compétitive dans les conditions actuelles du marché.</span>
-                    </div>
-
-                    <!-- Method notes row -->
-                    <div class="row gap-16" style="margin-top:8px;">
-                        <div class="row items-center gap-6"
-                            style="flex:1; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
-                                    <use href="#i-chart-line" />
-                                </svg></span>
-                            <div>
-                                <div class="label" style="font-size:7px;">CONSOMMATION ANNUELLE PRISE EN COMPTE</div>
-                                <strong style="font-size:12px; color:var(--navy-900);">{{ data.comparatifClientHistoryPdfDto.volumeAnnual|default:"-" }} MWh</strong>
-                            </div>
-                        </div>
-                        <div class="row items-center gap-6"
-                            style="flex:1.5; background:#f8f9fa; padding:6px 10px; border-radius:8px;">
-                            <span class="icon-circle sm ic-navy-soft" style="width: 22px; height: 22px;"><svg>
-                                    <use href="#i-info" />
-                                </svg></span>
-                            <div>
-                                <div class="label" style="font-size:7px;">MÉTHODE DE CALCUL DU PRIX MOYEN MOLÉCULE</div>
-                                <span style="font-size:9px; color:var(--gray-600);">Budget total molécule (hors capacité
-                                    et hors CEE) ÷ Consommation annuelle (MWh)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comparison table — page 3: rows 9–12 -->
-                    <table class="cmp-table" style="margin-top:10px; font-size:9px;">
-                        <thead>
-                            <tr>
-                                <th rowspan="2" style="width:90px; font-size:8px; padding:6px 4px;">FOURNISSEUR</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-energy" style="font-size:7px; padding:5px 3px;">PRIX DE
-                                    L'ÉNERGIE (€/MWh)</th>
-                                <th colspan="{{ data.tender_table.columns6|length }}" class="group-cap" style="font-size:7px; padding:5px 3px;">CAPACITÉ
-                                    (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">CEE<br />(€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">TYPE D'OFFRE</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
-                                </th>
-                                <th rowspan="2" style="font-size:7px; padding:5px 2px;">% ÉCONOMIE VS REFERENCE</th>
-                            </tr>
-                            <tr>
-                                {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
-                                {% endfor %}
-                                {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
-                                {% endfor %}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for r in data.comparatifClientHistoryPdfDto.allProvidersForTables|slice:"8:12" %}
-                            <tr {% if r.is_green_row %}class="row-rec" style="background:#f1faf4;"{% elif r.typeFournisseur == "CURRENT" %}style="background:#fff8e1;"{% endif %}>
-                                <td class="vendor" style="padding:5px 4px;">
-                                    {% if r.partnerPhoto and r.partnerPhoto.path %}
-                                    <img src="{{ r.partnerPhoto.path }}"
-                                         alt="{{ r.partnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
-                                    {% elif r.newPartnerLogoName %}
-                                    <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
-                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
-                                    {% else %}
-                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
-                                    {% endif %}
-                                    {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
-                                    {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
-                                </td>
-                                {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.hphRate|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.hchRate|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.hpeRate|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.hceRate|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.pteRate|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.fullHourRate|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.offPeakHourRate|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.baseRate|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
-                                {% endif %}
-                                {% endfor %}
-                                {% if r.typeCapa == "CAPAINCLUS" %}
-                                {% for col in data.tender_table.columns6 %}<td style="padding:4px 2px;">inclus</td>{% endfor %}
-                                {% else %}
-                                {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:4px 2px;">{{ r.capaHph|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:4px 2px;">{{ r.capaHch|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:4px 2px;">{{ r.capaHpe|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:4px 2px;">{{ r.capaHce|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:4px 2px;">{{ r.capaPointe|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:4px 2px;">{{ r.capaHp|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:4px 2px;">{{ r.capaHc|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:4px 2px;">{{ r.capaBase|default:"-" }}</td>
-                                {% else %}<td style="padding:4px 2px;">-</td>
-                                {% endif %}
-                                {% endfor %}
-                                {% endif %}
-                                <td style="padding:4px 2px;">{{ r.partCee|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
-                                <td style="padding:4px 2px;">{{ r.contractType|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
-                                <td style="padding:4px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-
-                    <!-- Bottom hints -->
-                    <div class="row gap-12" style="margin-top:10px;">
-                        <div class="row items-start gap-6" style="flex:1;">
-                            <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">1</div>
-                            <div><strong style="font-size:9px;">Prix moyen molécule</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Budget total molécule (hors capacité
-                                    et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
-                        </div>
-                        <div class="row items-start gap-6" style="flex:1;">
-                            <div class="icon-circle sm ic-navy"
-                                style="width: 18px; height: 18px; font-size:9px; font-weight:800;">2</div>
-                            <div><strong style="font-size:9px;">Budget total fournisseur</strong><br><span
-                                    style="font-size:8px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
-                                    sur l'année toutes périodes, hors Turpe et taxe</span></div>
-                        </div>
-                        <div class="row items-start gap-6"
-                            style="flex:1.2; background:#e6f4ec; padding:6px 8px; border-radius:8px;">
-                            <span class="icon-circle sm"
-                                style="background:var(--green-600); width:18px; height:18px;"><svg style="width:10px;">
-                                    <use href="#i-bulb" />
-                                </svg></span>
-                            {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
-                                <div><strong style="font-size:9px; color:var(--green-600);">À retenir</strong><br><span
-                                        style="font-size:8px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
-                                {% endwith %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RIGHT SIDEBAR -->
-                <div style="display: flex; flex-direction: column; height: 100%;">
-                    <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
-                        <div
-                            style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
-                            <div class="kicker"
-                                style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
-                                DÉFINITION DES POSTES</div>
-                            <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-bolt" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Prix du MWh selon
-                                            les différentes périodes (heures pleines / heures creuses, hiver / été).
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">CAPACITÉ</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Coût de sécurisation
-                                            de l'approvisionnement électrique, notamment lors des périodes de forte
-                                            consommation en hiver.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-file" />
-                                        </svg></span>
-                                    <div><strong style="font-size:7px;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Dispositif
-                                            règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
-                                            d'économies d'énergie.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-user" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Abonnement annuel
-                                            facturé par le fournisseur pour votre contrat.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
-                            <div class="kicker"
-                                style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
-                                POURQUOI CETTE ANALYSE ?</div>
-                            <div class="col gap-10" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-eye" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">TRANSPARENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous vous présentons
-                                            les données clés pour une décision en toute connaissance de cause.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-chart-bar" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous réalisons un
-                                            appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
-                                    </div>
-                                </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">SÉCURISATION</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous privilégions
-                                            les conditions stables et compétitives pour protéger votre budget.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div class="footer-bar" style="margin-top: 12px;">
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <path d="M12 8v4M12 16v.5" />
-                            <circle cx="12" cy="12" r="9" />
-                        </svg> OFFRE VALABLE À L'INSTANT T</span>
-                    <span class="strong">Sous réserve d'évolution du marché.</span>
-                    <div class="divider"></div>
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <path d="M12 3 2 21h20L12 3z" />
-                        </svg> MARCHÉ DE L'ÉNERGIE VOLATIL</span>
-                    <span class="strong">Opportunité à valider rapidement.</span>
-                    <div class="divider"></div>
-                    <span class="lock"><svg width="11" height="11" stroke="currentColor" stroke-width="2" fill="none"
-                            viewBox="0 0 24 24">
-                            <rect x="4" y="10" width="16" height="11" rx="2" />
-                            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-                        </svg> DOCUMENT CONFIDENTIEL</span>
-                    <div class="divider"></div>
-                    <span class="strong">Besoin d'informations ? Votre interlocuteur reste à votre disposition.</span>
-                </div>
-        </section>
-        {% endif %}
+        {% endfor %}
 
         <!-- SLIDE 6 -->
         <section data-screen-label="06 Résultat de l'appel d'offre"
             style="position: relative; padding-bottom: 0 !important;">
             <div class="row items-start justify-between gap-24">
                 <div style="flex:1;">
-                    <h1 class="page-title" style="font-size:46px;">RÉSULTAT DE L'APPEL D'OFFRE</h1>
+                    <h1 class="page-title" style="font-size:46px;">RÉSULTAT DE L'APPEL D' OFFRE</h1>
                     <p class="lede" style="margin-top:8px; max-width: 65%; font-size: 12px; line-height: 1.4;">Cette
                         analyse est basée sur votre consommation au cours des 12 derniers mois. Les prix mentionnés sont
                         valables au jour de la consultation, étant donné qu'ils sont sujets à la fluctuation des prix

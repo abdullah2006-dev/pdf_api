@@ -1877,6 +1877,10 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "contact_info": build_contact_info(data),
         "enedis_info": enedis_Chart(comparatif_dto),
         "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
+        "provider_page_chunks": [
+            comparatif_dto.get("allProvidersForTables", [])[i:i+4]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 4)
+        ],
     }
 
 def generate_simple_pdf(html_content, request, data, comparatif):
