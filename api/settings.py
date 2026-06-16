@@ -124,7 +124,7 @@ STATIC_URL = '/pdf-static/'
 
 # Add these lines for static files
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+    BASE_DIR / 'pdf-static',
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
