@@ -2986,10 +2986,17 @@
                                 {% endif %}
                                 <td style="padding:3px 2px;">{{ r.partCee|default:"-" }}</td>
                                 <td style="padding:3px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
-                                <td style="padding:3px 2px;">{{ r.contractType|default:"-" }}</td>
+                                <td style="padding:3px 2px;">{{ r.offerType|default:"-" }}{% if r.duration %}<br>{{ r.duration }} mois{% endif %}</td>
                                 <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
                                 <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
-                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.economiePercent|default:"-" }}</td>
+                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">
+                                    {% if r.typeFournisseur == "CURRENT" %}
+                                    <span style="font-size:6px; color:var(--gray-500);">(référence)</span>
+                                    {% else %}
+                                    {{ r.economiePercentCalc|floatformat:1|default:"-" }} %<br>
+                                    <span style="font-size:6px; color:var(--gray-500);">{{ r.economieEurCalc|floatformat:0|default:"-" }} €</span>
+                                    {% endif %}
+                                </td>
                             </tr>
                             {% empty %}
                             <tr><td colspan="15" style="text-align:center; padding:8px; color:var(--gray-500);">Aucune donnée disponible</td></tr>
@@ -3161,8 +3168,8 @@
                     style="height: 80px;"></image-slot>
                 <div class="savings-badge" style="padding: 10px 18px;">
                     <div class="label" style="font-size:11px;">ÉCONOMIE ESTIMÉE</div>
-                    <div class="pct" style="font-size:30px;">-25 %</div>
-                    <div class="eur" style="font-size:22px;">5 686 €</div>
+                    <div class="pct" style="font-size:30px;">{{ data.slide6.economy_pct|default:"-" }} %</div>
+                    <div class="eur" style="font-size:22px;">{{ data.slide6.economy_eur|default:"-" }} €</div>
                     <div class="sub" style="font-size:10px;">économisés / an</div>
                 </div>
             </div>
@@ -3208,14 +3215,9 @@
                                                 du fournisseur.</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">19 616,70
-                                    €</td>
-                                <td
-                                    style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">
-                                    8 978,82 €</td>
-                                <td
-                                    style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">
-                                    10 637,88 €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.fourniture|default:"-" }} €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.fourniture|default:"-" }} €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">{{ data.slide6.fourniture_economy|floatformat:2|default:"-" }} €</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3230,13 +3232,13 @@
                                                 distribution</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">4 951,60 €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.turpe|default:"-" }} €
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">4 951,60 €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.turpe|default:"-" }} €
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    0,00 €</td>
+                                    {{ data.slide6.turpe_economy|floatformat:2|default:"-" }} €</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3251,13 +3253,13 @@
                                                 Accise/CSPE</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">2 829,05 €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.taxes|default:"-" }} €
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">2 829,05 €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.taxes|default:"-" }} €
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    0,00 €</td>
+                                    {{ data.slide6.taxes_economy|floatformat:2|default:"-" }} €</td>
                             </tr>
                             <tr style="background:#f6f8fb;">
                                 <td style="text-align:left; padding-left:16px;">
@@ -3271,15 +3273,9 @@
                                                 style="font-size:11px; color:var(--gray-500);">(HORS TVA)</span></div>
                                     </div>
                                 </td>
-                                <td
-                                    style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">
-                                    22 445,75 €</td>
-                                <td
-                                    style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">
-                                    16 759,48 €</td>
-                                <td
-                                    style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">
-                                    5 686,27 €</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">{{ data.slide6.current.coutHTVA|default:"-" }} €</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.coutHTVA|default:"-" }} €</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">{{ data.slide6.total_ht_economy|floatformat:2|default:"-" }} €</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3299,7 +3295,7 @@
                                 <tbody>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Fourniture (Énergie)</td>
-                                        <td>8 978,82 €</td>
+                                        <td>{{ data.slide6.recommended.fourniture|floatformat:2|default:"-" }} €</td>
                                         <td>53,6 %</td>
                                     </tr>
                                     <tr>
@@ -3310,7 +3306,7 @@
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Taxes &amp; Contributions</td>
-                                        <td>2 829,05 €</td>
+                                        <td>{{ data.slide6.recommended.taxes|floatformat:2|default:"-" }} €</td>
                                         <td>16,8 %</td>
                                     </tr>
                                     <tr style="background:#f6f8fb;">
@@ -3333,15 +3329,15 @@
                                 <tbody>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Total HT</td>
-                                        <td>16 759,48 €</td>
+                                        <td>{{ data.slide6.recommended.coutHTVA|floatformat:2|default:"-" }} €</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">TVA (20 %)</td>
-                                        <td>3 351,90 €</td>
+                                        <td>{{ data.slide6.tva_amount|floatformat:2|default:"-" }} €</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;"><strong>TOTAL TTC</strong></td>
-                                        <td><strong style="font-size:18px;">20 111,38 €</strong></td>
+                                        <td><strong style="font-size:18px;">{{ data.slide6.total_ttc|floatformat:2|default:"-" }} €</strong></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -3787,7 +3783,7 @@
             </div>
 
             <div style="display:grid; grid-template-columns: 420px 1fr; gap: 28px; margin-top: 16px;">
-                <image-slot id="contact-8" src="{{ data.images.contact_portrait }}"
+                <image-slot id="contact-8" src="{{ data.sales.photo }}"
                     placeholder="Portrait — votre conseiller" radius="14"
                     style="height: 340px; width: 100%; object-fit: cover;"></image-slot>
 
@@ -3798,7 +3794,7 @@
                                 <use href="#i-user" />
                             </svg></span>
                         <div>
-                            <div class="name" style="font-size: 18px;">Romain Belmonte</div>
+                            <div class="name" style="font-size: 18px;">{{ data.sales.name|default:"-" }}</div>
                             <div class="role" style="font-size: 11px;">Conseiller énergie — Interlocuteur dédié</div>
                             <div class="desc" style="font-size: 10px;">Votre interlocuteur unique du début à la
                                 signature.</div>
@@ -3811,7 +3807,7 @@
                                 <use href="#i-phone" />
                             </svg></span>
                         <div>
-                            <div class="big-val" style="font-size: 18px;">07 50 50 50 50</div>
+                            <div class="big-val" style="font-size: 18px;">{{ data.sales.phone|default:"-" }}</div>
                             <div class="small" style="font-size: 10px;">Du lundi au vendredi de 9h à 18h</div>
                         </div>
                     </div>
@@ -3822,7 +3818,7 @@
                                 <use href="#i-mail" />
                             </svg></span>
                         <div>
-                            <div class="big-val green" style="font-size: 16px;">rbelmonte@volt-consulting.fr</div>
+                            <div class="big-val green" style="font-size: 16px;">{{ data.sales.email|default:"-" }}</div>
                             <div class="small" style="font-size: 10px;">Réponse sous 24h ouvrées</div>
                         </div>
                     </div>

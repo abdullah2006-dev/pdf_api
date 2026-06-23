@@ -743,10 +743,12 @@ def build_images(data, request, use_http=False):
         "contact_portrait": builder(request, "image/contact-portrait.jpg"),
         "hero_turbines": builder(request, "image/hero-turbines.jpg"),
         "team_meeting": builder(request, "image/team-meeting.jpg"),
+        "hero_refinery": builder(request, "image/gas-slide1-right-photo.png"),
+        "team_office": builder(request, "image/gas-slide2-right-photo.png"),
     })
 
 def build_static_url_http(request, path):
-    """HTTP URL — for browser-rendered templates (index.html via energy_offer_summary)."""
+    """HTTP URL — for browser-rendered templates (volt-electricity.html via energy_offer_summary)."""
     from django.templatetags.static import static
     if request:
         return request.build_absolute_uri(static(path))
@@ -1116,6 +1118,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         "hc": comparatif.get("hc"),
         "base": comparatif.get("base"),
         "sumOfAnnualRates": comparatif.get("sumOfAnnualRates"),
+        "sales": comparatif.get("sales"),
     }
 
     energy_type = dto.get("energyType")
@@ -1170,6 +1173,19 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         # If min_regular_cout_htva is infinity (None values), set to None
         if min_regular_cout_htva == float('inf'):
             min_regular_cout_htva = None
+
+    # "% ÉCONOMIE VS RÉFÉRENCE" for every row, computed against the CURRENT
+    # (actual/incumbent) provider's coutHTVA. Negative = cheaper than today.
+    ref_cout_htva = current_cout_htva if current_cout_htva != float('inf') else None
+    for provider in current_providers + regular_providers:
+        provider_cout_htva = get_cout_htva(provider)
+        if ref_cout_htva and provider_cout_htva != float('inf'):
+            economie_eur = provider_cout_htva - ref_cout_htva
+            provider["economieEurCalc"] = economie_eur
+            provider["economiePercentCalc"] = economie_eur / ref_cout_htva * 100
+        else:
+            provider["economieEurCalc"] = None
+            provider["economiePercentCalc"] = None
 
     # Paginate providers into containers (4 rows per container)
     paginated_containers = []
@@ -1653,11 +1669,63 @@ def energy_offer_summary(request):
         presentation_data = build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64, chart_12m_base64, comparatif_dto, request)
         
         # 5️⃣ Render HTML
-        html_content = render_to_string("index.html", {"data": presentation_data})
+        html_content = render_to_string("volt-electricity.html", {"data": presentation_data})
         
         # 6️⃣ Save HTML file to server and return path
         html_url, html_filename = save_html_file(html_content, request, data, comparatif)
         
+        return JsonResponse({
+            "status": "success",
+            "path": html_url,
+            "name": html_filename,
+            "title": html_filename,
+            "mime_type": "text/html",
+            "message": "HTML file generated successfully"
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({
+            "status": "error",
+            "message": f"An error occurred: {str(e)}",
+        }, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def comparatif_gas(request):
+    """
+    POST API endpoint that accepts GAS data, saves HTML file, and returns the file path.
+    Mirrors energy_offer_summary but renders volt-gas.html for GAS payloads.
+    """
+    try:
+        # 1️⃣ Parse incoming data
+        data = parse_request_data(request)
+
+        # Get comparatif data if available
+        comparatif = data.get("comparatifClientHistoryPdfDto", {})
+
+        # 2️⃣ Generate charts (if available)
+        chart_base64 = generate_price_chart_styled(data)
+        chart_12m_base64 = generate_price_chart_styled(data, last_n_months=12)
+        gas_chart_base64 = generate_enedis_bar_chart(
+            comparatif.get("grdfDataPastYear") or comparatif.get("enedisDataPastYear", {})
+        )
+
+        # 3️⃣ Build Comparatif DTO (GAS)
+        comparatif_dto = build_comparatif_dto_Gas(comparatif, request, data)
+
+        # 4️⃣ Build presentation data
+        presentation_data = build_presentation_data_gas(
+            data, chart_base64, chart_12m_base64, gas_chart_base64, comparatif_dto, request
+        )
+
+        # 5️⃣ Render HTML
+        html_content = render_to_string("volt-gas.html", {"data": presentation_data})
+
+        # 6️⃣ Save HTML file to server and return path
+        html_url, html_filename = save_html_file(html_content, request, data, comparatif)
+
         return JsonResponse({
             "status": "success",
             "path": html_url,
@@ -1787,6 +1855,75 @@ def _compute_chart_date_ranges(data):
     return result
 
 
+def _build_sales_info(comparatif_dto):
+    """Extract the sales rep's display info from comparatifClientHistoryPdfDto.sales
+    (an EmployeeDto-shaped object: name, firstName, email, mobilePhone/professionalPhone,
+    photoMedia.path)."""
+    sales = comparatif_dto.get("sales")
+    if not isinstance(sales, dict):
+        return {}
+
+    name = sales.get("name")
+    first_name = sales.get("firstName")
+    full_name = " ".join(part for part in [name, first_name] if part) or sales.get("fullname")
+
+    photo_media = sales.get("photoMedia")
+    photo = photo_media.get("path") if isinstance(photo_media, dict) else None
+
+    phone = sales.get("mobilePhone") or sales.get("professionalPhone") or sales.get("homePhone")
+
+    return {
+        "name": full_name,
+        "email": sales.get("email"),
+        "phone": phone,
+        "photo": photo,
+    }
+
+
+def _build_slide6_data(comparatif_dto):
+    all_providers = comparatif_dto.get("allProvidersForTables", [])
+    current = next((p for p in all_providers if p.get("typeFournisseur") == "CURRENT"), {})
+    recommended = (comparatif_dto.get("allRegularProviders") or [{}])[0]
+
+    def _f(v):
+        try:
+            return float(v) if v is not None else None
+        except (ValueError, TypeError):
+            return None
+
+    cur_fourniture = _f(current.get("fourniture"))
+    rec_fourniture = _f(recommended.get("fourniture"))
+    fourniture_economy = (cur_fourniture - rec_fourniture) if (cur_fourniture is not None and rec_fourniture is not None) else None
+
+    cur_turpe = _f(current.get("turpe"))
+    rec_turpe = _f(recommended.get("turpe"))
+    turpe_economy = (cur_turpe - rec_turpe) if (cur_turpe is not None and rec_turpe is not None) else None
+
+    cur_taxes = _f(current.get("taxes"))
+    rec_taxes = _f(recommended.get("taxes"))
+    taxes_economy = (cur_taxes - rec_taxes) if (cur_taxes is not None and rec_taxes is not None) else None
+
+    cur_cout_htva = _f(current.get("coutHTVA"))
+    rec_cout_htva = _f(recommended.get("coutHTVA"))
+    total_ht_economy = (cur_cout_htva - rec_cout_htva) if (cur_cout_htva is not None and rec_cout_htva is not None) else None
+
+    tva_amount = (rec_cout_htva * 0.20) if rec_cout_htva is not None else None
+    total_ttc = (rec_cout_htva + tva_amount) if (rec_cout_htva is not None and tva_amount is not None) else None
+
+    return {
+        "current": current,
+        "recommended": recommended,
+        "fourniture_economy": fourniture_economy,
+        "turpe_economy": turpe_economy,
+        "taxes_economy": taxes_economy,
+        "total_ht_economy": total_ht_economy,
+        "tva_amount": tva_amount,
+        "total_ttc": total_ttc,
+        "economy_pct": comparatif_dto.get("ratioHTVA"),
+        "economy_eur": comparatif_dto.get("differenceHTVA"),
+    }
+
+
 def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64, chart_12m_base64, comparatif_dto, request):
     """
     Build presentation data for the energy offer summary page.
@@ -1881,7 +2018,293 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
             comparatif_dto.get("allProvidersForTables", [])[i:i+4]
             for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 4)
         ],
+        "slide6": _build_slide6_data(comparatif_dto),
+        "sales": _build_sales_info(comparatif_dto),
     }
+
+
+def build_comparatif_dto_Gas(comparatif, request, data):
+    """GAS counterpart of build_comparatif_dto_Electricity — same provider
+    pagination/sorting/green-row logic, validated against energyType GAS."""
+    print("Inside BuildComparatifDTOGas")
+
+    created_on_raw = comparatif.get("createdOn")
+    if not created_on_raw:
+        raise ValueError("Missing required field: createdOn")
+
+    try:
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0)
+        created_on = dt.strftime("%d/%m/%Y")
+        created_on_time = dt.strftime("%Hh%M")
+    except Exception as e:
+        raise ValueError(f"Invalid createdOn value: {e}")
+
+    dto = {
+        "title": data.get("contexte_title", "Contexte global"),
+        "createdOn": created_on,
+        "createdOnTime": created_on_time,
+        "energyType": comparatif.get("energyType"),
+        "pce": comparatif.get("pce"),
+        "gasProfile": comparatif.get("gasProfile"),
+        "routingRate": comparatif.get("routingRate"),
+        "segmentation": comparatif.get("segmentation"),
+        "contractStartDate": comparatif.get("contractStartDate"),
+        "volumeAnnual": comparatif.get("volumeAnnual"),
+        "ratioHTVA": comparatif.get("ratioHTVA"),
+        "differenceHTVA": comparatif.get("differenceHTVA"),
+        "currentSupplierName": comparatif.get("currentSupplierName"),
+        "currentContractExpiryDate": comparatif.get("currentContractExpiryDate"),
+        # Best-effort gas profile metadata — key names guessed from the template;
+        # confirm/adjust once the real CRM payload for GAS is available.
+        "typology": comparatif.get("typology"),
+        "debitLabel": comparatif.get("debitLabel"),
+        "typologyDetail": comparatif.get("typologyDetail"),
+        "usage": comparatif.get("usage"),
+        "winterPct": comparatif.get("winterPct"),
+        "summerPct": comparatif.get("summerPct"),
+        "cpb2026": comparatif.get("cpb2026"),
+        "cpb2027": comparatif.get("cpb2027"),
+        "cpb2028": comparatif.get("cpb2028"),
+    }
+
+    if dto.get("energyType") != "GAS":
+        raise ValueError("Invalid or missing energyType. Must be 'GAS'.")
+    if not dto.get("pce"):
+        raise ValueError("Missing required GAS field: pce")
+
+    # Separate CURRENT and REGULAR providers
+    comparatif_rates = comparatif.get("comparatifRates", [])
+
+    # Alias gas-specific cost fields so both the comparison table
+    # (acheminementGrdf / acciseGaz) and the summary slide (distribution /
+    # accise) read from the same raw provider values.
+    for provider in comparatif_rates:
+        if provider.get("acheminementGrdf") is None:
+            provider["acheminementGrdf"] = provider.get("distribution")
+        if provider.get("acciseGaz") is None:
+            provider["acciseGaz"] = provider.get("ticgn")
+
+    current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
+    regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
+
+    def get_cout_htva(provider):
+        cout_htva = provider.get("coutHTVA")
+        if cout_htva is None:
+            return float('inf')
+        try:
+            return float(cout_htva)
+        except (ValueError, TypeError):
+            return float('inf')
+
+    regular_providers.sort(key=get_cout_htva)
+
+    current_cout_htva = get_cout_htva(current_providers[0]) if current_providers else None
+
+    min_regular_cout_htva = None
+    if regular_providers:
+        min_regular_cout_htva = get_cout_htva(regular_providers[0])
+        if min_regular_cout_htva == float('inf'):
+            min_regular_cout_htva = None
+
+    paginated_containers = []
+    current_index = 0
+    regular_index = 0
+    green_row_used = True
+
+    while current_index < len(current_providers) or regular_index < len(regular_providers):
+        container = {
+            "current_providers": [],
+            "regular_providers": [],
+            "show_header": len(paginated_containers) == 0,
+            "show_title_labels": False
+        }
+
+        rows_in_container = 0
+
+        while current_index < len(current_providers) and rows_in_container < 4:
+            container["current_providers"].append(current_providers[current_index])
+            current_index += 1
+            rows_in_container += 1
+
+        if current_index >= len(current_providers) and len(container["current_providers"]) > 0:
+            container["show_title_labels"] = True
+
+        if len(current_providers) == 0 and len(paginated_containers) == 0:
+            container["show_title_labels"] = True
+
+        while regular_index < len(regular_providers) and rows_in_container < 4:
+            provider = regular_providers[regular_index]
+
+            if (not green_row_used and
+                container["show_title_labels"] and
+                regular_index == 0 and
+                min_regular_cout_htva is not None and
+                current_cout_htva is not None and
+                min_regular_cout_htva <= current_cout_htva):
+
+                provider["is_green_row"] = True
+                green_row_used = True
+            else:
+                provider["is_green_row"] = False
+
+            container["regular_providers"].append(provider)
+            regular_index += 1
+            rows_in_container += 1
+
+        paginated_containers.append(container)
+
+    dto["paginatedContainers"] = paginated_containers
+    dto["comparatifRates"] = comparatif_rates
+
+    all_regular_providers = []
+    for container in paginated_containers:
+        all_regular_providers.extend(container["regular_providers"])
+    dto["allRegularProviders"] = all_regular_providers
+
+    all_providers_for_tables = []
+    for container in paginated_containers:
+        all_providers_for_tables.extend(container["current_providers"])
+    all_providers_for_tables.extend(all_regular_providers)
+    dto["allProvidersForTables"] = all_providers_for_tables
+
+    return dto
+
+
+def _build_slide6_data_gas(comparatif_dto):
+    all_providers = comparatif_dto.get("allProvidersForTables", [])
+    current_raw = next((p for p in all_providers if p.get("typeFournisseur") == "CURRENT"), {})
+    recommended_raw = (comparatif_dto.get("allRegularProviders") or [{}])[0]
+
+    def _f(v):
+        try:
+            return float(v) if v is not None else None
+        except (ValueError, TypeError):
+            return None
+
+    def _build_side(provider):
+        abonnement = _f(provider.get("abonnementAnswer"))
+        if abonnement is None:
+            abonnement = _f(provider.get("abonnementAnnual"))
+
+        total_ht = _f(provider.get("coutHTVA"))
+        tva = _f(provider.get("tva"))
+        total_ttc = _f(provider.get("coutTTC"))
+
+        if tva is None and total_ht is not None:
+            tva = round(total_ht * 0.20, 2)
+        if total_ttc is None and total_ht is not None and tva is not None:
+            total_ttc = round(total_ht + tva, 2)
+
+        return {
+            "fourniture": _f(provider.get("fourniture")),
+            "distribution": _f(provider.get("distribution")),
+            "abonnement": abonnement,
+            "cta": _f(provider.get("cta")),
+            "accise": _f(provider.get("ticgn")),
+            "total_ht": total_ht,
+            "tva": tva,
+            "total_ttc": total_ttc,
+        }
+
+    current = _build_side(current_raw)
+    recommended = _build_side(recommended_raw)
+
+    def _diff(key):
+        a, b = current.get(key), recommended.get(key)
+        return (a - b) if (a is not None and b is not None) else None
+
+    breakdown = {}
+    rec_total_ht = recommended.get("total_ht")
+    for key in ("fourniture", "distribution", "abonnement", "cta", "accise"):
+        value = recommended.get(key)
+        breakdown[key] = value
+        breakdown[f"{key}_pct"] = (
+            round(value / rec_total_ht * 100, 1)
+            if value is not None and rec_total_ht else None
+        )
+
+    return {
+        "current": current,
+        "recommended": recommended,
+        "fourniture_economy": _diff("fourniture"),
+        "distribution_economy": _diff("distribution"),
+        "abonnement_economy": _diff("abonnement"),
+        "breakdown": breakdown,
+        "economy_pct": comparatif_dto.get("ratioHTVA"),
+        "economy_eur": comparatif_dto.get("differenceHTVA"),
+    }
+
+
+def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_base64, comparatif_dto, request):
+    """
+    Build presentation data for the gas (GAZ) comparatif page.
+    Follows the same pattern as build_presentation_data_energy_offer.
+    """
+    print("Inside BuildPresentationDataGas")
+
+    def safe_value(value):
+        if value is None:
+            return ""
+        try:
+            str_val = str(value).strip().lower()
+            if str_val == "" or str_val == "none" or str_val == "null":
+                return ""
+            return str(value)
+        except AttributeError:
+            return str(value) if value is not None else ""
+
+    client_first_name = safe_value(data.get("clientFirstName"))
+    client_last_name = safe_value(data.get("clientLastName"))
+    client_contact_name = safe_value(
+        data.get("clientContactName") or f"{client_first_name} {client_last_name}".strip()
+    )
+
+    return {
+        "title": data.get("title", "VOLT CONSULTING - Gas Services Presentation"),
+        "clientSociety": safe_value(data.get("clientSociety")),
+        "clientContactName": client_contact_name,
+        "clientFirstName": client_first_name,
+        "clientLastName": client_last_name,
+        "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "gas_info": {
+            "pce": comparatif_dto.get("pce"),
+            "contract_start_date": comparatif_dto.get("contractStartDate"),
+            "segmentation": comparatif_dto.get("segmentation"),
+            "profile": comparatif_dto.get("gasProfile"),
+            "profile_threshold": comparatif_dto.get("routingRate"),
+            "total_annual_mwh": comparatif_dto.get("volumeAnnual"),
+            "typology": comparatif_dto.get("typology"),
+            "debit_label": comparatif_dto.get("debitLabel"),
+            "typology_detail": comparatif_dto.get("typologyDetail"),
+            "usage": comparatif_dto.get("usage"),
+            "winter_pct": comparatif_dto.get("winterPct"),
+            "summer_pct": comparatif_dto.get("summerPct"),
+            "cpb_2026": comparatif_dto.get("cpb2026"),
+            "cpb_2027": comparatif_dto.get("cpb2027"),
+            "cpb_2028": comparatif_dto.get("cpb2028"),
+        },
+        "images": build_images(data, request, True),
+        "comparatifClientHistoryPdfDto": comparatif_dto,
+        "image": build_image_section(data, chart_base64),
+        "imageOne": {
+            "gas_chart": gas_chart_base64 if gas_chart_base64 else ""
+        },
+        "imageTwo": {
+            "chart_12m": chart_12m_base64 if chart_12m_base64 else ""
+        },
+        "chart_date_ranges": _compute_chart_date_ranges(data),
+        "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
+        "provider_page_chunks": [
+            comparatif_dto.get("allProvidersForTables", [])[i:i+4]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 4)
+        ],
+        "gas_providers": {
+            "recommended": (comparatif_dto.get("allRegularProviders") or [None])[0],
+        },
+        "slide6": _build_slide6_data_gas(comparatif_dto),
+        "advisor": data.get("advisor", {}),
+    }
+
 
 def generate_simple_pdf(html_content, request, data, comparatif):
     """Simple PDF generator without complex blank page removal"""
