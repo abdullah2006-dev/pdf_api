@@ -1865,6 +1865,10 @@ def _call_market_llm(prompt):
         "model": "gpt-oss:20b",
         "prompt": prompt,
         "stream": False,
+        "think": "low",
+        # Keep the model resident in memory so back-to-back / subsequent
+        # generations skip the ~40s cold-load cost (load_duration).
+        "keep_alive": "30m",
     }).encode("utf-8")
 
     req = urllib.request.Request(
