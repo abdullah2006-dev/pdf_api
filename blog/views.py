@@ -1,4 +1,7 @@
 import re, io, base64
+import urllib.request
+import urllib.error
+from concurrent.futures import ThreadPoolExecutor
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
@@ -1855,6 +1858,164 @@ def _compute_chart_date_ranges(data):
     return result
 
 
+def _call_market_llm(prompt):
+    """POST a prompt to the in-house LLM (gpt-oss:20b, Ollama-compatible /api/generate).
+    Returns the raw response text, or None on any network/timeout/parse failure."""
+    payload = json.dumps({
+        "model": "gpt-oss:20b",
+        "prompt": prompt,
+        "stream": False,
+    }).encode("utf-8")
+
+    req = urllib.request.Request(
+        "https://gpt.caansoft.com/gpt/api/generate",
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=280) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, ValueError) as e:
+        print(f"Market LLM call failed: {e}")
+        return None
+
+    return body.get("response") or None
+
+
+def _parse_llm_fields(text, field_names):
+    """Parse a 'LABEL: text' per-line response into {field_name: text}, matching each
+    field_name (lowercase key) against a 'FIELD_NAME:' prefix (case-insensitive)."""
+    result = {}
+    if not text:
+        return result
+    for line in text.splitlines():
+        line = line.strip()
+        for field in field_names:
+            prefix = f"{field}:"
+            if line.upper().startswith(prefix.upper()):
+                result[field.lower()] = line.split(":", 1)[1].strip()
+                break
+    return result
+
+
+def _summarize_chart_data(chart_data_dto, recent_window=30):
+    """Reduce chartDataDto (4 series x ~250 daily points each) to compact per-series stats
+    (first/last/min/max/overall change/recent trend) so the LLM prompt stays small enough
+    for the model to actually generate a response instead of exhausting its token budget."""
+    if not chart_data_dto or not isinstance(chart_data_dto, dict):
+        return None
+
+    series_list = chart_data_dto.get("series") or []
+    x_axis = chart_data_dto.get("xAxis") or []
+    dates = (x_axis[0].get("data") if x_axis and isinstance(x_axis[0], dict) else []) or []
+
+    summary = {
+        "period": {"from": dates[0] if dates else None, "to": dates[-1] if dates else None},
+        "series": [],
+    }
+
+    for s in series_list:
+        data = s.get("data") or []
+        values = [v for v in data if isinstance(v, (int, float))]
+        if not values:
+            continue
+
+        first_val = next(v for v in data if isinstance(v, (int, float)))
+        last_val = next(v for v in reversed(data) if isinstance(v, (int, float)))
+
+        recent = values[-recent_window:]
+        previous = values[-2 * recent_window:-recent_window] or values[:-recent_window]
+        recent_avg = sum(recent) / len(recent) if recent else None
+        previous_avg = sum(previous) / len(previous) if previous else None
+
+        overall_change_pct = (last_val - first_val) / first_val * 100 if first_val else None
+        recent_trend_pct = (
+            (recent_avg - previous_avg) / previous_avg * 100
+            if recent_avg is not None and previous_avg else None
+        )
+
+        summary["series"].append({
+            "label": s.get("label"),
+            "min": round(min(values), 2),
+            "max": round(max(values), 2),
+            "first": round(first_val, 2),
+            "last": round(last_val, 2),
+            "overall_change_pct": round(overall_change_pct, 1) if overall_change_pct is not None else None,
+            "recent_trend_pct": round(recent_trend_pct, 1) if recent_trend_pct is not None else None,
+        })
+
+    return summary if summary["series"] else None
+
+
+def _generate_market_analysis(chart_data_dto):
+    """Ask the LLM for a short market analysis + recommendation based on a compact summary
+    of the price history (chartDataDto). Returns None on any failure so the template falls
+    back to its default copy."""
+    summary = _summarize_chart_data(chart_data_dto)
+    if not summary:
+        return None
+
+    prompt = (
+        "Tu es un analyste du marché de l'énergie pour Volt Consulting. "
+        "Voici un résumé de l'historique des prix (chartDataDto) au format JSON : "
+        "pour chaque contrat (label), min/max sur la période, valeur de début/fin, "
+        "variation globale en % (overall_change_pct), et tendance récente en % sur les "
+        "30 derniers points (recent_trend_pct) :\n"
+        f"{json.dumps(summary, ensure_ascii=False)}\n\n"
+        "À partir de ces données, rédige deux phrases courtes (30 mots maximum chacune) "
+        "à destination d'un client professionnel :\n"
+        "1) Une analyse de la tendance récente du marché.\n"
+        "2) Une recommandation sur l'opportunité d'agir maintenant.\n"
+        "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
+        "ANALYSE: <texte>\n"
+        "RECOMMANDATION: <texte>"
+    )
+
+    text = _call_market_llm(prompt)
+    fields = _parse_llm_fields(text, ["ANALYSE", "RECOMMANDATION"])
+    return fields or None
+
+
+def _generate_consumption_analysis(enedis_data_past_year):
+    """Ask the LLM for a short consumption-profile analysis based on the monthly
+    consumption history relevé par ENEDIS (enedisDataPastYear). Returns None on any
+    failure so the template falls back to its default copy."""
+    if not enedis_data_past_year:
+        return None
+
+    prompt = (
+        "Tu es un analyste du marché de l'énergie pour Volt Consulting. "
+        "Voici l'historique de consommation mensuelle du client, relevé par ENEDIS "
+        "(enedisDataPastYear), au format JSON :\n"
+        f"{json.dumps(enedis_data_past_year, ensure_ascii=False)}\n\n"
+        "À partir de ces données, rédige trois phrases courtes (30 mots maximum chacune) "
+        "à destination d'un client professionnel :\n"
+        "1) PROFIL: le profil de consommation (variations, périodes de forte/faible consommation).\n"
+        "2) EXPOSITION: l'exposition de ce profil aux fluctuations du marché de l'énergie.\n"
+        "3) STRATEGIE: une stratégie d'achat adaptée à ce profil.\n"
+        "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
+        "PROFIL: <texte>\n"
+        "EXPOSITION: <texte>\n"
+        "STRATEGIE: <texte>"
+    )
+
+    text = _call_market_llm(prompt)
+    fields = _parse_llm_fields(text, ["PROFIL", "EXPOSITION", "STRATEGIE"])
+    return fields or None
+
+
+def _generate_analyses_parallel(chart_data_dto, enedis_data_past_year):
+    """Run the market analysis (slide 3) and consumption analysis (slide 4) LLM calls
+    concurrently instead of one after another, since each can take minutes - sequentially
+    they could add up to several minutes for a single page generation request."""
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        market_future = executor.submit(_generate_market_analysis, chart_data_dto)
+        consumption_future = executor.submit(_generate_consumption_analysis, enedis_data_past_year)
+        return market_future.result(), consumption_future.result()
+
+
 def _build_sales_info(comparatif_dto):
     """Extract the sales rep's display info from comparatifClientHistoryPdfDto.sales
     (an EmployeeDto-shaped object: name, firstName, email, mobilePhone/professionalPhone,
@@ -1976,6 +2137,11 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
     if black != "" and black1 != "":
         black3 = "économisé/an"
 
+    market_analysis, consumption_analysis = _generate_analyses_parallel(
+        data.get("chartDataDto"),
+        data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear"),
+    )
+
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
         "headingone": "APPEL D'OFFRE",
@@ -1996,6 +2162,7 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "black3": black3,
         "image": build_image_section(data, chart_base64),
         "has_chart": chart_base64 is not None,
+        "has_chart_data": bool(data.get("chartDataDto")),
         "imageOne": {
             "enedis_chart": enedis_chart_base64 if enedis_chart_base64 else ""
         },
@@ -2020,6 +2187,8 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         ],
         "slide6": _build_slide6_data(comparatif_dto),
         "sales": _build_sales_info(comparatif_dto),
+        "market_analysis": market_analysis or {},
+        "consumption_analysis": consumption_analysis or {},
     }
 
 

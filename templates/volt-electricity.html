@@ -53,6 +53,10 @@
 
         * {
             box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         deck-stage {
@@ -2377,6 +2381,7 @@
         </section>
 
         <!-- SLIDE 3 — NOTRE ANALYSE card with teal background #005973 and white text -->
+        {% if data.has_chart_data %}
         <section data-screen-label="03 Évolution du marché de l'énergie">
             <div class="row items-start gap-20" style="margin-bottom:10px;">
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
@@ -2545,8 +2550,7 @@
                                 style="background: rgba(255,255,255,0.2); color: #fff; width:26px; height:26px;"><svg>
                                     <use href="#i-search" />
                                 </svg></span>NOTRE ANALYSE</div>
-                        <p style="font-size:12px; line-height:1.45; margin:0; color: #fff;">Les niveaux début 2026 =
-                            point bas. Le rebond récent confirme un retour de l'incertitude et de la volatilité.</p>
+                        <p style="font-size:12px; line-height:1.45; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
                     </div>
 
                     <div class="card red" style="padding:14px 14px; flex: 1;">
@@ -2554,8 +2558,7 @@
                                 style="background:#fff; color:var(--red-600); width:26px; height:26px;"><svg>
                                     <use href="#i-target" />
                                 </svg></span>NOTRE RECOMMANDATION</div>
-                        <p style="font-size:12px; line-height:1.45; margin:0;">Dans un contexte incertain, <strong>nous
-                                recommandons de sécuriser votre contrat dès maintenant.</strong></p>
+                        <p style="font-size:12px; line-height:1.45; margin:0;">{{ data.market_analysis.recommandation }}</p>
                     </div>
 
                     <!-- Warning box -->
@@ -2581,6 +2584,7 @@
                     à son destinataire.</span>
             </div>
         </section>
+        {% endif %}
 
         <!-- SLIDE 4 — Right analysis card now stretches full height (top to bottom) -->
         <section data-screen-label="04 Votre consommation relevée par Enedis">
@@ -2707,7 +2711,7 @@
                         <!-- Total Annual Card -->
                         <div class="total-annual" style="padding:12px 14px; margin:0; min-width:180px;">
                             <div class="head" style="font-size:9px;"><svg width="12" height="12"><use href="#i-trend-up"/></svg> TOTAL ANNUEL</div>
-                            <div class="big" style="font-size:32px;">{{data.enedis_info.enedis_rate_sum}} MWh</div>
+                            <div class="big" style="font-size:32px;">{{data.enedis_info.enedis_rate_sum|floatformat:2}} MWh</div>
                             <div class="desc" style="font-size:10px;">Base de calcul de l'appel d'offres</div>
                         </div>
                     </div>
@@ -2766,7 +2770,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Votre consommation présente des variations au cours de l'année, en fonction de votre activité et des périodes.</p>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.profil }}</p>
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2774,7 +2778,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-calendar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Ce type de profil implique une exposition aux fluctuations du marché de l'énergie, notamment sur les périodes de forte consommation.</p>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.exposition }}</p>
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2782,7 +2786,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
+                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.strategie }}</p>
                             </div>
                         </div>
                         <div class="row items-center gap-8" style="margin-top:14px; background: #eef2f7; padding:8px 10px; border-radius:6px;">
@@ -3191,10 +3195,18 @@
                                         style="background:#003db8; color:#fff; font-size:13px; font-weight:700; text-transform:uppercase; text-align:center; padding:10px 0;">
                                         OFFRE RECOMMANDÉE
                                     </div>
-                                    <div style="background:#fff; text-align:center; border-top:1px solid #e5e5e5;">
-                                        <image-slot id="volt-logo" src="{{ data.images.logo }}"
-                                            placeholder="VOLT CONSULTING Logo" shape="rect"
-                                            style="height: 40px; width: 80px;"></image-slot>
+                                    <div style="background:#fff; text-align:center; border-top:1px solid #e5e5e5; padding:6px 0;">
+                                        {% if data.slide6.recommended.partnerPhoto and data.slide6.recommended.partnerPhoto.path %}
+                                        <img src="{{ data.slide6.recommended.partnerPhoto.path }}"
+                                             alt="{{ data.slide6.recommended.partnerName|default:'-' }}"
+                                             style="max-height:40px; width:80px; object-fit:contain; display:block; margin:auto;">
+                                        {% elif data.slide6.recommended.newPartnerLogoName %}
+                                        <img src="{{ data.volt_logo_base_url }}{{ data.slide6.recommended.newPartnerLogoName }}"
+                                             alt="{{ data.slide6.recommended.partnerName|default:data.slide6.recommended.newPartnerName|default:'-' }}"
+                                             style="max-height:40px; width:80px; object-fit:contain; display:block; margin:auto;">
+                                        {% else %}
+                                        <strong style="font-size:13px; color:#003db8;">{{ data.slide6.recommended.partnerName|default:data.slide6.recommended.newPartnerName|default:"-" }}</strong>
+                                        {% endif %}
                                     </div>
                                 </th>
                                 <th class="group-cap" style="background:var(--green-600); font-size:13px;">
@@ -5138,9 +5150,9 @@
                     const key = e.key;
                     let handled = true;
 
-                    if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+                    if (key === 'ArrowRight' || key === 'ArrowDown' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
                         this._advance(1, 'keyboard');
-                    } else if (key === 'ArrowLeft' || key === 'PageUp') {
+                    } else if (key === 'ArrowLeft' || key === 'ArrowUp' || key === 'PageUp') {
                         this._advance(-1, 'keyboard');
                     } else if (key === 'Home') {
                         this._go(0, 'keyboard');
