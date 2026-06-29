@@ -7,4 +7,7 @@ urlpatterns = [
 
     path('api/comparatif-electricity/', views.energy_offer_summary, name='energy_offer_summary'),
     path('api/comparatif-gas/', views.comparatif_gas, name='comparatif_gas'),
+
+    path('api/generate-market-analysis/', views.generate_market_analysis, name='generate_market_analysis'),
+    path('api/generate-consumption-analysis/', views.generate_consumption_analysis, name='generate_consumption_analysis'),
 ]

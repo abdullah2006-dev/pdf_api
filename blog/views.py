@@ -2111,12 +2111,12 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
     # Get ratioHTVA and differenceHTVA values
     ratio_htva = comparatif_dto.get("ratioHTVA")
     difference_htva = comparatif_dto.get("differenceHTVA")
-    
+
     # Initialize black, black1, black3 based on conditions
     black = ""
     black1 = ""
     black3 = ""
-    
+
     # Condition for black (ratioHTVA):
     # Show only if ratioHTVA is not None, not empty, and ≤ 0
     if ratio_htva is not None and ratio_htva != "":
@@ -2126,7 +2126,7 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
                 black = f"{ratio_htva}%"
         except (ValueError, TypeError):
             pass
-    
+
     # Condition for black1 (differenceHTVA):
     # Show only if differenceHTVA is not None, not empty, and ≤ 0
     if difference_htva is not None and difference_htva != "":
@@ -2136,15 +2136,53 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
                 black1 = f"{difference_htva}€"
         except (ValueError, TypeError):
             pass
-    
+
     # Condition for black3 ("économisé/an"):
     if black != "" and black1 != "":
         black3 = "économisé/an"
 
-    market_analysis, consumption_analysis = _generate_analyses_parallel(
-        data.get("chartDataDto"),
-        data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear"),
-    )
+    # ── Market analysis: prefer precomputed (daily cache), else LLM ──
+    precomputed_analyse = data.get("precomputedAnalyse")
+    precomputed_recommandation = data.get("precomputedRecommandation")
+    has_market = bool(precomputed_analyse or precomputed_recommandation)
+
+    # ── Consumption analysis: prefer precomputed (async save-side job), else LLM ──
+    precomputed_profil = data.get("precomputedProfil")
+    precomputed_exposition = data.get("precomputedExposition")
+    precomputed_strategie = data.get("precomputedStrategie")
+    has_consumption = bool(precomputed_profil or precomputed_exposition or precomputed_strategie)
+
+    market_analysis = None
+    consumption_analysis = None
+
+    if has_market:
+        market_analysis = {
+            "analyse": precomputed_analyse or "",
+            "recommandation": precomputed_recommandation or "",
+        }
+    if has_consumption:
+        consumption_analysis = {
+            "profil": precomputed_profil or "",
+            "exposition": precomputed_exposition or "",
+            "strategie": precomputed_strategie or "",
+        }
+
+    # Only call the LLM for whichever half is still missing.
+    if not has_market and not has_consumption:
+        # neither precomputed -> run both in parallel (full fallback)
+        market_analysis, consumption_analysis = _generate_analyses_parallel(
+            data.get("chartDataDto"),
+            data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear"),
+        )
+    elif not has_market:
+        # consumption ready, market missing -> only market LLM
+        market_analysis = _generate_market_analysis(data.get("chartDataDto"))
+    elif not has_consumption:
+        # market ready, consumption missing -> only consumption LLM
+        consumption_analysis = _generate_consumption_analysis(
+            data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear")
+        )
+    # else: both precomputed -> no LLM call at all
 
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
@@ -2634,3 +2672,40 @@ def generate_enedis_bar_chart(chart_data):
 
     img_base64 = base64.b64encode(buffer.read()).decode("utf-8")
     return f"data:image/png;base64,{img_base64}"
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def generate_market_analysis(request):
+    try:
+        data = parse_request_data(request)
+        analysis = _generate_market_analysis(data.get("chartDataDto"))  # {analyse, recommandation} or None
+        if not analysis:
+            return JsonResponse({"status": "error", "message": "No analysis generated"}, status=200)
+        return JsonResponse({
+            "status": "success",
+            "analyse": analysis.get("analyse", ""),
+            "recommandation": analysis.get("recommandation", ""),
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    
+@csrf_exempt
+@require_http_methods(["POST"])
+def generate_consumption_analysis(request):
+    try:
+        data = parse_request_data(request)
+        analysis = _generate_consumption_analysis(data.get("enedisDataPastYear"))
+        if not analysis:
+            return JsonResponse({"status": "error", "message": "No analysis generated"}, status=200)
+        return JsonResponse({
+            "status": "success",
+            "profil": analysis.get("profil", ""),
+            "exposition": analysis.get("exposition", ""),
+            "strategie": analysis.get("strategie", ""),
+        })
+    except json.JSONDecodeError:
+        return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
