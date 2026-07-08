@@ -59,6 +59,30 @@
             user-select: none;
         }
 
+        /* Editable text boxes (e.g. slide 3 analysis/recommandation): re-enable
+           text selection despite the global user-select:none, and give a subtle
+           affordance so the user knows they can click to edit. */
+        [contenteditable="true"] {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+            cursor: text;
+            border-radius: 4px;
+            transition: box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        /* Accent ring reads on both dark (slide 3) and light (slide 4) backgrounds. */
+        [contenteditable="true"]:hover {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.55);
+        }
+
+        [contenteditable="true"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.9);
+            background: rgba(59, 130, 246, 0.08);
+        }
+
         deck-stage {
             --slide-width: 1123px;
             --slide-height: 794px;
@@ -119,7 +143,7 @@
         h1.page-title {
             font-family: var(--font-display);
             font-weight: 800;
-            font-size: 56px;
+            font-size: 54px;
             line-height: 1.0;
             letter-spacing: -0.02em;
             color: var(--navy-900);
@@ -266,7 +290,8 @@
         .benefit {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
+            text-align: center;
             gap: 12px;
         }
 
@@ -278,6 +303,12 @@
             color: var(--navy-900);
             letter-spacing: 0.02em;
             line-height: 1.2;
+            /* Reserve height for up to 3 lines so every .desc starts at the
+               same level across cards, regardless of title wrapping. */
+            min-height: calc(13px * 1.2 * 3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .benefit .desc {
@@ -1070,10 +1101,21 @@
         }
 
         .cons-block .hint {
+            display: none;
             font-size: 10px;
             color: var(--gray-500);
             letter-spacing: 0.06em;
             text-transform: uppercase;
+        }
+
+        /* Unit (MWh) rendered on its own line below the value in each cons-block. */
+        .cons-block .val .cons-unit {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-500);
+            letter-spacing: 0.04em;
+            margin-top: -2px;
         }
 
         .cons-block .val {
@@ -1086,6 +1128,7 @@
         }
 
         .cons-block .sub {
+            display: none;
             font-size: 11px;
             color: var(--gray-500);
         }
@@ -1118,6 +1161,16 @@
             font-weight: 800;
             font-size: 38px;
             letter-spacing: -0.01em;
+        }
+
+        /* MWh on its own line below the value in the total annual card. */
+        .total-annual .big .cons-unit {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #a8c0db;
+            letter-spacing: 0.04em;
+            margin-top: -2px;
         }
 
         .total-annual .desc {
@@ -1345,7 +1398,7 @@
         }
 
         deck-stage>section h1.page-title {
-            font-size: 43px !important;
+            font-size: 40px !important;
         }
 
         deck-stage>section .lede {
@@ -1371,8 +1424,8 @@
         }
 
         deck-stage>section .cat-pill {
-            padding: 8px 20px !important;
-            font-size: 16px !important;
+            padding: 7px 18px !important;
+            font-size: 13px !important;
         }
 
         deck-stage>section .brand .word {
@@ -1401,6 +1454,15 @@
 
         deck-stage>section .info-pill .value {
             font-size: 15px !important;
+        }
+
+        /* Vertically center each info-pill's label+value block on slide 5, even
+           when the grid stretches a pill taller than its content. */
+        section[data-slide="comparatif"] .info-pill > div {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-self: stretch;
         }
 
         deck-stage>section .icon-circle.sm {
@@ -1956,9 +2018,9 @@
 
             <div style="position:relative; z-index:1;">
                 <!-- Head row -->
-                <div class="page-head" style="justify-content: flex-start; gap: auto;">
+                <div class="page-head" style="justify-content: flex-start; gap: auto; align-items: center;">
                     <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                        shape="rect" style="height: 91px;"></image-slot>
+                        shape="rect" style="height: 78px;"></image-slot>
                     <div style="flex: 1;"></div>
                     <div class="cat-pill"
                         style="padding: 14px 42px; font-size: 26px; margin-right: 380px; aspect-ratio: 3; border-radius: 17px;">
@@ -1973,7 +2035,7 @@
                 </div>
 
                 <!-- Hero text -->
-                <h1 class="page-title" style="margin-top:36px; font-size:72px; line-height:0.96;">
+                <h1 class="page-title" style="margin-top:36px; font-size:72px; line-height:1.2;">
                     RÉDUISEZ IMMÉDIATEMENT<br />
                     VOTRE BUDGET ÉNERGIE
                 </h1>
@@ -1993,9 +2055,9 @@
 
                 <!-- Benefits with increased height -->
                 <div class="benefits"
-                    style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 40px; max-width: 600px; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); overflow: hidden;">
+                    style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 40px; max-width: 630px; border: 1px solid var(--gray-300); border-radius: var(--radius-sm); overflow: hidden;">
                     <div class="benefit"
-                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-200); gap: 6px; min-height: 100px;">
+                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-300); gap: 6px; min-height: 100px;">
                         <span class="icon-circle lg ic-navy-soft" style="width: 28px; height: 28px;"><svg
                                 style="width: 50%; height: 50%;">
                                 <use href="#i-trend-down" />
@@ -2006,7 +2068,7 @@
                             aujourd'hui.</div>
                     </div>
                     <div class="benefit"
-                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-200); gap: 6px; min-height: 100px;">
+                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-300); gap: 6px; min-height: 100px;">
                         <span class="icon-circle lg ic-navy-soft" style="width: 28px; height: 28px;"><svg
                                 style="width: 50%; height: 50%;">
                                 <use href="#i-shield" />
@@ -2017,7 +2079,7 @@
                             marché.</div>
                     </div>
                     <div class="benefit"
-                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-200); gap: 6px; min-height: 100px;">
+                        style="padding: 14px 8px; margin: 0; border-right: 1px solid var(--gray-300); gap: 6px; min-height: 100px;">
                         <span class="icon-circle lg ic-navy-soft" style="width: 28px; height: 28px;"><svg
                                 style="width: 50%; height: 50%;">
                                 <use href="#i-target" />
@@ -2043,10 +2105,10 @@
                 <div
                     style="display:grid; grid-template-columns: 360px 1fr; gap:22px; margin-top: 35px; max-width:1050px;">
                     <!-- Left column: Combined date/validity box + Free box stacked -->
-                    <div class="col gap-10">
+                    <div class="col gap-10" style="height: 100%;">
                         <!-- Combined dark box with two columns and a divider -->
                         <div class="darkpill"
-                            style="display: flex; justify-content: center; padding: 10px 14px;">
+                            style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 10px 14px;">
                             <!-- Étude réalisée -->
                             <div class="col gap-2" style="align-items: center; text-align: center;">
                                 <span class="label" style="font-size: 9px;">Étude réalisée le</span>
@@ -2056,7 +2118,7 @@
                         </div>
 
                         <!-- Free service box - below the combined box -->
-                        <div class="card" style="background: #e6f4ec; border: 1px solid #c2e3d2; padding: 10px 14px;">
+                        <div class="card" style="background: #e6f4ec; border: 1px solid #c2e3d2; padding: 10px 14px; flex: 1; display: flex; align-items: center;">
                             <div class="row items-center gap-8">
                                 <span class="icon-circle md ic-green" style="width: 32px; height: 32px;"><svg>
                                         <use href="#i-check" />
@@ -2097,11 +2159,13 @@
                                         <use href="#i-user" />
                                     </svg></span>
                                 <span
-                                    style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Interlocuteur
-                                    :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{data.clientContactName}}</span>
+                                    style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Nom
+                                    &amp; prénom :</span>
+                                <span
+                                    style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{data.clientLastName}}
+                                    {{data.clientFirstName}}</span>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-pin" />
@@ -2109,21 +2173,18 @@
                                 <span
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Site
                                     :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientBusinessAddress.street }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.client_site_address }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
-                                        <use href="#i-user" />
+                                        <use href="#i-phone" />
                                     </svg></span>
                                 <span
-                                    style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Nom
-                                    &amp; prénom :</span>
-                                <span
-                                    style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{data.clientLastName}}
-                                    {{data.clientFirstName}}</span>
+                                    style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0;">Téléphone
+                                    :</span>
+                                <span style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{ data.clientPhoneNumber }}</span>
                             </div>
-                            <div></div>
                             <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
@@ -2141,26 +2202,21 @@
             </div>
 
             <!-- Footer warning -->
-            <div class="footer-bar warn" style="padding: 6px 40px;">
-                <span class="lock"><svg width="10" height="10" stroke="currentColor" stroke-width="2.2" fill="none"
+            <div class="footer-bar warn" style="padding: 8px 44px !important; font-size: 12px !important; gap: 14px;">
+                <span class="lock" style="text-wrap: balance;"><svg width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none"
                         viewBox="0 0 24 24">
                         <path d="M12 3 2 21h20L12 3z" />
                         <path d="M12 10v5" />
                         <path d="M12 18v.5" />
                     </svg> LES PRIX ÉVOLUENT CHAQUE JOUR</span>
-                <span class="strong" style="font-weight:500; font-size: 9px;">Cette recommandation peut ne plus être
-                    valable
-                    demain.</span>
+                <span class="strong" style="font-weight:500; font-size: 11px; text-wrap: balance;">Cette recommandation peut ne plus être valable demain.</span>
                 <div style="flex:1"></div>
-                <span class="lock" style="color:#fff;"><svg width="10" height="10" stroke="currentColor"
+                <span class="lock" style="color:#fff;"><svg width="13" height="13" stroke="currentColor"
                         stroke-width="2.2" fill="none" viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
                     </svg> DOCUMENT CONFIDENTIEL</span>
-                <span class="strong" style="font-weight:500; font-size: 9px;">Document strictement confidentiel —
-                    Destiné exclusivement
-                    à son
-                    destinataire.</span>
+                <span class="strong" style="font-weight:500; font-size: 11px; text-wrap: balance;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
 
@@ -2170,9 +2226,9 @@
                 <!-- LEFT COLUMN -->
                 <div>
                     <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                        shape="rect" style="height: 91px;"></image-slot>
+                        shape="rect" style="height: 78px;"></image-slot>
 
-                    <h1 class="page-title" style="font-size:44px; line-height:1.2; text-transform:none;">
+                    <h1 class="page-title" style="line-height:1.2; text-transform:none;">
                         Votre expert en optimisation<br />
                         énergétique <span style="color:var(--navy-600);">B2B</span>
                     </h1>
@@ -2205,8 +2261,10 @@
                         NOTRE CABINET EN CHIFFRES
                     </div>
 
+                    <!-- Bordered segment: stats row + implantation/engagement cards -->
+                    <div style="border: 1px solid var(--gray-200); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 10px 14px; margin-top: 8px;">
                     <!-- Stat grid WITH VERTICAL SEPARATOR LINES -->
-                    <div style="display: flex; margin-top:16px;">
+                    <div style="display: flex;">
                         <!-- Stat 1 -->
                         <div class="stat" style="flex: 1; text-align: center; padding: 0 6px;">
                             <div class="icon-wrap"><span class="icon-circle lg ic-navy"
@@ -2215,7 +2273,7 @@
                                     </svg></span></div>
                             <div class="num" style="font-size:20px;">+40</div>
                             <div class="lbl" style="font-size:10px;">COLLABORATEURS</div>
-                            <div class="desc" style="font-size:9px;">Une équipe d'experts dédiée.</div>
+                            <div class="desc" style="font-size:9px;">Une équipe <br> d'experts dédiée.</div>
                         </div>
                         <!-- Vertical line -->
                         <div style="width: 1px; background: var(--gray-200); margin: 8px 0;"></div>
@@ -2227,7 +2285,7 @@
                                     </svg></span></div>
                             <div class="num" style="font-size:20px;">+2000</div>
                             <div class="lbl" style="font-size:10px;">CLIENTS</div>
-                            <div class="desc" style="font-size:9px;">TPE aux grands groupes.</div>
+                            <div class="desc" style="font-size:9px;">TPE aux grands <br> groupes.</div>
                         </div>
                         <!-- Vertical line -->
                         <div style="width: 1px; background: var(--gray-200); margin: 8px 0;"></div>
@@ -2250,9 +2308,9 @@
                                         stroke="none">
                                         <path d="M12 3c-2 3-5 5-7 7 1 5 4 9 7 11 3-2 6-6 7-11-2-2-5-4-7-7z" />
                                     </svg></span></div>
-                            <div class="num" style="font-size:16px;">COUVERTURE</div>
+                            <div class="num" style="font-size:16px; text-transform:uppercase;">COUVERTURE</div>
                             <div class="lbl" style="font-size:10px;">NATIONALE</div>
-                            <div class="desc" style="font-size:9px;">Accompagnement France entière.</div>
+                            <div class="desc" style="font-size:9px;">Accompagnement <br> France entière.</div>
                         </div>
                         <!-- Vertical line -->
                         <div style="width: 1px; background: var(--gray-200); margin: 8px 0;"></div>
@@ -2269,25 +2327,25 @@
                     </div>
 
                     <!-- Implantation + engagement cards (side by side, unchanged) -->
-                    <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:14px; margin-top:20px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap:14px; margin-top:6px;">
                         <!-- NOTRE IMPLANTATION card -->
-                        <div class="card" style="padding:12px 14px;">
-                            <div class="row items-start gap-10">
+                        <div class="card" style="padding:12px 14px; border: none; box-shadow: none;">
+                            <div class="row items-center gap-10">
                                 <span class="icon-circle md ic-navy" style="width: 32px; height: 32px;"><svg>
                                         <use href="#i-pin" />
                                     </svg></span>
-                                <div class="col gap-2">
-                                    <span class="kicker" style="font-size:10px;">NOTRE IMPLANTATION</span>
-                                    <span class="bold" style="color:var(--navy-900); font-size:12px;">SIÈGE SOCIAL ·
+                                <div class="col gap-2" style="gap:5px;">
+                                    <span class="kicker" style="font-size:11px;">NOTRE IMPLANTATION</span>
+                                    <span class="bold" style="color:var(--navy-900); font-size:14px;">SIÈGE SOCIAL ·
                                         VERSAILLES</span>
-                                    <span class="small muted" style="font-size:10px;">Un accompagnement de proximité sur
+                                    <span class="small muted" style="font-size:11px; line-height:1.4;">Un accompagnement de proximité sur
                                         toute la France.</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- NOTRE ENGAGEMENT card -->
-                        <div class="card" style="padding:12px 14px;">
+                        <div class="card" style="padding:12px 14px; border: none; box-shadow: none;">
                             <div class="kicker center"
                                 style="font-size:10px; color:var(--navy-700); display:flex; align-items:center; gap:8px; justify-content:center;">
                                 <span class="icon-circle sm ic-navy" style="width: 20px; height: 20px;"><svg>
@@ -2302,6 +2360,8 @@
                             </p>
                         </div>
                     </div>
+                    </div>
+                    <!-- /Bordered segment -->
 
                     <!-- ENTERPRISE LINK -->
                     <div class="row items-center gap-6" style="margin-top: 12px;">
@@ -2326,57 +2386,66 @@
                             style="width:100%; height:100%; display:block; object-fit: cover; object-position: center 25%;"></image-slot>
                     </div>
                     <div class="card dark"
-                        style="margin-top: 351px; position: relative; z-index: 2; width: 319px; height: 360px; border: 2px solid #fff; margin-left: auto; margin-right: 11px; padding: 18px 20px;">
+                        style="margin-top: 351px; position: relative; z-index: 2; width: 319px; height: 360px; border: 1px solid rgba(255,255,255,0.12); margin-left: auto; margin-right: 11px; padding: 18px 20px; box-shadow: 0 12px 32px rgba(0,0,0,0.25);">
                         <div class="kicker" style="color:#a8c0db; font-size:11px;">POURQUOI CHOISIR</div>
-                        <div class="brand brand-sm" style="margin:4px 0 14px 0; color:#fff;">
-                            <span class="word" style="color:#fff; font-size:28px;">VOLT</span>
-                            <span class="sub" style="color:#a8c0db; font-size:7px;">CONSULTING ?</span>
+                        <div style="margin:4px 0 12px 0;">
+                            <span style="color:#fff; font-family:var(--font-display); font-weight:800; font-size:22px; letter-spacing:0.02em;">VOLT CONSULTING ?</span>
                         </div>
-                        <div class="col gap-12">
-                            <div class="row items-center gap-10"><span class="icon-circle md ic-white"
-                                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.12);"><svg>
+                        <div class="col" style="gap:10px;">
+                            <div class="row items-center gap-8" style="padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span class="icon-circle md ic-white"
+                                    style="width: 26px; height: 26px; background: rgba(255,255,255,0.14); flex-shrink:0;"><svg>
                                         <use href="#i-users" />
-                                    </svg></span><span
-                                    style="font-family:var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.02em; color:#fff; line-height:1.3;">Accès
-                                    direct aux principaux fournisseurs</span></div>
-                            <div class="row items-center gap-10"><span class="icon-circle md ic-white"
-                                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.12);"><svg>
+                                    </svg></span>
+                                <span style="font-family:var(--font-display); font-weight:500; font-size:11px; letter-spacing:0.01em; color:#fff; line-height:1.25; flex:1; min-width:0;">ACCÈS
+                                    DIRECT AUX PRINCIPAUX FOURNISSEURS</span>
+                            </div>
+                            <div class="row items-center gap-8" style="padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span class="icon-circle md ic-white"
+                                    style="width: 26px; height: 26px; background: rgba(255,255,255,0.14); flex-shrink:0;"><svg>
                                         <use href="#i-chart-line" />
-                                    </svg></span><span
-                                    style="font-family:var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.02em; color:#fff; line-height:1.3;">Analyse
-                                    en temps réel des prix</span></div>
-                            <div class="row items-center gap-10"><span class="icon-circle md ic-white"
-                                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.12);"><svg>
+                                    </svg></span>
+                                <span style="font-family:var(--font-display); font-weight:500; font-size:11px; letter-spacing:0.01em; color:#fff; line-height:1.25; flex:1; min-width:0;">ANALYSE
+                                    EN TEMPS RÉEL DES PRIX</span>
+                            </div>
+                            <div class="row items-center gap-8" style="padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span class="icon-circle md ic-white"
+                                    style="width: 26px; height: 26px; background: rgba(255,255,255,0.14); flex-shrink:0;"><svg>
                                         <use href="#i-target" />
-                                    </svg></span><span
-                                    style="font-family:var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.02em; color:#fff; line-height:1.3;">Stratégie
-                                    d'achat adaptée</span></div>
-                            <div class="row items-center gap-10"><span class="icon-circle md ic-white"
-                                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.12);"><svg>
+                                    </svg></span>
+                                <span style="font-family:var(--font-display); font-weight:500; font-size:11px; letter-spacing:0.01em; color:#fff; line-height:1.25; flex:1; min-width:0;">STRATÉGIE
+                                    D'ACHAT ADAPTÉE</span>
+                            </div>
+                            <div class="row items-center gap-8" style="padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span class="icon-circle md ic-white"
+                                    style="width: 26px; height: 26px; background: rgba(255,255,255,0.14); flex-shrink:0;"><svg>
                                         <use href="#i-cog" />
-                                    </svg></span><span
-                                    style="font-family:var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.02em; color:#fff; line-height:1.3;">Accompagnement
-                                    complet</span></div>
-                            <div class="row items-center gap-10"><span class="icon-circle md ic-white"
-                                    style="width: 30px; height: 30px; background: rgba(255,255,255,0.12);"><svg>
+                                    </svg></span>
+                                <span style="font-family:var(--font-display); font-weight:500; font-size:11px; letter-spacing:0.01em; color:#fff; line-height:1.25; flex:1; min-width:0;">ACCOMPAGNEMENT
+                                    COMPLET</span>
+                            </div>
+                            <div class="row items-center gap-8">
+                                <span class="icon-circle md ic-white"
+                                    style="width: 26px; height: 26px; background: rgba(255,255,255,0.14); flex-shrink:0;"><svg>
                                         <use href="#i-user" />
-                                    </svg></span><span
-                                    style="font-family:var(--font-display); font-weight:700; font-size:11px; letter-spacing:0.02em; color:#fff; line-height:1.3;">Interlocuteur
-                                    unique dédié</span></div>
+                                    </svg></span>
+                                <span style="font-family:var(--font-display); font-weight:500; font-size:11px; letter-spacing:0.01em; color:#fff; line-height:1.25; flex:1; min-width:0;">INTERLOCUTEUR
+                                    UNIQUE DÉDIÉ</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="footer-bar">
-                <span class="lock"><svg width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none"
+            <div class="footer-bar" style="font-size: 12px !important; padding: 8px 44px !important; gap: 14px;">
+                <span class="lock"><svg width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none"
                         viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
                     </svg> DOCUMENT CONFIDENTIEL</span>
-                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement
-                    à son destinataire.</span>
+                <div class="divider"></div>
+                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
 
@@ -2385,14 +2454,14 @@
         <section data-screen-label="03 Évolution du marché de l'énergie">
             <div class="row items-start gap-20" style="margin-bottom:10px;">
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 85px;"></image-slot>
+                    style="height: 72px;"></image-slot>
                 <div class="flex-1">
                     <h1 class="page-title" style="font-size:38px !important; margin-bottom:8px; text-align: left;">
-                        ÉVOLUTION DU MARCHÉ DE L'ÉNERGIE</h1>
+                        ÉVOLUTION DU <br> MARCHÉ DE L'ÉNERGIE</h1>
                     <p class="lede" style="margin:0; max-width:none; font-size:15px; text-align: left;">Un marché <span
                             style="color:var(--red-600); font-weight:700;">volatil</span> et <span
                             style="color:var(--red-600); font-weight:700;">imprévisible</span>, influencé par les crises
-                        internationales et les tensions géopolitiques.</p>
+                        internationales <br> et les tensions géopolitiques.</p>
                 </div>
                 <div style="width:120px;"></div>
             </div>
@@ -2525,17 +2594,17 @@
                         <div class="card-title" style="font-size:12px; margin-bottom:10px; text-align: center;">CE QU'IL
                             FAUT COMPRENDRE</div>
                         <div class="col" style="font-size:12px; line-height:1.45;">
-                            <div class="row items-start gap-7" style="padding-bottom:8px;"><span class="icon-circle sm"
+                            <div class="row items-center gap-10" style="padding-bottom:8px;"><span class="icon-circle sm"
                                     style="background:#1d4d77; width:20px; height:20px;"><svg>
                                         <use href="#i-chart-line" />
-                                    </svg></span><span>Les prix évoluent chaque jour.</span></div>
+                                    </svg></span><span>Les prix évoluent chaque <br> jour.</span></div>
                             <div style="height:1px; background: rgba(255,255,255,0.15); margin: 4px 0 8px 0;"></div>
-                            <div class="row items-start gap-7" style="padding-bottom:8px;"><span class="icon-circle sm"
+                            <div class="row items-center gap-10" style="padding-bottom:8px;"><span class="icon-circle sm"
                                     style="background:#1d4d77; width:20px; height:20px;"><svg>
                                         <use href="#i-globe" />
                                     </svg></span><span>Marché dépend du contexte géopolitique.</span></div>
                             <div style="height:1px; background: rgba(255,255,255,0.15); margin: 4px 0 8px 0;"></div>
-                            <div class="row items-start gap-7"><span class="icon-circle sm"
+                            <div class="row items-center gap-10"><span class="icon-circle sm"
                                     style="background:#1d4d77; width:20px; height:20px;"><svg>
                                         <use href="#i-alert" />
                                     </svg></span><span>Hausses brutales et imprévisibles.</span></div>
@@ -2550,7 +2619,7 @@
                                 style="background: rgba(255,255,255,0.2); color: #fff; width:26px; height:26px;"><svg>
                                     <use href="#i-search" />
                                 </svg></span>NOTRE ANALYSE</div>
-                        <p style="font-size:12px; line-height:1.45; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
+                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
                     </div>
 
                     <div class="card red" style="padding:14px 14px; flex: 1;">
@@ -2558,7 +2627,7 @@
                                 style="background:#fff; color:var(--red-600); width:26px; height:26px;"><svg>
                                     <use href="#i-target" />
                                 </svg></span>NOTRE RECOMMANDATION</div>
-                        <p style="font-size:12px; line-height:1.45; margin:0;">{{ data.market_analysis.recommandation }}</p>
+                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0;">{{ data.market_analysis.recommandation }}</p>
                     </div>
 
                     <!-- Warning box -->
@@ -2574,14 +2643,14 @@
                 </div>
             </div>
 
-            <div class="footer-bar">
-                <span class="lock"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none"
+            <div class="footer-bar" style="font-size: 12px !important; padding: 8px 44px !important; gap: 14px;">
+                <span class="lock"><svg width="15" height="15" stroke="currentColor" stroke-width="2.2" fill="none"
                         viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
                     </svg> DOCUMENT CONFIDENTIEL</span>
-                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement
-                    à son destinataire.</span>
+                <div class="divider"></div>
+                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
         {% endif %}
@@ -2596,7 +2665,7 @@
                         Base de calcul de votre appel d'offres</p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 80px;"></image-slot>
+                    style="height: 68px;"></image-slot>
             </div>
 
             <!-- MAIN ROW: left column (info pills + consumption blocks + chart) | right column (analysis card, full height) -->
@@ -2647,71 +2716,73 @@
                     </div>
 
                     <!-- Consumption blocks - DYNAMIC based on tender_table.columns6 -->
-                    <div style="display:flex; flex-wrap:wrap; gap:0px; margin-bottom:18px; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden;">
+                    <div style="display:flex; gap:12px; margin-bottom:18px; align-items:stretch;">
+                        <div style="flex:1; display:flex; flex-wrap:wrap; gap:0px; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden;">
                         {% for col in data.tender_table.columns6 %}
                             {% if col == "HPH" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="4"/></svg></span> HPH</div>
                                 <span class="hint" style="font-size:9px;">(Heures Pleines Hiver)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hph}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hph}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Nov → Mars · Journée</div>
                             </div>
                             {% elif col == "HCH" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HCH</div>
                                 <span class="hint" style="font-size:9px;">(Heures Creuses Hiver)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hch}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hch}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Nov → Mars · Nuit / Week-end</div>
                             </div>
                             {% elif col == "HPE" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--amber-500); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-sun"/></svg></span> HPE</div>
                                 <span class="hint" style="font-size:9px;">(Heures Pleines Été)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hpe}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hpe}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Avr → Oct · Journée</div>
                             </div>
                             {% elif col == "HCE" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--green-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HCE</div>
                                 <span class="hint" style="font-size:9px;">(Heures Creuses Été)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hce}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hce}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Avr → Oct · Nuit / Week-end</div>
                             </div>
                             {% elif col == "POINTE" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--red-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-bolt"/></svg></span> POINTE</div>
                                 <span class="hint" style="font-size:9px;">(Pointe Hiver)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_pointe}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_pointe}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Heures de pointe</div>
                             </div>
                             {% elif col == "HP" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--navy-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-sun"/></svg></span> HP</div>
                                 <span class="hint" style="font-size:9px;">(Heures Pleines)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hp}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hp}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Journée</div>
                             </div>
                             {% elif col == "HC" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--green-600); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-moon"/></svg></span> HC</div>
                                 <span class="hint" style="font-size:9px;">(Heures Creuses)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hc}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_hc}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Nuit / Week-end</div>
                             </div>
                             {% elif col == "BASE" %}
                             <div class="cons-block" style="flex:1; gap:3px; border-right:1px solid var(--gray-200); padding:8px 6px; background:#fff; min-width:100px;">
                                 <div class="key"><span class="dot" style="background:var(--teal-900); width:22px; height:22px;"><svg width="12" height="12"><use href="#i-bolt"/></svg></span> BASE</div>
                                 <span class="hint" style="font-size:9px;">(Base)</span>
-                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_base}} MWh</div>
+                                <div class="val" style="font-size:22px;">{{data.enedis_info.enedis_rate_base}}<span class="cons-unit"> MWh</span></div>
                                 <div class="sub" style="font-size:10px;">Tarif Base</div>
                             </div>
                             {% endif %}
                         {% endfor %}
+                        </div>
 
                         <!-- Total Annual Card -->
                         <div class="total-annual" style="padding:12px 14px; margin:0; min-width:180px;">
                             <div class="head" style="font-size:9px;"><svg width="12" height="12"><use href="#i-trend-up"/></svg> TOTAL ANNUEL</div>
-                            <div class="big" style="font-size:32px;">{{data.enedis_info.enedis_rate_sum|floatformat:2}} MWh</div>
+                            <div class="big" style="font-size:32px;">{{data.enedis_info.enedis_rate_sum|floatformat:2}}<span class="cons-unit"> MWh</span></div>
                             <div class="desc" style="font-size:10px;">Base de calcul de l'appel d'offres</div>
                         </div>
                     </div>
@@ -2758,6 +2829,21 @@
                         <div style="text-align:center; padding:20px; color:#999; font-size:11px;">Aucune donnée de consommation disponible</div>
                         {% endif %}
                     </div>
+
+                    <!-- Market conditions strip - in normal flow, below the bar chart -->
+                    <div class="row gap-0" style="align-items: stretch; margin-top:12px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; height: 80px;">
+                        <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
+                            <span class="icon-circle md" style="background:#e6f4ec; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-bulb"/></svg></span>
+                            <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Les conditions de marché évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 12px;">
+                            <div style="width: 1px; background: var(--teal-900); height: 50px;"></div>
+                        </div>
+                        <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
+                            <span class="icon-circle md" style="background:#fff3df; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-calendar"/></svg></span>
+                            <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Offre valable à l'instant T<br />et susceptible d'évoluer rapidement.</div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- RIGHT COLUMN: analysis card with divider lines -->
@@ -2770,7 +2856,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.profil }}</p>
+                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.profil }}</p>
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2778,7 +2864,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-calendar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.exposition }}</p>
+                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.exposition }}</p>
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2786,7 +2872,7 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
-                                <p style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600);">{{ data.consumption_analysis.strategie }}</p>
+                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.strategie }}</p>
                             </div>
                         </div>
                         <div class="row items-center gap-8" style="margin-top:14px; background: #eef2f7; padding:8px 10px; border-radius:6px;">
@@ -2797,37 +2883,22 @@
                 </div>
             </div>
 
-            <!-- Bottom row - increased height from 60px to 80px, padding increased for better readability -->
-            <div class="row items-center gap-0" style="margin-top:4px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; width: 69%; height: 80px; position: absolute; bottom: 54px;">
-                <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
-                    <span class="icon-circle md" style="background:#e6f4ec; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-bulb"/></svg></span>
-                    <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Les conditions de marché évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
-                </div>
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 12px;">
-                    <div style="width: 1px; background: var(--teal-900); height: 50px;"></div>
-                </div>
-                <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
-                    <span class="icon-circle md" style="background:#fff3df; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-calendar"/></svg></span>
-                    <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Offre valable à l'instant T<br />et susceptible d'évoluer rapidement.</div>
-                </div>
-            </div>
-
-            <div class="footer-bar">
-                <span class="lock"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> DOCUMENT CONFIDENTIEL</span>
+            <div class="footer-bar" style="font-size: 11px !important; padding: 8px 44px !important; gap: 14px;">
+                <span class="lock"><svg width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> DOCUMENT CONFIDENTIEL</span>
                 <div class="divider"></div>
-                <span class="lock" style="color:#f7c042;"><svg width="12" height="12" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18v.5"/></svg> Marché de l'énergie volatil — opportunité à valider rapidement.</span>
+                <span class="lock" style="color:#f7c042;"><svg width="14" height="14" stroke="currentColor" stroke-width="2.2" fill="none" viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5"/><path d="M12 18v.5"/></svg> Marché de l'énergie volatil — opportunité à valider rapidement.</span>
                 <div class="divider"></div>
-                <span class="strong" style="font-weight:500;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
+                <span class="strong" style="font-weight:500; text-wrap: balance;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
 
         <!-- Slide 5 -->
         {% for page_providers in data.provider_page_chunks %}
-        <section data-screen-label="05 Détail de notre analyse marché">
+        <section data-screen-label="05 Détail de notre analyse marché" data-slide="comparatif">
             <div
                 style="display:grid; grid-template-columns: 1fr 240px; gap:14px; align-items: stretch; height: calc(100% - 50px);">
                 <!-- LEFT SIDE -->
-                <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; flex-direction: column; justify-content: flex-start; gap: 10px;">
                     <div class="row items-start justify-between gap-24">
                         <div>
                             <h1 class="page-title" style="font-size:24px;">DÉTAIL DE NOTRE ANALYSE MARCHÉ</h1>
@@ -2839,7 +2910,7 @@
                                 sécurisante.</p>
                         </div>
                         <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo"
-                            shape="rect" style="height: 44px;"></image-slot>
+                            shape="rect" fit="contain" style="height: 52px;"></image-slot>
                     </div>
 
                     <!-- Info pills row -->
@@ -2928,7 +2999,6 @@
                                 <th rowspan="2" style="font-size:7px; padding:3px 2px;">CEE<br />(€/MWh)</th>
                                 <th rowspan="2" style="font-size:7px; padding:3px 2px;">ABONNEMENT FOURNISSEUR<br />(€/AN)</th>
                                 <th rowspan="2" style="font-size:7px; padding:3px 2px;">TYPE D'OFFRE</th>
-                                <th rowspan="2" style="font-size:7px; padding:3px 2px;">PRIX MOYEN<br />MOLÉCULE (€/MWh)</th>
                                 <th rowspan="2" style="font-size:7px; padding:3px 2px;">BUDGET TOTAL <br />FOURNISSEUR<br />HORS TURPE
                                 </th>
                                 <th rowspan="2" style="font-size:7px; padding:3px 2px;">% ÉCONOMIE VS REFERENCE</th>
@@ -2949,11 +3019,11 @@
                                     {% if r.partnerPhoto and r.partnerPhoto.path %}
                                     <img src="{{ r.partnerPhoto.path }}"
                                          alt="{{ r.partnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                         style="max-height:28px; max-width:100%; width:auto; display:block; margin:0 auto;">
                                     {% elif r.newPartnerLogoName %}
                                     <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
                                          alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
-                                         style="max-height:28px; width:100%; object-fit:contain; display:block; margin:auto;">
+                                         style="max-height:28px; max-width:100%; width:auto; display:block; margin:0 auto;">
                                     {% else %}
                                     <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
                                     {% endif %}
@@ -2991,37 +3061,38 @@
                                 <td style="padding:3px 2px;">{{ r.partCee|default:"-" }}</td>
                                 <td style="padding:3px 2px;">{{ r.abonnementAnswer|default:"-" }}</td>
                                 <td style="padding:3px 2px;">{{ r.offerType|default:"-" }}{% if r.duration %}<br>{{ r.duration }} mois{% endif %}</td>
-                                <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.prixMoyenMolecule|default:"-" }}</td>
                                 <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">{{ r.coutHTVA|default:"-" }}</td>
                                 <td style="padding:3px 2px; {% if r.is_green_row %}color:var(--green-600); font-weight:700;{% endif %}">
                                     {% if r.typeFournisseur == "CURRENT" %}
                                     <span style="font-size:6px; color:var(--gray-500);">(référence)</span>
+                                    {% elif r.economiePercentCalc is not None %}
+                                    {{ r.economiePercentCalc|floatformat:1 }} %<br>
+                                    <span style="font-size:6px; color:var(--gray-500);">{{ r.economieEurCalc|floatformat:0 }} €</span>
                                     {% else %}
-                                    {{ r.economiePercentCalc|floatformat:1|default:"-" }} %<br>
-                                    <span style="font-size:6px; color:var(--gray-500);">{{ r.economieEurCalc|floatformat:0|default:"-" }} €</span>
+                                    <span style="color:var(--gray-400); font-size:13px; line-height:1;" title="Économie non calculable — aucune offre actuelle de référence">—</span>
                                     {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="15" style="text-align:center; padding:8px; color:var(--gray-500);">Aucune donnée disponible</td></tr>
+                            <tr><td colspan="14" style="text-align:center; padding:8px; color:var(--gray-500);">Aucune donnée disponible</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
 
                     <!-- Bottom hints -->
-                    <div class="row gap-10">
+                    <div class="row gap-10" style="margin-top:8px;">
                         <div class="row items-start gap-6" style="flex:1;">
                             <div class="icon-circle sm ic-navy"
                                 style="width: 16px; height: 16px; font-size:8px; font-weight:800;">1</div>
-                            <div><strong style="font-size:8px;">Prix moyen molécule</strong><br><span
-                                    style="font-size:7px; color:var(--gray-600);">Budget total molécule (hors capacité
+                            <div style="line-height:0.95;"><strong style="font-size:10px;">Prix moyen molécule</strong><br><span
+                                    style="font-size:9px; color:var(--gray-600);">Budget total molécule (hors capacité
                                     et hors CEE) ÷ Consommation annuelle (MWh)</span></div>
                         </div>
                         <div class="row items-start gap-6" style="flex:1;">
                             <div class="icon-circle sm ic-navy"
                                 style="width: 16px; height: 16px; font-size:8px; font-weight:800;">2</div>
-                            <div><strong style="font-size:8px;">Budget total fournisseur</strong><br><span
-                                    style="font-size:7px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
+                            <div style="line-height:0.95;"><strong style="font-size:10px;">Budget total fournisseur</strong><br><span
+                                    style="font-size:9px; color:var(--gray-600);">Inclut l'ensemble des coûts d'énergie
                                     sur l'année toutes périodes, hors Turpe et taxe</span></div>
                         </div>
                         <div class="row items-start gap-6"
@@ -3031,8 +3102,8 @@
                                     <use href="#i-bulb" />
                                 </svg></span>
                             {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
-                                <div><strong style="font-size:8px; color:var(--green-600);">À retenir</strong><br><span
-                                        style="font-size:7px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                <div style="line-height:0.95;"><strong style="font-size:10px; color:var(--green-600);">À retenir</strong><br><span
+                                        style="font-size:9px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
                                 {% endwith %}
                         </div>
                     </div>
@@ -3043,50 +3114,53 @@
                     <div style="flex: 1; display: flex; flex-direction: column; line-height: 27px">
 
                         <!-- Box 1: DÉFINITION DES POSTES -->
-                        <div
-                            style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
+                        <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff; margin-bottom: 16px; overflow: hidden;">
                             <div class="kicker"
                                 style="font-size:10px; padding: 12px 16px; background-color: #011337; color: #ffffff; margin: 0;">
                                 DÉFINITION DES POSTES</div>
                             <div class="col gap-14" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-bolt" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Prix du MWh selon
-                                            les différentes périodes (heures pleines / heures creuses, hiver / été).
-                                        </div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                                <use href="#i-bolt" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">PRIX DE L'ÉNERGIE</strong>
+                                    </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:34px;">Prix du MWh selon
+                                        les différentes périodes (heures pleines / heures creuses, hiver / été).
                                     </div>
                                 </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">CAPACITÉ</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Coût de sécurisation
-                                            de l'approvisionnement électrique, notamment lors des périodes de forte
-                                            consommation en hiver.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                                <use href="#i-shield" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">CAPACITÉ</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:34px;">Coût de sécurisation
+                                        de l'approvisionnement électrique, notamment lors des périodes de forte
+                                        consommation en hiver.</div>
                                 </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-file" />
-                                        </svg></span>
-                                    <div><strong style="font-size:7px;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Dispositif
-                                            règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
-                                            d'économies d'énergie.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                                <use href="#i-file" />
+                                            </svg></span>
+                                        <strong style="font-size:10px; line-height: normal;">CEE — CERTIFICATS D'ÉCONOMIES D'ÉNERGIE</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:34px; margin-top:5px;">Dispositif
+                                        règlementaire obligeant les fournisseurs d'énergie à promouvoir des actions
+                                        d'économies d'énergie.</div>
                                 </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 26px; height: 26px;"><svg style="width:13px;">
-                                            <use href="#i-user" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Abonnement annuel
-                                            facturé par le fournisseur pour votre contrat.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 26px; height: 26px;"><svg style="width:13px;">
+                                                <use href="#i-user" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">ABONNEMENT FOURNISSEUR</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:34px;">Abonnement annuel
+                                        facturé par le fournisseur pour votre contrat.</div>
                                 </div>
                             </div>
                         </div>
@@ -3094,35 +3168,38 @@
                         <!-- Box 2: POURQUOI CETTE ANALYSE ? -->
                         <div style="border: 1px solid #e5e7eb; border-radius: 10px; background: #ffffff;">
                             <div class="kicker"
-                                style="font-size:10px; padding: 12px 16px; margin: 0; border-radius: 10px 10px 0 0;">
+                                style="font-size:10px; padding: 0 16px; margin: 0; border-radius: 10px 10px 0 0;">
                                 POURQUOI CETTE ANALYSE ?</div>
                             <div class="col gap-10" style="margin-top:12px; padding: 0 16px 14px 16px;">
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-eye" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">TRANSPARENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous vous présentons
-                                            les données clés pour une décision en toute connaissance de cause.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                                <use href="#i-eye" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">TRANSPARENCE</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:32px;">Nous vous présentons
+                                        les données clés pour une décision en toute connaissance de cause.</div>
                                 </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-chart-bar" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous réalisons un
-                                            appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                                <use href="#i-chart-bar" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">MISE EN CONCURRENCE</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:32px;">Nous réalisons un
+                                        appel d'offres rigoureux auprès des fournisseurs sélectionnés.</div>
                                 </div>
-                                <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
-                                        style="width: 24px; height: 24px;"><svg style="width:12px;">
-                                            <use href="#i-shield" />
-                                        </svg></span>
-                                    <div><strong style="font-size:10px;">SÉCURISATION</strong>
-                                        <div style="font-size:9px; color:#6b7280; line-height:1.4;">Nous privilégions
-                                            les conditions stables et compétitives pour protéger votre budget.</div>
+                                <div class="col" style="gap:0;">
+                                    <div class="row items-center gap-8">
+                                        <span class="icon-circle sm ic-navy-soft" style="width: 24px; height: 24px;"><svg style="width:12px;">
+                                                <use href="#i-shield" />
+                                            </svg></span>
+                                        <strong style="font-size:10px;">SÉCURISATION</strong>
                                     </div>
+                                    <div style="font-size:10px; color:#6b7280; line-height:1.4; margin-left:32px;">Nous privilégions
+                                        les conditions stables et compétitives pour protéger votre budget.</div>
                                 </div>
                             </div>
                         </div>
@@ -3169,12 +3246,18 @@
                             contractuels.</strong></p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 80px;"></image-slot>
+                    style="height: 68px;"></image-slot>
                 <div class="savings-badge" style="padding: 10px 18px;">
+                    {% if data.slide6.has_current %}
                     <div class="label" style="font-size:11px;">ÉCONOMIE ESTIMÉE</div>
                     <div class="pct" style="font-size:30px;">{{ data.slide6.economy_pct|default:"-" }} %</div>
                     <div class="eur" style="font-size:22px;">{{ data.slide6.economy_eur|default:"-" }} €</div>
                     <div class="sub" style="font-size:10px;">économisés / an</div>
+                    {% else %}
+                    <div class="label" style="font-size:11px;">NOTRE OFFRE</div>
+                    <div class="pct" style="font-size:22px; color:var(--green-500);">Nouvelle offre</div>
+                    <div class="sub" style="font-size:10px; max-width:150px; margin-left:auto;">Aucune offre actuelle à comparer</div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -3187,8 +3270,8 @@
                                 <th style="text-align:left; padding-left:16px; width:28%; font-size:13px;">COMPARATIF
                                     ANNUEL</th>
                                 <th style="font-size:13px;">OFFRE ACTUELLE<br /><span
-                                        style="font-size:10px; font-weight:500; color:#a8c0db;">(de
-                                        renouvellement)</span>
+                                        style="font-size:10px; font-weight:500; color:#a8c0db;">{% if data.slide6.has_current %}(de
+                                        renouvellement){% else %}(non communiquée){% endif %}</span>
                                 </th>
                                 <th style="padding:0 !important;">
                                     <div
@@ -3227,9 +3310,9 @@
                                                 du fournisseur.</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.fourniture|default:"-" }} €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.fourniture|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.fourniture|default:"-" }} €</td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">{{ data.slide6.fourniture_economy|floatformat:2|default:"-" }} €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">{% if data.slide6.has_current %}{{ data.slide6.fourniture_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3244,13 +3327,13 @@
                                                 distribution</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.turpe|default:"-" }} €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.turpe|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.turpe|default:"-" }} €
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    {{ data.slide6.turpe_economy|floatformat:2|default:"-" }} €</td>
+                                    {% if data.slide6.has_current %}{{ data.slide6.turpe_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3265,13 +3348,13 @@
                                                 Accise/CSPE</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.taxes|default:"-" }} €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.taxes|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.taxes|default:"-" }} €
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    {{ data.slide6.taxes_economy|floatformat:2|default:"-" }} €</td>
+                                    {% if data.slide6.has_current %}{{ data.slide6.taxes_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr style="background:#f6f8fb;">
                                 <td style="text-align:left; padding-left:16px;">
@@ -3285,9 +3368,9 @@
                                                 style="font-size:11px; color:var(--gray-500);">(HORS TVA)</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">{{ data.slide6.current.coutHTVA|default:"-" }} €</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">{% if data.slide6.has_current %}{{ data.slide6.current.coutHTVA|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                                 <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.coutHTVA|default:"-" }} €</td>
-                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">{{ data.slide6.total_ht_economy|floatformat:2|default:"-" }} €</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">{% if data.slide6.has_current %}{{ data.slide6.total_ht_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3417,8 +3500,8 @@
                                 <use href="#i-alert" />
                             </svg></span>
                         <div>
-                            <span style="font-size:11px; letter-spacing:0.1em;">OFFRE VALABLE À L'INSTANT T</span>
-                            <div style="font-size:10px; color:#7d5915;">Les conditions de marché évoluent
+                            <span style="font-size:11px; letter-spacing:0.06em; white-space:nowrap;">OFFRE VALABLE À L'INSTANT T</span>
+                            <div style="font-size:10px; color:#7d5915; text-transform:none; font-weight:400; letter-spacing:0; line-height:1.4; margin-top:2px;">Les conditions de marché évoluent
                                 quotidiennement. Cette estimation est susceptible d'ajustement.</div>
                         </div>
                     </div>
@@ -3466,15 +3549,13 @@
 
             <!-- Footer - full width, flush with bottom, no gap -->
             <div class="footer-bar"
-                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 10px 40px; display: flex; justify-content: center; gap: 12px;">
-                <span class="lock" style="font-size:10px; display: inline-flex; align-items: center;"><svg width="12"
-                        height="12" stroke="currentColor" stroke-width="2" fill="none" viewBox="0 0 24 24">
+                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 7px 40px !important; display: flex; justify-content: center; align-items: center; gap: 12px;">
+                <span class="lock" style="font-size:11px; display: inline-flex; align-items: center;"><svg width="14"
+                        height="14" stroke="currentColor" stroke-width="2" fill="none" viewBox="0 0 24 24">
                         <circle cx="12" cy="12" r="9" />
                         <path d="M12 8v.5M12 11v6" />
                     </svg></span>
-                <span class="strong" style="font-weight:500; font-size:10px; text-align: center;">Les montants présentés
-                    sont basés sur
-                    votre consommation des 12 derniers mois et sont donnés à titre indicatif.</span>
+                <span class="strong" style="font-weight:500; font-size:11px; text-align: center;">Les montants présentés sont basés sur votre consommation des 12 derniers mois et sont donnés à titre indicatif.</span>
             </div>
         </section>
 
@@ -3491,7 +3572,7 @@
                         et sans impact sur votre activité.</p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 70px;"></image-slot>
+                    style="height: 60px;"></image-slot>
             </div>
 
             <div style="display:grid; grid-template-columns: 1fr 280px; gap: 20px; margin-top: 12px;">
@@ -3502,7 +3583,7 @@
 
                     <!-- 3-step flow -->
                     <div
-                        style="display:grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; gap:0; margin-top: 20px; align-items:flex-start;">
+                        style="display:grid; grid-template-columns: 1fr 24px 1fr 24px 1fr; gap:0; margin-top: 12px; align-items:flex-start;">
                         <div class="col items-center gap-8 center">
                             <span class="step-num" style="width: 24px; height: 24px; font-size: 12px;">1</span>
                             <span class="icon-circle xl ic-navy-soft" style="width: 44px; height: 44px;"><svg width="28"
@@ -3512,7 +3593,7 @@
                             <div
                                 style="font-family:var(--font-display); font-weight:800; font-size: 11px; color:var(--navy-900); letter-spacing:0.04em; text-transform:uppercase; line-height:1.25;">
                                 VALIDATION DU CONTRAT</div>
-                            <div style="font-size: 10px; color:var(--gray-600); max-width:200px;">Signature électronique
+                            <div style="font-size: 11px; color:var(--gray-600); max-width:200px;">Signature électronique
                                 sécurisée de
                                 votre contrat.</div>
                         </div>
@@ -3533,7 +3614,7 @@
                             <div
                                 style="font-family:var(--font-display); font-weight:800; font-size: 11px; color:var(--navy-900); letter-spacing:0.04em; text-transform:uppercase; line-height:1.25;">
                                 PRISE EN CHARGE PAR ENEDIS</div>
-                            <div style="font-size: 10px; color:var(--gray-600); max-width:220px;">ENEDIS gère l'ensemble
+                            <div style="font-size: 11px; color:var(--gray-600); max-width:220px;">ENEDIS gère l'ensemble
                                 de la
                                 transition et du changement de fournisseur. Vous n'avez aucune démarche à effectuer.
                             </div>
@@ -3555,7 +3636,7 @@
                             <div
                                 style="font-family:var(--font-display); font-weight:800; font-size: 11px; color:var(--navy-900); letter-spacing:0.04em; text-transform:uppercase; line-height:1.25;">
                                 ACTIVATION DU NOUVEAU CONTRAT</div>
-                            <div style="font-size: 10px; color:var(--gray-600); max-width:200px;">Votre nouveau contrat
+                            <div style="font-size: 11px; color:var(--gray-600); max-width:200px;">Votre nouveau contrat
                                 est activé à la
                                 date convenue. ENEDIS s'occupe de vous. <strong style="color:var(--navy-900);">Pas
                                     d'interruption de
@@ -3564,8 +3645,8 @@
                     </div>
 
                     <!-- Bottom info row -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 24px;">
-                        <div class="card" style="padding: 12px 14px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px;">
+                        <div class="card" style="padding: 10px 12px;">
                             <div class="row items-center gap-8" style="margin-bottom: 6px;">
                                 <span class="icon-circle md ic-navy" style="width: 28px; height: 28px;"><svg width="16"
                                         height="16">
@@ -3582,7 +3663,7 @@
                                 <div style="font-size: 9px; color:var(--gray-500); letter-spacing:0.08em;">L'ÉLECTRICITÉ
                                     EN RÉSEAU</div>
                             </div>
-                            <p style="font-size: 10px; color:var(--gray-700); line-height:1.4; margin:0;">
+                            <p style="font-size: 11px; color:var(--gray-700); line-height:1.4; margin:0;">
                                 ENEDIS reste votre gestionnaire de réseau. Il continue d'assurer l'acheminement de
                                 l'électricité jusqu'à
                                 votre site. <strong style="color:var(--navy-900);">Seule la partie fournisseur
@@ -3598,14 +3679,14 @@
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.08em;">AIDE
                                     À L'ÉDITION DU COURRIER</strong>
                             </div>
-                            <p style="font-size: 10px; color:var(--gray-700); line-height:1.4; margin:0;">
+                            <p style="font-size: 11px; color:var(--gray-700); line-height:1.4; margin:0;">
                                 Nous vous aidons à rédiger le courrier de non reconduction tacite à mettre à disposition
                                 ou à adresser à
                                 votre fournisseur actuel, si nécessaire.
                             </p>
                         </div>
 
-                        <div class="card" style="padding: 12px 14px;">
+                        <div class="card" style="padding: 10px 12px;">
                             <div class="row items-center gap-8" style="margin-bottom: 6px;">
                                 <span class="icon-circle md ic-navy" style="width: 28px; height: 28px;"><svg width="16"
                                         height="16">
@@ -3615,7 +3696,7 @@
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.08em;">DOCUMENTS
                                     NÉCESSAIRES</strong>
                             </div>
-                            <div class="col gap-6" style="font-size: 10px; color:var(--gray-700);">
+                            <div class="col gap-6" style="font-size: 11px; color:var(--gray-700);">
                                 <div class="row items-start gap-8"><span class="icon-circle sm ic-navy-soft"
                                         style="width: 20px; height: 20px;"><svg width="12" height="12">
                                             <use href="#i-file" />
@@ -3657,7 +3738,7 @@
                     <div class="kicker center"
                         style="color:var(--navy-900); padding: 6px 0; border-top: 1px solid var(--gray-200); border-bottom: 1px solid var(--gray-200); font-size: 10px;">
                         NOS GARANTIES</div>
-                    <div class="col gap-12" style="margin-top: 12px;">
+                    <div class="col gap-8" style="margin-top: 8px;">
                         <div class="row items-start gap-10">
                             <span class="icon-circle lg"
                                 style="background:#e6f4ec; width: 36px; height: 36px; color:var(--green-600);"><svg
@@ -3667,7 +3748,7 @@
                             <div><strong
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.06em; text-transform:uppercase;">ENEDIS
                                     ASSURE LA TRANSITION</strong>
-                                <div style="font-size: 10px; color:var(--gray-600); line-height:1.4;">Le gestionnaire
+                                <div style="font-size: 11px; color:var(--gray-600); line-height:1.4;">Le gestionnaire
                                     de réseau ENEDIS
                                     est seul responsable de l'acheminement et du changement de fournisseur.</div>
                             </div>
@@ -3681,7 +3762,7 @@
                             <div><strong
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.06em; text-transform:uppercase;">AUCUNE
                                     INTERRUPTION DE SERVICE</strong>
-                                <div style="font-size: 10px; color:var(--gray-600); line-height:1.4;">ENEDIS et le
+                                <div style="font-size: 11px; color:var(--gray-600); line-height:1.4;">ENEDIS et le
                                     nouveau fournisseur
                                     s'occupent de vous. La continuité de votre alimentation électrique est assurée.
                                 </div>
@@ -3696,7 +3777,7 @@
                             <div><strong
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.06em; text-transform:uppercase;">CONTRAT
                                     CADRE ET RÈGLEMENTÉ</strong>
-                                <div style="font-size: 10px; color:var(--gray-600); line-height:1.4;">Nous travaillons
+                                <div style="font-size: 11px; color:var(--gray-600); line-height:1.4;">Nous travaillons
                                     dans le respect
                                     de la règlementation en vigueur pour une transition conforme et sécurisée.</div>
                             </div>
@@ -3710,7 +3791,7 @@
                             <div><strong
                                     style="font-family:var(--font-display); color:var(--navy-900); font-size: 11px; letter-spacing:0.06em; text-transform:uppercase;">ACCOMPAGNEMENT
                                     SUR MESURE</strong>
-                                <div style="font-size: 10px; color:var(--gray-600); line-height:1.4;">Un interlocuteur
+                                <div style="font-size: 11px; color:var(--gray-600); line-height:1.4;">Un interlocuteur
                                     dédié vous
                                     accompagne à chaque étape, de la signature à la mise en service du nouveau contrat.
                                 </div>
@@ -3769,14 +3850,14 @@
 
             <!-- Footer - full width -->
             <div class="footer-bar"
-                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 8px 40px; display: flex; justify-content: center; gap: 12px;">
-                <span class="lock" style="font-size: 9px;"><svg width="10" height="10" stroke="currentColor"
+                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 8px 40px; display: flex; justify-content: center; align-items: center; gap: 14px;">
+                <span class="lock" style="font-size: 11px;"><svg width="14" height="14" stroke="currentColor"
                         stroke-width="2" fill="none" viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
                     </svg> DOCUMENT CONFIDENTIEL</span>
-                <span class="strong" style="font-weight:500; font-size: 9px;">Document strictement confidentiel —
-                    Destiné exclusivement à son destinataire.</span>
+                <div class="divider"></div>
+                <span class="strong" style="font-weight:500; font-size: 11px;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
 
@@ -3791,13 +3872,20 @@
                         chaque étape de votre contrat.</p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 70px;"></image-slot>
+                    style="height: 60px;"></image-slot>
             </div>
 
             <div style="display:grid; grid-template-columns: 420px 1fr; gap: 28px; margin-top: 16px;">
-                <image-slot id="contact-8" src="{{ data.sales.photo }}"
-                    placeholder="Portrait — votre conseiller" radius="14"
-                    style="height: 340px; width: 100%; object-fit: cover;"></image-slot>
+                {% if data.sales.photo %}
+                <img src="{{ data.sales.photo }}" alt="{{ data.sales.name|default:'Votre conseiller' }}"
+                    style="height: 340px; width: 100%; object-fit: contain; border-radius: 14px; display: block; background: #eef2f7;">
+                {% else %}
+                <!-- Branded fallback when no portrait is provided (Option 2: initials avatar) -->
+                <div style="height: 340px; width: 100%; border-radius: 14px; background: linear-gradient(160deg, var(--navy-800), var(--navy-900)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;">
+                    <span style="width: 120px; height: 120px; border-radius: 999px; background: rgba(255,255,255,0.10); display: flex; align-items: center; justify-content: center; color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 44px; letter-spacing: 0.04em;">{{ data.sales.initials|default:"?" }}</span>
+                    <span style="color: #a8c0db; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;">{{ data.sales.name|default:"Votre conseiller dédié" }}</span>
+                </div>
+                {% endif %}
 
                 <div class="card" style="padding: 16px 20px;">
                     <div class="contact-row" style="padding: 6px 0;">
@@ -3814,7 +3902,7 @@
                     </div>
                     <div class="divider-h" style="margin: 8px 0;"></div>
                     <div class="contact-row" style="padding: 6px 0;">
-                        <span class="icon-circle lg ic-navy" style="width: 40px; height: 40px;"><svg width="20"
+                        <span class="icon-circle lg ic-green-soft" style="width: 40px; height: 40px;"><svg width="20"
                                 height="20">
                                 <use href="#i-phone" />
                             </svg></span>
@@ -3825,7 +3913,7 @@
                     </div>
                     <div class="divider-h" style="margin: 8px 0;"></div>
                     <div class="contact-row" style="padding: 6px 0;">
-                        <span class="icon-circle lg ic-navy" style="width: 40px; height: 40px;"><svg width="20"
+                        <span class="icon-circle lg ic-green-soft" style="width: 40px; height: 40px;"><svg width="20"
                                 height="20">
                                 <use href="#i-mail" />
                             </svg></span>
@@ -3836,14 +3924,13 @@
                     </div>
                     <div class="divider-h" style="margin: 8px 0;"></div>
                     <div class="contact-row" style="padding: 6px 0;">
-                        <span class="icon-circle lg ic-navy" style="width: 40px; height: 40px;"><svg width="20"
+                        <span class="icon-circle lg ic-green-soft" style="width: 40px; height: 40px;"><svg width="20"
                                 height="20">
                                 <use href="#i-pin" />
                             </svg></span>
                         <div>
                             <div class="big-val" style="font-size: 18px;">VOLT CONSULTING</div>
-                            <div class="small" style="font-size: 10px;">1 ter passage Saint Pierre<br />Versailles 78000
-                            </div>
+                            <div class="small" style="font-size: 10px;">1 ter passage Saint Pierre, Versailles 78000</div>
                         </div>
                     </div>
                 </div>
@@ -3920,8 +4007,7 @@
                         <div class="quote" style="color:#cdd9e8; font-size: 12px; padding:0 20px;">
                             Mon objectif : vous apporter clarté, simplicité et performance énergétique.<br />À très
                             bientôt,<br /><strong
-                                style="color:var(--green-500); font-style:normal; font-weight:700;">Romain
-                                Belmonte</strong>
+                                style="color:var(--green-500); font-style:normal; font-weight:700;">{{ data.sales.name|default:"Votre conseiller" }}</strong>
                         </div>
                     </div>
                 </div>
@@ -3929,14 +4015,14 @@
 
             <!-- Footer - full width -->
             <div class="footer-bar"
-                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 8px 40px; display: flex; justify-content: center; gap: 12px;">
-                <span class="lock" style="font-size: 9px;"><svg width="10" height="10" stroke="currentColor"
+                style="position: absolute; left: 0; right: 0; bottom: 0; margin-top: 0; width: 100%; border-radius: 0; padding: 8px 40px; display: flex; justify-content: center; align-items: center; gap: 14px;">
+                <span class="lock" style="font-size: 11px;"><svg width="14" height="14" stroke="currentColor"
                         stroke-width="2" fill="none" viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
                     </svg> DOCUMENT CONFIDENTIEL</span>
-                <span class="strong" style="font-weight:500; font-size: 9px;">Document strictement confidentiel —
-                    Destiné exclusivement à son destinataire.</span>
+                <div class="divider"></div>
+                <span class="strong" style="font-weight:500; font-size: 11px;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
     </deck-stage>
@@ -5411,6 +5497,39 @@
                         while (el.firstChild) box.appendChild(el.firstChild);
                         return box;
                     };
+                    // <image-slot> is a custom element whose visible content is an <img>
+                    // in its shadow DOM. The generic neuter below would blank it, so
+                    // thumbnails would lose every image. Convert each slot to a plain
+                    // <img> using the *live* slot's currently displayed source (which
+                    // reflects the server src or any dropped/reframed image). Clone tree
+                    // order matches the original, so we pair them up by index.
+                    const _origSlots = entry.slide.querySelectorAll('image-slot');
+                    clone.querySelectorAll('image-slot').forEach((cEl, i) => {
+                        const orig = _origSlots[i];
+                        let src = '';
+                        try {
+                            const oimg = orig && orig.shadowRoot &&
+                                orig.shadowRoot.querySelector('.frame img');
+                            if (oimg && oimg.style.display !== 'none') {
+                                src = oimg.currentSrc || oimg.src || '';
+                            }
+                        } catch (e) { /* ignore cross-realm/shadow access issues */ }
+                        if (!src) src = cEl.getAttribute('src') || '';
+                        if (!src) return; // no image -> let neuter draw a placeholder box
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = '';
+                        img.loading = 'lazy';
+                        img.decoding = 'async';
+                        // Match the slot's real framing: default fit is 'cover' (fills +
+                        // crops), not 'contain'. Honor its fit/position attrs, then let the
+                        // slot's own inline style (box size, explicit object-fit) win.
+                        const _fit = cEl.getAttribute('fit') || 'cover';
+                        const _pos = cEl.getAttribute('position') || '50% 50%';
+                        img.style.cssText = 'display:block;object-fit:' + _fit +
+                            ';object-position:' + _pos + ';' + (cEl.getAttribute('style') || '');
+                        cEl.replaceWith(img);
+                    });
                     // querySelectorAll('*') returns descendants only — a custom-element
                     // slide root (<my-slide>…</my-slide>) would slip through and upgrade
                     // on append. Swap the root first.

@@ -2,6 +2,8 @@ import re, io, base64
 import urllib.request
 import urllib.error
 from concurrent.futures import ThreadPoolExecutor
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.template.loader import render_to_string
@@ -337,7 +339,7 @@ def build_comparatif_dto(comparatif, request, data):
     comparatif_rates = comparatif.get("comparatifRates", [])
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
-    
+
     # Sort regular_providers by coutHTVA in ascending order
     # Handle None values by putting them at the end
     def get_cout_htva(provider):
@@ -348,7 +350,7 @@ def build_comparatif_dto(comparatif, request, data):
             return float(cout_htva)
         except (ValueError, TypeError):
             return float('inf')
-    
+
     regular_providers.sort(key=get_cout_htva)
 
     # Get current provider's coutHTVA for comparison
@@ -405,13 +407,13 @@ def build_comparatif_dto(comparatif, request, data):
             # 3. This is the first regular provider after labels
             # 4. This provider has the minimum coutHTVA among regular providers
             # 5. The min_regular_cout_htva ≤ current_cout_htva
-            if (not green_row_used and 
-                container["show_title_labels"] and 
+            if (not green_row_used and
+                container["show_title_labels"] and
                 regular_index == 0 and  # First regular provider
-                min_regular_cout_htva is not None and 
-                current_cout_htva is not None and 
+                min_regular_cout_htva is not None and
+                current_cout_htva is not None and
                 min_regular_cout_htva <= current_cout_htva):
-                
+
                 provider["is_green_row"] = True
                 green_row_used = True
             else:
@@ -425,13 +427,13 @@ def build_comparatif_dto(comparatif, request, data):
 
     dto["paginatedContainers"] = paginated_containers
     dto["comparatifRates"] = comparatif_rates  # Keep original for backward compatibility
-    
+
     # Add a flattened list of all regular providers in sorted order
     all_regular_providers = []
     for container in paginated_containers:
         all_regular_providers.extend(container["regular_providers"])
     dto["allRegularProviders"] = all_regular_providers
-    
+
     # Add a flattened list of ALL providers (CURRENT + regular) for tables
     all_providers_for_tables = []
     # Add CURRENT providers first (they appear at the top in the UI)
@@ -597,7 +599,7 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
         clean_society = re.sub(r"\s+", "", str(society))
     else:
         clean_society = re.sub(r"\s+", "", str(trade_name))
-    
+
     # 🚨 IMPORTANT: Remove path separators and other problematic characters
     # Replace any non-alphanumeric characters (except underscore) with underscore
     clean_society = re.sub(r'[^a-zA-Z0-9_]', '_', clean_society)
@@ -605,13 +607,13 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
     clean_society = re.sub(r'_+', '_', clean_society)
     # Remove leading/trailing underscores
     clean_society = clean_society.strip('_')
-    
+
     # 2️⃣ Energy type suffix
     additional_text = "_elec" if energy_type.upper() == "ELECTRICITY" else "_gaz"
-    
+
     # 3️⃣ Date part (YYYY-MM-DD)
     date_str = datetime.now().strftime("%Y-%m-%d")
-    
+
     # 4️⃣ Final filename
     filename = f"Comparatif_{clean_society}{additional_text}_{date_str}.pdf"
     return filename
@@ -620,7 +622,7 @@ def create_comparatif_filename(society: str, trade_name: str, energy_type: str) 
 def build_static_url(request, path):
     """Build HTTP static URL for browser rendering (works in headless Chrome)."""
     from django.templatetags.static import static
-    
+
     # If request is available, build absolute URI
     if request:
         return request.build_absolute_uri(static(path))
@@ -648,12 +650,12 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
     # Get ratioHTVA and differenceHTVA values
     ratio_htva = comparatif_dto.get("ratioHTVA")
     difference_htva = comparatif_dto.get("differenceHTVA")
-    
+
     # Initialize black, black1, black3 based on conditions
     black = ""
     black1 = ""
     black3 = ""
-    
+
     # Condition for black (ratioHTVA):
     # Show only if ratioHTVA is not None, not empty, and ≤ 0
     if ratio_htva is not None and ratio_htva != "":
@@ -664,7 +666,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         except (ValueError, TypeError):
             # If can't convert to number, keep empty
             pass
-    
+
     # Condition for black1 (differenceHTVA):
     # Show only if differenceHTVA is not None, not empty, and ≤ 0
     if difference_htva is not None and difference_htva != "":
@@ -675,7 +677,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         except (ValueError, TypeError):
             # If can't convert to number, keep empty
             pass
-    
+
     # Condition for black3 ("économisé/an"):
     # Show only if BOTH ratioHTVA ≤ 0 AND differenceHTVA ≤ 0
     # (both are negative or zero)
@@ -692,6 +694,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
         "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
         "currentContractExpiryDate": (
             datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
@@ -727,7 +730,7 @@ def build_images(data, request, use_http=False):
     return data.get("images", {
         "left": builder(request, "image/side2-removebg-preview.png"),
         "right": builder(request, "image/side-removebg-preview.png"),
-        "logo": builder(request, "image/volt1-removebg-preview.png"),
+        "logo": "https://crm.volt-consulting.com/uploads/volt/logos/volt-logo.png",
         "side333": data.get("side3", builder(request, "image/side333-removebg-preview.png")),
         "volt_image1": builder(request, "image/volt_image1.png"),
         "icon": data.get("icon", builder(request, "image/buld-removebg-preview.png")),
@@ -1023,12 +1026,12 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
     # Get ratioHTVA and differenceHTVA values
     ratio_htva = comparatif_dto.get("ratioHTVA")
     difference_htva = comparatif_dto.get("differenceHTVA")
-    
+
     # Initialize black, black1, black3 based on conditions
     black = ""
     black1 = ""
     black3 = ""
-    
+
     # Condition for black (ratioHTVA):
     # Show only if ratioHTVA is not None, not empty, and ≤ 0
     if ratio_htva is not None and ratio_htva != "":
@@ -1039,7 +1042,7 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         except (ValueError, TypeError):
             # If can't convert to number, keep empty
             pass
-    
+
     # Condition for black1 (differenceHTVA):
     # Show only if differenceHTVA is not None, not empty, and ≤ 0
     if difference_htva is not None and difference_htva != "":
@@ -1050,7 +1053,7 @@ def build_presentation_data_Electricity(data, enedis_chart_base64, chart_base64,
         except (ValueError, TypeError):
             # If can't convert to number, keep empty
             pass
-    
+
     # Condition for black3 ("économisé/an"):
     # Show only if BOTH ratioHTVA ≤ 0 AND differenceHTVA ≤ 0
     # (both are negative or zero)
@@ -1150,7 +1153,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
     comparatif_rates = comparatif.get("comparatifRates", [])
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
-    
+
     # Sort regular_providers by coutHTVA in ascending order
     # Handle None values by putting them at the end
     def get_cout_htva(provider):
@@ -1161,7 +1164,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
             return float(cout_htva)
         except (ValueError, TypeError):
             return float('inf')
-    
+
     regular_providers.sort(key=get_cout_htva)
 
     # Get current provider's coutHTVA for comparison
@@ -1231,13 +1234,13 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
             # 3. This is the first regular provider after labels
             # 4. This provider has the minimum coutHTVA among regular providers
             # 5. The min_regular_cout_htva ≤ current_cout_htva
-            if (not green_row_used and 
-                container["show_title_labels"] and 
+            if (not green_row_used and
+                container["show_title_labels"] and
                 regular_index == 0 and  # First regular provider
-                min_regular_cout_htva is not None and 
-                current_cout_htva is not None and 
+                min_regular_cout_htva is not None and
+                current_cout_htva is not None and
                 min_regular_cout_htva <= current_cout_htva):
-                
+
                 provider["is_green_row"] = True
                 green_row_used = True
             else:
@@ -1251,13 +1254,13 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
 
     dto["paginatedContainers"] = paginated_containers
     dto["comparatifRates"] = comparatif_rates
-    
+
     # Add a flattened list of all regular providers in sorted order
     all_regular_providers = []
     for container in paginated_containers:
         all_regular_providers.extend(container["regular_providers"])
     dto["allRegularProviders"] = all_regular_providers
-    
+
     # Add a flattened list of ALL providers (CURRENT + regular) for tables
     all_providers_for_tables = []
     # Add CURRENT providers first (they appear at the top in the UI)
@@ -1316,7 +1319,7 @@ def build_tender_table_Electricity(data, comparatif_dto):
 
         print(
             f"DEBUG: energy_type_upper={energy_type_upper}, segmentation_upper={segmentation_upper}, tarif_type_upper={tarif_type_upper}, parametreDeCompteur_upper={parametreDeCompteur_upper}")
-        
+
         if energy_type_upper == "ELECTRICITY":
             segmentation_mapping = {
                 "C1": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
@@ -1348,61 +1351,6 @@ def build_tender_table_Electricity(data, comparatif_dto):
                 columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
                 columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
                 columns6 = ["HP", "HC"]
-
-        # if energy_type_upper == "ELECTRICITY":
-        #     # Define segmentation to columns6 mapping
-        #     segmentation_mapping = {
-        #         "C1": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
-        #         "C2": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
-        #         "C3": ["HPH", "HCH", "HPE", "HCE", "POINTE"],
-        #         "C4": ["HPH", "HCH", "HPE", "HCE"],
-        #     }
-
-        #     segmentation_mapping1 = {
-        #         "C1": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
-        #         "C2": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
-        #         "C3": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh", "POINTE <br> €/MWh"],
-        #         "C4": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
-        #     }
-
-        #     # Check for C5 with specific tarif types
-        #     if segmentation_upper == "C5":
-        #         tarif_mapping = {
-        #             "QUATRE": ["HPH", "HCH", "HPE", "HCE"],
-        #             "DOUBLE": ["HP", "HC"],
-        #             "BASE": ["BASE"]
-        #         }
-
-        #         tarif_mapping1 = {
-        #             "QUATRE": ["HPH <br> €/MWh", "HCH <br> €/MWh", "HPE <br> €/MWh", "HCE <br> €/MWh"],
-        #             "DOUBLE": ["HP <br> €/MWh", "HC <br> €/MWh"],
-        #             "BASE": ["BASE <br> €/MWh"]
-        #         }
-
-        #         # Safely get columns6 with fallback
-        #         columns6 = tarif_mapping.get(tarif_type_upper, ["HP", "HC"])
-
-        #         # Get the base columns without "Fournisseur"
-        #         base_columns = tarif_mapping1.get(tarif_type_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
-
-        #         # Add "Fournisseur" to columns (but not to columns1)
-        #         columns = ["Fournisseur"] + base_columns
-        #         columns1 = base_columns  # columns1 doesn't get "Fournisseur"
-        #     else:
-        #         # Use mapping for other segmentations
-        #         columns6 = segmentation_mapping.get(segmentation_upper, ["HP", "HC"])
-
-        #         # Get the base columns without "Fournisseur"
-        #         base_columns = segmentation_mapping1.get(segmentation_upper, ["HP <br> €/MWh", "HC <br> €/MWh"])
-
-        #         # Add "Fournisseur" to columns (but not to columns1)
-        #         columns = ["Fournisseur"] + base_columns
-        #         columns1 = base_columns  # columns1 doesn't get "Fournisseur"
-        # else:
-        #     # Default fallback for non-electricity or unknown energy types
-        #     columns6 = ["HP", "HC"]
-        #     columns = ["Fournisseur", "HP <br> €/MWh", "HC <br> €/MWh"]
-        #     columns1 = ["HP <br> €/MWh", "HC <br> €/MWh"]
 
     return {
         "title": data.get("tender_table_title", "RÉSULTAT DE L'APPEL D'OFFRE"),
@@ -1504,7 +1452,7 @@ def enedis_Chart(comparatif_dto):
     energy_type = comparatif_dto.get("energyType", "ELECTRICITY")
     segmentation = comparatif_dto.get("segmentation", "")
     tarif_type = comparatif_dto.get("tarifType", "")
-    parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")    
+    parametreDeCompteur = comparatif_dto.get("parametreDeCompteur", "")
 
     # Convert to uppercase for consistent comparison - SAFE VERSION
     energy_type_upper = safe_strip_upper(energy_type)
@@ -1531,61 +1479,6 @@ def enedis_Chart(comparatif_dto):
         "contract_start_date": formatted_date,
         "enedis_rate_sum": comparatif_dto.get("sumOfAnnualRates", "-"),
     }
-
-    # Apply exact same rules as build_tender_table_Electricity
-    # if energy_type_upper == "ELECTRICITY":
-    #     if segmentation_upper in ["C1", "C2", "C3"]:
-    #         # C1, C2, C3: HPE, HPH, HCE, HCH, POINTE
-    #         base_response.update({
-    #             "enedis_rate_hph": comparatif_dto.get("hph", "-"),
-    #             "enedis_rate_hch": comparatif_dto.get("hch", "-"),
-    #             "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
-    #             "enedis_rate_hce": comparatif_dto.get("hce", "-"),
-    #             "enedis_rate_pointe": comparatif_dto.get("pte", "-"),
-
-    #             "enedis_rate_puissance_hph": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hch": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hpe": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hce": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_pointe": comparatif_dto.get("puissance", "-"),
-    #         })
-    #     elif segmentation_upper == "C4" or (segmentation_upper == "C5" and tarif_type_upper == "QUATRE"):
-    #         # C4 or C5 QUATRE: HPE, HPH, HCE, HCH
-    #         base_response.update({
-    #             "enedis_rate_hph": comparatif_dto.get("hph", "-"),
-    #             "enedis_rate_hch": comparatif_dto.get("hch", "-"),
-    #             "enedis_rate_hpe": comparatif_dto.get("hpe", "-"),
-    #             "enedis_rate_hce": comparatif_dto.get("hce", "-"),
-
-    #             "enedis_rate_puissance_hph": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hch": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hpe": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hce": comparatif_dto.get("puissance", "-"),
-    #         })
-    #     elif segmentation_upper == "C5" and tarif_type_upper == "BASE":
-    #         # C5 BASE: BASE only
-    #         base_response.update({
-    #             "enedis_rate_base": comparatif_dto.get("base", "-"),
-    #             "enedis_rate_puissance_base": comparatif_dto.get("puissance", "-"),
-    #         })
-    #     elif segmentation_upper == "C5" and tarif_type_upper == "DOUBLE":
-    #         # C5 DOUBLE: HP, HC
-    #         base_response.update({
-    #             "enedis_rate_hp": comparatif_dto.get("hp", "-"),
-    #             "enedis_rate_hc": comparatif_dto.get("hc", "-"),
-
-    #             "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
-    #             "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
-    #         })
-    #     else:
-            # Default: HP, HC
-            # base_response.update({
-            #     "enedis_rate_hp": comparatif_dto.get("hp", "-"),
-            #     "enedis_rate_hc": comparatif_dto.get("hc", "-"),
-
-            #     "enedis_rate_puissance_hp": comparatif_dto.get("puissance", "-"),
-            #     "enedis_rate_puissance_hc": comparatif_dto.get("puissance", "-"),
-            # })
 
     if energy_type_upper == "ELECTRICITY":
         if segmentation_upper in ["C1", "C2", "C3"]:
@@ -1654,10 +1547,10 @@ def energy_offer_summary(request):
     try:
         # 1️⃣ Parse incoming data
         data = parse_request_data(request)
-        
+
         # Get comparatif data if available
         comparatif = data.get("comparatifClientHistoryPdfDto", {})
-        
+
         # 2️⃣ Generate chart (if available)
         chart_base64 = generate_price_chart_styled(data)
         chart_12m_base64 = generate_price_chart_styled(data, last_n_months=12)
@@ -1670,13 +1563,13 @@ def energy_offer_summary(request):
 
         # 4️⃣ Build presentation data
         presentation_data = build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64, chart_12m_base64, comparatif_dto, request)
-        
+
         # 5️⃣ Render HTML
         html_content = render_to_string("volt-electricity.html", {"data": presentation_data})
-        
+
         # 6️⃣ Save HTML file to server and return path
         html_url, html_filename = save_html_file(html_content, request, data, comparatif)
-        
+
         return JsonResponse({
             "status": "success",
             "path": html_url,
@@ -1805,18 +1698,18 @@ def create_energy_offer_filename(society: str, trade_name: str, energy_type: str
         clean_society = re.sub(r"\s+", "", str(society))
     else:
         clean_society = re.sub(r"\s+", "", str(trade_name))
-    
+
     # Remove path separators and problematic characters
     clean_society = re.sub(r'[^a-zA-Z0-9_]', '_', clean_society)
     clean_society = re.sub(r'_+', '_', clean_society)
     clean_society = clean_society.strip('_')
-    
+
     # 2️⃣ Energy type suffix
     additional_text = "_elec" if energy_type.upper() == "ELECTRICITY" else "_gaz"
-    
+
     # 3️⃣ Date part (YYYY-MM-DD)
     date_str = datetime.now().strftime("%Y-%m-%d")
-    
+
     # 4️⃣ Final filename
     filename = f"Energy_Offer_{clean_society}{additional_text}_{date_str}.html"
     return filename
@@ -1970,8 +1863,11 @@ def _generate_market_analysis(chart_data_dto):
         f"{json.dumps(summary, ensure_ascii=False)}\n\n"
         "À partir de ces données, rédige deux phrases courtes (30 mots maximum chacune) "
         "à destination d'un client professionnel :\n"
-        "1) Une analyse de la tendance récente du marché.\n"
-        "2) Une recommandation sur l'opportunité d'agir maintenant.\n"
+        "1) Une analyse factuelle de la tendance récente du marché.\n"
+        "2) Une recommandation POSITIVE et ENCOURAGEANTE qui met en avant l'opportunité "
+        "de sécuriser une offre dès maintenant avec l'accompagnement de Volt Consulting. "
+        "La recommandation doit toujours être rassurante et tournée vers l'action ; "
+        "ne jamais conseiller d'attendre, ni employer un ton négatif ou décourageant.\n"
         "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
         "ANALYSE: <texte>\n"
         "RECOMMANDATION: <texte>"
@@ -1982,23 +1878,253 @@ def _generate_market_analysis(chart_data_dto):
     return fields or None
 
 
+# ── Consumption-analysis pipeline ────────────────────────────────────────────
+# All numeric facts (peaks, lows, rankings, percentages) are computed in Python
+# in _summarize_enedis_data. The LLM is only ever asked to turn already-correct
+# facts into prose (_generate_consumption_analysis) — it never ranks, sorts, or
+# calculates a percentage itself. Output is checked against the summary
+# (_validate_consumption_text) and falls back to a plain, guaranteed-correct
+# template (_fallback_consumption_analysis) if it drifts.
+
+_FRENCH_MONTHS = {
+    "janvier": "01", "février": "02", "fevrier": "02", "mars": "03",
+    "avril": "04", "mai": "05", "juin": "06", "juillet": "07",
+    "août": "08", "aout": "08", "septembre": "09", "octobre": "10",
+    "novembre": "11", "décembre": "12", "decembre": "12",
+}
+
+
+def _summarize_enedis_data(enedis_data_past_year):
+    """Single source of truth for all consumption facts. Every number, ranking,
+    and label the LLM will use is computed HERE in Python — the LLM never
+    ranks, sorts, or calculates a percentage itself. It only receives the
+    finished facts and turns them into prose."""
+    if not enedis_data_past_year or not isinstance(enedis_data_past_year, dict):
+        return None
+
+    months = enedis_data_past_year.get("months") or []
+    consumption = enedis_data_past_year.get("consumptionData") or {}
+    if not months or not isinstance(consumption, dict):
+        return None
+
+    labels = {
+        "HPH": "Heures Pleines Hiver", "HCH": "Heures Creuses Hiver",
+        "HPE": "Heures Pleines Été", "HCE": "Heures Creuses Été",
+        "HP": "Heures Pleines", "HC": "Heures Creuses",
+        "POINTE": "Pointe Hiver", "BASE": "Base",
+    }
+    winter_codes = {"HPH", "HCH"}
+    summer_codes = {"HPE", "HCE"}
+
+    def _num(v):
+        return v if isinstance(v, (int, float)) else 0
+
+    # ---- Monthly totals ----
+    monthly_total = []
+    for i in range(len(months)):
+        total = sum(_num(vals[i]) for vals in consumption.values()
+                    if isinstance(vals, list) and i < len(vals))
+        monthly_total.append(round(total, 1))
+
+    total_annual = round(sum(monthly_total), 1)
+    if total_annual <= 0:
+        return None
+
+    # ---- Separate trailing "no data yet" months from real zero months ----
+    no_data_months = []
+    for i in range(len(monthly_total) - 1, -1, -1):
+        if monthly_total[i] == 0:
+            no_data_months.append(months[i])
+        else:
+            break
+    no_data_months.reverse()
+    no_data_set = set(no_data_months)
+
+    elapsed_idx = [i for i in range(len(months)) if months[i] not in no_data_set]
+    if not elapsed_idx:
+        return None
+
+    elapsed_totals = [monthly_total[i] for i in elapsed_idx]
+    avg_monthly = round(sum(elapsed_totals) / len(elapsed_totals), 1)
+
+    # ---- Peak / low months, ranked in Python (never by the LLM) ----
+    ranked = sorted(elapsed_idx, key=lambda i: monthly_total[i], reverse=True)
+    peak_months = [{"month": months[i], "value": monthly_total[i]} for i in ranked[:3]]
+    lowest_months = [{"month": months[i], "value": monthly_total[i]} for i in ranked[-3:]][::-1]
+    peak_value = monthly_total[ranked[0]] if ranked else 0
+    peak_to_average_ratio = round(peak_value / avg_monthly, 2) if avg_monthly else None
+
+    # ---- Tariff-period breakdown, ranked by share ----
+    period_totals = {}
+    for code, vals in consumption.items():
+        if not isinstance(vals, list):
+            continue
+        period_total = round(sum(_num(v) for v in vals), 1)
+        if period_total > 0:
+            period_totals[code] = period_total
+
+    consumption_by_period = sorted(
+        (
+            {
+                "code": code,
+                "label": labels.get(code, code),
+                "total": total,
+                "share_pct": round(total / total_annual * 100, 1),
+            }
+            for code, total in period_totals.items()
+        ),
+        key=lambda p: p["share_pct"],
+        reverse=True,
+    )
+    dominant_period = consumption_by_period[0] if consumption_by_period else None
+
+    # ---- Winter vs summer split, ranked ----
+    winter_total = round(sum(v for c, v in period_totals.items() if c in winter_codes), 1)
+    summer_total = round(sum(v for c, v in period_totals.items() if c in summer_codes), 1)
+    season_split = None
+    if winter_total > 0 and summer_total > 0:
+        winter_pct = round(winter_total / total_annual * 100, 1)
+        summer_pct = round(summer_total / total_annual * 100, 1)
+        season_split = {
+            "winter_total": winter_total,
+            "summer_total": summer_total,
+            "winter_share_pct": winter_pct,
+            "summer_share_pct": summer_pct,
+            "dominant_season": "hiver" if winter_pct > summer_pct else "été",
+        }
+
+    return {
+        "period": {"from": months[0], "to": months[-1]},
+        "total_annual_kwh": total_annual,
+        "avg_monthly_kwh": avg_monthly,
+        "peak_months": peak_months,
+        "lowest_months": lowest_months,
+        "peak_to_average_ratio": peak_to_average_ratio,
+        "no_data_months": no_data_months,
+        "consumption_by_period": consumption_by_period,
+        "dominant_period": dominant_period,
+        "season_split": season_split,
+    }
+
+
+def _extract_mentioned_months(text):
+    """Find every month reference in the text, whether written numerically
+    ('12/2025') or in French prose ('décembre 2025'), and normalize both
+    to 'MM/YYYY' so they can be checked against the precomputed summary.
+    This is the piece that was previously missing: the LLM writes natural
+    French ("décembre 2025", "mars 2026"), and a numeric-only regex silently
+    let every wrong month claim through validation."""
+    found = set()
+
+    # Numeric form: "12/2025"
+    found.update(re.findall(r"\b(?:0[1-9]|1[0-2])/20\d{2}\b", text))
+
+    # French prose form: "décembre 2025" (case-insensitive, accent-tolerant
+    # via the "decembre"/"fevrier"/"aout" fallback keys in _FRENCH_MONTHS)
+    for name, mm in _FRENCH_MONTHS.items():
+        for match in re.finditer(rf"\b{name}\b\s+(\d{{4}})", text, flags=re.IGNORECASE):
+            found.add(f"{mm}/{match.group(1)}")
+
+    return found
+
+
+def _validate_consumption_text(text, summary):
+    """Reject any generated field that cites a month, percentage, or figure
+    not present in the precomputed summary. Catches both numeric ('12/2025')
+    and French-prose ('décembre 2025') month references, and tolerates small
+    rounding differences in percentages instead of requiring exact string
+    matches."""
+    if not text:
+        return False
+
+    allowed_months = {
+        m["month"] for m in summary.get("peak_months", []) + summary.get("lowest_months", [])
+    }
+    mentioned_months = _extract_mentioned_months(text)
+    if mentioned_months - allowed_months:
+        print(f"Rejected: unlisted month(s) {mentioned_months - allowed_months}")
+        return False
+
+    allowed_pcts = {p["share_pct"] for p in summary.get("consumption_by_period", [])}
+    if summary.get("season_split"):
+        allowed_pcts.add(summary["season_split"]["winter_share_pct"])
+        allowed_pcts.add(summary["season_split"]["summer_share_pct"])
+
+    mentioned_pcts_raw = re.findall(r"(\d+(?:[.,]\d+)?)\s?%", text)
+    for raw in mentioned_pcts_raw:
+        val = float(raw.replace(",", "."))
+        # Tolerance for rounding differences (e.g. model writes "34%" for 33.9)
+        if not any(abs(val - allowed) < 0.15 for allowed in allowed_pcts):
+            print(f"Rejected: unlisted percentage {val}")
+            return False
+
+    return True
+
+
+def _fallback_consumption_analysis(summary):
+    """Plain templated output, used only if the LLM output fails validation.
+    Guaranteed numerically correct since it's built directly from summary."""
+    peak = summary["peak_months"][0]
+    low = summary["lowest_months"][0]
+    dominant = summary.get("dominant_period")
+    season = summary.get("season_split")
+
+    profil = (
+        f"Consommation maximale en {peak['month']} ({peak['value']} kWh), "
+        f"minimale en {low['month']} ({low['value']} kWh)"
+    )
+    if dominant:
+        profil += f", dominée par les {dominant['label']} ({dominant['share_pct']}%)"
+    if season:
+        profil += (
+            f", avec une consommation plus marquée en {season['dominant_season']} "
+            f"({season['winter_share_pct']}% hiver / {season['summer_share_pct']}% été)"
+        )
+    profil += "."
+
+    return {
+        "profil": profil,
+        "exposition": (
+            f"Avec un pic à {summary['peak_to_average_ratio']}x la consommation moyenne, "
+            "ce profil reste exposé aux variations du marché de l'énergie."
+        ),
+        "strategie": (
+            "Un contrat à prix fixe sécurise votre budget face à cette variabilité "
+            "et vous permet d'anticiper vos coûts sur la durée."
+        ),
+    }
+
+
 def _generate_consumption_analysis(enedis_data_past_year):
-    """Ask the LLM for a short consumption-profile analysis based on the monthly
-    consumption history relevé par ENEDIS (enedisDataPastYear). Returns None on any
-    failure so the template falls back to its default copy."""
-    if not enedis_data_past_year:
+    """All facts are computed in _summarize_enedis_data. The LLM's only job
+    is to phrase those facts fluently — it is explicitly told not to compute,
+    rank, or invent anything. Output is validated against the summary and
+    falls back to a plain template on any mismatch."""
+    summary = _summarize_enedis_data(enedis_data_past_year)
+    print("DEBUG summary:", json.dumps(summary, ensure_ascii=False, indent=2))
+    if not summary:
         return None
 
     prompt = (
-        "Tu es un analyste du marché de l'énergie pour Volt Consulting. "
-        "Voici l'historique de consommation mensuelle du client, relevé par ENEDIS "
-        "(enedisDataPastYear), au format JSON :\n"
-        f"{json.dumps(enedis_data_past_year, ensure_ascii=False)}\n\n"
-        "À partir de ces données, rédige trois phrases courtes (30 mots maximum chacune) "
-        "à destination d'un client professionnel :\n"
-        "1) PROFIL: le profil de consommation (variations, périodes de forte/faible consommation).\n"
-        "2) EXPOSITION: l'exposition de ce profil aux fluctuations du marché de l'énergie.\n"
-        "3) STRATEGIE: une stratégie d'achat adaptée à ce profil.\n"
+        "Tu es un rédacteur pour Volt Consulting. Voici un JSON contenant DÉJÀ TOUS "
+        "les calculs et classements nécessaires sur la consommation d'un client "
+        "(ENEDIS) — ne recalcule rien, ne classe rien, n'invente aucun chiffre ni "
+        "mois : contente-toi de reformuler ces faits en français fluide.\n\n"
+        f"{json.dumps(summary, ensure_ascii=False)}\n\n"
+        "Champs à utiliser :\n"
+        "- peak_months[0] et lowest_months[0] : mois de plus forte/faible consommation.\n"
+        "- dominant_period : poste horaire dominant et son share_pct.\n"
+        "- season_split : dominant_season et les deux share_pct (uniquement si non null).\n"
+        "- peak_to_average_ratio : à utiliser pour juger de l'exposition au marché.\n"
+        "- no_data_months : mois SANS données (futurs) — ne jamais les présenter comme "
+        "une consommation nulle ou un creux saisonnier.\n\n"
+        "Rédige trois phrases courtes (30 mots maximum chacune), pour un client "
+        "professionnel :\n"
+        "1) PROFIL: reformule peak_months[0], lowest_months[0], dominant_period, "
+        "et season_split (si présent) en une phrase naturelle.\n"
+        "2) EXPOSITION: l'exposition de ce profil aux fluctuations du marché, en "
+        "t'appuyant sur peak_to_average_ratio et dominant_period.\n"
+        "3) STRATEGIE: une stratégie d'achat concrète adaptée à ce profil.\n"
         "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
         "PROFIL: <texte>\n"
         "EXPOSITION: <texte>\n"
@@ -2007,7 +2133,19 @@ def _generate_consumption_analysis(enedis_data_past_year):
 
     text = _call_market_llm(prompt)
     fields = _parse_llm_fields(text, ["PROFIL", "EXPOSITION", "STRATEGIE"])
-    return fields or None
+
+    if not fields:
+        return _fallback_consumption_analysis(summary)
+
+    combined_text = " ".join(fields.values())
+    if not _validate_consumption_text(combined_text, summary):
+        return _fallback_consumption_analysis(summary)
+
+    return {
+        "profil": fields.get("profil", ""),
+        "exposition": fields.get("exposition", ""),
+        "strategie": fields.get("strategie", ""),
+    }
 
 
 def _generate_analyses_parallel(chart_data_dto, enedis_data_past_year):
@@ -2018,6 +2156,19 @@ def _generate_analyses_parallel(chart_data_dto, enedis_data_past_year):
         market_future = executor.submit(_generate_market_analysis, chart_data_dto)
         consumption_future = executor.submit(_generate_consumption_analysis, enedis_data_past_year)
         return market_future.result(), consumption_future.result()
+
+
+def _format_site_address(client_business_address):
+    """Format the 'Site' address so the postal code (5-digit) and everything after it
+    (the city) wrap to the next line. Returns an HTML-safe string with a <br> inserted
+    before the first postal code; the raw address is escaped first to stay injection-safe.
+    Returns "" when there's no street."""
+    street = (client_business_address or {}).get("street") if isinstance(client_business_address, dict) else None
+    if not street:
+        return ""
+    # Escape first, then insert the break before the first 5-digit postal code.
+    formatted = re.sub(r"\s+(\d{5}\b)", r"<br>\1", escape(street), count=1)
+    return mark_safe(formatted)
 
 
 def _build_sales_info(comparatif_dto):
@@ -2037,8 +2188,13 @@ def _build_sales_info(comparatif_dto):
 
     phone = sales.get("mobilePhone") or sales.get("professionalPhone") or sales.get("homePhone")
 
+    # Initials for the photo-less fallback avatar: first letter of the first two
+    # name words (e.g. "Musab Abbas" -> "MA"), uppercased.
+    initials = "".join(word[0] for word in (full_name or "").split()[:2]).upper() or None
+
     return {
         "name": full_name,
+        "initials": initials,
         "email": sales.get("email"),
         "phone": phone,
         "photo": photo,
@@ -2078,6 +2234,9 @@ def _build_slide6_data(comparatif_dto):
     return {
         "current": current,
         "recommended": recommended,
+        # True only when the payload actually carries a CURRENT (incumbent) provider.
+        # When False, the whole "offre actuelle" comparison isn't meaningful.
+        "has_current": bool(current),
         "fourniture_economy": fourniture_economy,
         "turpe_economy": turpe_economy,
         "taxes_economy": taxes_economy,
@@ -2194,6 +2353,7 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "clientEmail": safe_value(data.get("clientEmail")),
         "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
         "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
         "currentContractExpiryDate": (
             datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
@@ -2224,8 +2384,8 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "enedis_info": enedis_Chart(comparatif_dto),
         "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
         "provider_page_chunks": [
-            comparatif_dto.get("allProvidersForTables", [])[i:i+4]
-            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 4)
+            comparatif_dto.get("allProvidersForTables", [])[i:i+8]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 8)
         ],
         "slide6": _build_slide6_data(comparatif_dto),
         "sales": _build_sales_info(comparatif_dto),
@@ -2276,6 +2436,7 @@ def build_comparatif_dto_Gas(comparatif, request, data):
         "cpb2026": comparatif.get("cpb2026"),
         "cpb2027": comparatif.get("cpb2027"),
         "cpb2028": comparatif.get("cpb2028"),
+        "sales": comparatif.get("sales"),
     }
 
     if dto.get("energyType") != "GAS":
@@ -2392,6 +2553,20 @@ def _build_slide6_data_gas(comparatif_dto):
         except (ValueError, TypeError):
             return None
 
+    volume_annual = _f(comparatif_dto.get("volumeAnnual"))
+
+    def _cee_annual(provider):
+        # Prefer a direct annual CEE amount; otherwise derive it from the
+        # €/MWh rate (partCee) multiplied by the annual volume.
+        for key in ("ceeAnnual", "partCeeByCA", "ceeByCA"):
+            val = _f(provider.get(key))
+            if val is not None:
+                return val
+        part = _f(provider.get("partCee"))
+        if part is not None and volume_annual is not None:
+            return round(part * volume_annual, 2)
+        return None
+
     def _build_side(provider):
         abonnement = _f(provider.get("abonnementAnswer"))
         if abonnement is None:
@@ -2408,6 +2583,7 @@ def _build_slide6_data_gas(comparatif_dto):
 
         return {
             "fourniture": _f(provider.get("fourniture")),
+            "cee": _cee_annual(provider),
             "distribution": _f(provider.get("distribution")),
             "abonnement": abonnement,
             "cta": _f(provider.get("cta")),
@@ -2438,8 +2614,13 @@ def _build_slide6_data_gas(comparatif_dto):
         "current": current,
         "recommended": recommended,
         "fourniture_economy": _diff("fourniture"),
+        "cee_economy": _diff("cee"),
         "distribution_economy": _diff("distribution"),
         "abonnement_economy": _diff("abonnement"),
+        "cta_economy": _diff("cta"),
+        "accise_economy": _diff("accise"),
+        "total_ht_economy": _diff("total_ht"),
+        "total_ttc_economy": _diff("total_ttc"),
         "breakdown": breakdown,
         "economy_pct": comparatif_dto.get("ratioHTVA"),
         "economy_eur": comparatif_dto.get("differenceHTVA"),
@@ -2477,6 +2658,7 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         "clientFirstName": client_first_name,
         "clientLastName": client_last_name,
         "clientBusinessAddress": data.get("clientBusinessAddress", {}),
+        "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "gas_info": {
             "pce": comparatif_dto.get("pce"),
             "contract_start_date": comparatif_dto.get("contractStartDate"),
@@ -2506,21 +2688,24 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         "chart_date_ranges": _compute_chart_date_ranges(data),
         "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
         "provider_page_chunks": [
-            comparatif_dto.get("allProvidersForTables", [])[i:i+4]
-            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 4)
+            comparatif_dto.get("allProvidersForTables", [])[i:i+8]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 8)
         ],
         "gas_providers": {
             "recommended": (comparatif_dto.get("allRegularProviders") or [None])[0],
         },
         "slide6": _build_slide6_data_gas(comparatif_dto),
         "advisor": data.get("advisor", {}),
+        # Same source/shape as the electricity deck (photo, name, initials, phone,
+        # email) so slide 8 can reuse the identical photo + initials-fallback logic.
+        "sales": _build_sales_info(comparatif_dto),
     }
 
 
 def generate_simple_pdf(html_content, request, data, comparatif):
     """Simple PDF generator without complex blank page removal"""
     host = request.get_host().split(":")[0]
-    
+
     if host == "volt-crm.caansoft.com":
         base_dir = settings.STAGING_MEDIA_ROOT
         base_url = settings.STAGING_MEDIA_URL
@@ -2530,21 +2715,21 @@ def generate_simple_pdf(html_content, request, data, comparatif):
     else:
         base_dir = settings.MEDIA_ROOT
         base_url = settings.MEDIA_URL
-    
+
     relative_path = os.path.join("clients", str(data.get("clientId")), "energy_offer")
     pdf_dir = os.path.join(base_dir, relative_path)
     os.makedirs(pdf_dir, exist_ok=True)
-    
+
     pdf_filename = f"Energy_Offer_{data.get('clientSociety', 'client')}_{datetime.now().strftime('%Y%m%d')}.pdf"
     pdf_path = os.path.join(pdf_dir, pdf_filename)
-    
+
     css = CSS(string="@page { size: A4 landscape; margin: 6mm; }")
     HTML(string=html_content).write_pdf(pdf_path, stylesheets=[css])
-    
+
     pdf_url = request.build_absolute_uri(
         os.path.join(base_url, relative_path, pdf_filename)
     )
-    
+
     return pdf_url, pdf_filename
 
 def generate_enedis_bar_chart(chart_data):
@@ -2598,7 +2783,7 @@ def generate_enedis_bar_chart(chart_data):
 
     # Create figure with transparent background (like generate_enedis_chart)
     fig, ax = plt.subplots(figsize=(11, 3.6), dpi=150)
-    
+
     # Make backgrounds transparent
     fig.patch.set_alpha(0)
     ax.patch.set_alpha(0)
@@ -2638,11 +2823,11 @@ def generate_enedis_bar_chart(chart_data):
         bbox_to_anchor=(0.0, 1.18),
         ncol=len(legend_patches),
         frameon=False,
-        fontsize=8,
-        handlelength=1.0,
-        handleheight=0.85,
-        handletextpad=0.45,
-        columnspacing=1.0,
+        fontsize=10,
+        handlelength=1.4,
+        handleheight=1.1,
+        handletextpad=0.5,
+        columnspacing=1.2,
     )
     for text in legend.get_texts():
         text.set_color("#374151")
@@ -2690,12 +2875,17 @@ def generate_market_analysis(request):
         return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def generate_consumption_analysis(request):
     try:
         data = parse_request_data(request)
+        # NOTE: this reads enedisDataPastYear at the TOP LEVEL of the payload,
+        # while build_presentation_data_energy_offer reads it nested under
+        # comparatifClientHistoryPdfDto. If both endpoints are meant to accept
+        # the same payload shape, confirm which nesting the caller actually
+        # sends — otherwise one of the two paths will silently get None here.
         analysis = _generate_consumption_analysis(data.get("enedisDataPastYear"))
         if not analysis:
             return JsonResponse({"status": "error", "message": "No analysis generated"}, status=200)
