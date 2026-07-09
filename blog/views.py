@@ -1684,10 +1684,16 @@ def save_html_file(html_content, request, data, comparatif):
 
     # Embed the exact edit-target so the inline editor writes back to *this*
     # file in every environment (local media, staging, production) instead of
-    # guessing it from the browser URL.
+    # guessing it from the browser URL. Also embed the API base: on the CRM
+    # hosts the Django service sits behind the /pdf-service/ nginx location,
+    # whereas locally it's served at the root — so the editor's save call needs
+    # the right prefix to actually reach Django.
+    api_base = "/pdf-service" if host in ("volt-crm.caansoft.com", "crm.volt-consulting.com") else ""
     edit_marker = (
         "<script>window.__VOLT_EDIT_TARGET__ = "
         + json.dumps(html_path.replace("\\", "/"))
+        + "; window.__VOLT_API_BASE__ = "
+        + json.dumps(api_base)
         + ";</script>"
     )
     if "</head>" in html_content:

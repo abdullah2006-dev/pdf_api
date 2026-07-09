@@ -5020,7 +5020,7 @@
                 };
                 setState('saving');
                 positionBtnFor(currentEl);
-                fetch('/editor/save-file/', {
+                fetch((window.__VOLT_API_BASE__ || '') + '/editor/save-file/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
