@@ -3030,13 +3030,6 @@ def save_file_edit(request):
         if n == 0:
             return JsonResponse({'ok': False, 'error': 'replace failed'}, status=500)
 
-        # Backup
-        try:
-            bak = abs_path + f'.bak.{int(time.time())}'
-            shutil.copy2(abs_path, bak)
-        except Exception:
-            logging.exception('backup failed')
-
         # Atomic write
         fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(abs_path), prefix='.tmp-', suffix='.html')
         os.close(fd)
