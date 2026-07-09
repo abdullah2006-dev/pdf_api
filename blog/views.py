@@ -2412,8 +2412,8 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "enedis_info": enedis_Chart(comparatif_dto),
         "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
         "provider_page_chunks": [
-            comparatif_dto.get("allProvidersForTables", [])[i:i+8]
-            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 8)
+            comparatif_dto.get("allProvidersForTables", [])[i:i+6]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 6)
         ],
         "slide6": _build_slide6_data(comparatif_dto),
         "sales": _build_sales_info(comparatif_dto),
@@ -2717,8 +2717,8 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         "chart_date_ranges": _compute_chart_date_ranges(data),
         "volt_logo_base_url": "https://crm.volt-consulting.com/uploads/volt/providers/",
         "provider_page_chunks": [
-            comparatif_dto.get("allProvidersForTables", [])[i:i+8]
-            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 8)
+            comparatif_dto.get("allProvidersForTables", [])[i:i+6]
+            for i in range(0, max(len(comparatif_dto.get("allProvidersForTables", [])), 1), 6)
         ],
         "gas_providers": {
             "recommended": (comparatif_dto.get("allRegularProviders") or [None])[0],
