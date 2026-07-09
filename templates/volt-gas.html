@@ -2116,103 +2116,98 @@
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect" style="height: 68px;"></image-slot>
             </div>
 
-            <div style="display:grid; grid-template-columns: 1fr 300px; gap:24px; margin-top:4px; align-items: stretch;">
+            <div style="display:grid; grid-template-columns: 1fr 300px; gap:24px; margin-top:4px; align-items: stretch; min-height: calc(100% - 185px);">
 
-                <div>
+                <div style="display:flex; flex-direction:column; height:100%;">
                     <!-- Top info pills: PCE, contract start, segment, profile -->
-                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0px; margin-bottom:10px;">
-                        <div class="info-pill" style="padding:6px 6px; border:1px solid var(--gray-200); border-right:none; border-radius:8px 0 0 8px; margin:0;">
-                            <span class="icon-circle md ic-accent" style="width: 24px; height: 24px;"><svg><use href="#i-meter" /></svg></span>
-                            <div class="col gap-1"><span class="label" style="font-size:7px;">Compteur (PCE)</span><span class="value" style="font-size:11px;">{{ data.gas_info.pce }}</span></div>
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0px; margin-bottom:14px;">
+                        <div class="info-pill" style="padding:10px 8px; border:1px solid var(--gray-200); border-right:none; border-radius:8px 0 0 8px; margin:0;">
+                            <span class="icon-circle md ic-accent" style="width: 28px; height: 28px;"><svg><use href="#i-meter" /></svg></span>
+                            <div class="col gap-1"><span class="label" style="font-size:8px;">Compteur (PCE)</span><span class="value" style="font-size:13px;">{{ data.gas_info.pce }}</span></div>
                         </div>
-                        <div class="info-pill" style="padding:6px 6px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg><use href="#i-calendar" /></svg></span>
-                            <div class="col gap-1"><span class="label" style="font-size:7px;">Début nouveau contrat</span><span class="value" style="font-size:11px;">{{ data.gas_info.contract_start_date }}</span></div>
+                        <div class="info-pill" style="padding:10px 8px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
+                            <span class="icon-circle md ic-navy" style="width: 28px; height: 28px;"><svg><use href="#i-calendar" /></svg></span>
+                            <div class="col gap-1"><span class="label" style="font-size:8px;">Début nouveau contrat</span><span class="value" style="font-size:13px;">{{ data.gas_info.contract_start_date }}</span></div>
                         </div>
-                        <div class="info-pill" style="padding:6px 6px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
-                            <span class="icon-circle md ic-navy" style="width: 24px; height: 24px;"><svg><use href="#i-pie" /></svg></span>
-                            <div class="col gap-1"><span class="label" style="font-size:7px;">Segment</span><span class="value" style="font-size:11px;">{{ data.gas_info.segmentation }}</span></div>
+                        <div class="info-pill" style="padding:10px 8px; border:1px solid var(--gray-200); border-right:none; border-radius:0; margin:0;">
+                            <span class="icon-circle md ic-navy" style="width: 28px; height: 28px;"><svg><use href="#i-pie" /></svg></span>
+                            <div class="col gap-1"><span class="label" style="font-size:8px;">Segment</span><span class="value" style="font-size:13px;">{{ data.gas_info.routing_rate }}</span></div>
                         </div>
-                        <div class="info-pill" style="padding:6px 6px; border:1px solid var(--gray-200); border-radius:0 8px 8px 0; margin:0;">
-                            <span class="icon-circle md ic-accent" style="width: 24px; height: 24px;"><svg><use href="#i-flame" /></svg></span>
-                            <div class="col gap-1"><span class="label" style="font-size:7px;">Profil</span><span class="value" style="font-size:11px;">{{ data.gas_info.profile }}</span></div>
-                        </div>
-                    </div>
-
-                    <!-- Gas profile summary block — replaces elec's HPH/HCH/HPE/HCE strip
-                         with the PDF's "votre profil de consommation" identity card,
-                         since gas billing isn't split by time-of-use the way elec is. -->
-                    <div style="display:flex; gap:0px; margin-bottom:10px; border:1px solid var(--gray-200); border-radius:8px; overflow:hidden;">
-                        <div style="flex:1; padding:12px 16px; background:#fff; display:flex; align-items:center; gap:16px; border-right:1px solid var(--gray-200);">
-                            <span class="icon-circle xl ic-accent-soft" style="width:56px; height:56px;"><svg><use href="#i-building" /></svg></span>
-                            <div>
-                                <div class="val" style="font-size:26px;">{{ data.gas_info.total_annual_mwh }} MWh</div>
-                                <div class="sub" style="font-size:10px;">TOTAL ANNUEL</div>
-                                <span class="badge-rec" style="margin-top:6px;">{{ data.gas_info.typology|default:"COPROPRIÉTÉS RÉSIDENTIELLES" }}</span>
-                            </div>
-                        </div>
-                        <div style="flex:1.4; padding:12px 16px; background:#fff;">
-                            <div class="col gap-6">
-                                <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:20px; height:20px;"><svg><use href="#i-chart-bar" /></svg></span><span style="font-size:10px; color:var(--gray-700);">Profil {{ data.gas_info.profile }} : consommation à débit {{ data.gas_info.debit_label|default:"élevé (&gt; 5 GWh/an)" }}</span></div>
-                                <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:20px; height:20px;"><svg><use href="#i-building" /></svg></span><span style="font-size:10px; color:var(--gray-700);">Typologie : {{ data.gas_info.typology_detail|default:"chaufferies collectives habitat résidentiel" }}</span></div>
-                                <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:20px; height:20px;"><svg><use href="#i-snow" /></svg></span><span style="font-size:10px; color:var(--gray-700);">Saisonnalité marquée : consommation plus élevée en période hivernale</span></div>
-                                <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:20px; height:20px;"><svg><use href="#i-users" /></svg></span><span style="font-size:10px; color:var(--gray-700);">Usage : {{ data.gas_info.usage|default:"chauffage et eau chaude sanitaire" }}</span></div>
-                            </div>
+                        <div class="info-pill" style="padding:10px 8px; border:1px solid var(--gray-200); border-radius:0 8px 8px 0; margin:0;">
+                            <span class="icon-circle md ic-accent" style="width: 28px; height: 28px;"><svg><use href="#i-flame" /></svg></span>
+                            <div class="col gap-1"><span class="label" style="font-size:8px;">Profil</span><span class="value" style="font-size:13px;">{{ data.gas_info.profile }}</span></div>
                         </div>
                     </div>
 
-                    <!-- Winter/summer split — gas-specific seasonal repartition -->
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:10px;">
-                        <div class="card" style="padding:10px 14px; background:#eef4fb;">
-                            <div class="row items-center gap-10">
-                                <span class="icon-circle lg" style="background:var(--navy-800); color:#fff; width:40px; height:40px;"><svg><use href="#i-snow" /></svg></span>
-                                <div>
-                                    <div class="kicker" style="font-size:9px; color:var(--navy-700);">HIVER (NOV → MARS)</div>
-                                    <div class="h-mid" style="font-size:22px;">{{ data.gas_info.winter_pct|default:"70" }} %</div>
-                                    <div class="sub" style="font-size:9px; color:var(--gray-500);">de la consommation annuelle</div>
+                    <!-- Profile identity card + seasonal repartition card, side by side
+                         (bar chart removed; layout matches the PDF's slide-4 design). -->
+                    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:14px; margin-bottom:14px; align-items:stretch; flex:1;">
+
+                        <!-- VOTRE PROFIL DE CONSOMMATION -->
+                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:16px 18px; background:#fff; display:flex; flex-direction:column;">
+                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:16px;">VOTRE PROFIL DE CONSOMMATION</div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:center;">
+                                <div style="display:flex; align-items:center; gap:12px; min-width:0;">
+                                    <span class="icon-circle xl" style="background:var(--teal-900); color:#fff; width:46px; height:46px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-building" /></svg></span>
+                                    <div style="min-width:0;">
+                                        <div class="val" style="font-size:20px;">{{ data.gas_info.total_annual_mwh }} MWh</div>
+                                        <div class="sub" style="font-size:9px;">TOTAL ANNUEL</div>
+                                        <span class="badge-rec" style="margin-top:6px; font-size:8px;">{{ data.gas_info.typology|default:"COPROPRIÉTÉS RÉSIDENTIELLES" }}</span>
+                                    </div>
+                                </div>
+                                <div class="col gap-10" style="min-width:0;">
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-chart-bar" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Profil {{ data.gas_info.profile }} : consommation à débit {{ data.gas_info.debit_label|default:"élevé (&gt; 5 GWh/an)" }}</span></div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-building" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Typologie : {{ data.gas_info.typology_detail|default:"chaufferies collectives habitat résidentiel" }}</span></div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-snow" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Saisonnalité marquée : consommation plus élevée en période hivernale</span></div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-users" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Usage : {{ data.gas_info.usage|default:"chauffage et eau chaude sanitaire" }}</span></div>
+                                </div>
+                            </div>
+                            <div class="row items-center gap-8" style="margin-top:auto; padding-top:16px;">
+                                <div class="row items-center gap-10" style="background:#eef4f6; border:1px solid #cfe0e4; border-radius:8px; padding:11px 12px; width:100%;">
+                                    <span class="icon-circle sm" style="background:var(--teal-900); color:#fff; width:28px; height:28px; flex-shrink:0;"><svg style="width:14px;"><use href="#i-info" /></svg></span>
+                                    <span style="font-size:11px; color:var(--gray-700);"><strong style="color:var(--teal-900);">POINT CLÉ</strong> — Votre consommation est fortement exposée aux prix du gaz en période hivernale.</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="card" style="padding:10px 14px; background:#fff7ea;">
-                            <div class="row items-center gap-10">
-                                <span class="icon-circle lg" style="background:var(--amber-500); color:#fff; width:40px; height:40px;"><svg><use href="#i-sun" /></svg></span>
+
+                        <!-- RÉPARTITION SAISONNIÈRE -->
+                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:16px 18px; background:#f8f9fa; display:flex; flex-direction:column;">
+                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:16px;">RÉPARTITION SAISONNIÈRE</div>
+                            <div class="row items-center gap-12" style="margin-bottom:16px;">
+                                <span class="icon-circle lg" style="background:var(--navy-800); color:#fff; width:44px; height:44px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-snow" /></svg></span>
                                 <div>
-                                    <div class="kicker" style="font-size:9px; color:#8a6315;">ÉTÉ (AVR → OCT)</div>
-                                    <div class="h-mid" style="font-size:22px;">{{ data.gas_info.summer_pct|default:"30" }} %</div>
-                                    <div class="sub" style="font-size:9px; color:var(--gray-500);">de la consommation annuelle</div>
+                                    <div class="kicker" style="font-size:10px; color:var(--navy-700);">HIVER (NOV → MARS)</div>
+                                    <div class="h-mid" style="font-size:26px;">{{ data.gas_info.winter_pct|default:"70" }} %</div>
+                                    <div class="sub" style="font-size:10px; color:var(--gray-500);">de la consommation annuelle</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Monthly bar chart from gas consumption history -->
-                    <div class="chart" style="margin-top:4px; padding:8px 10px;">
-                        <div class="row items-baseline justify-between">
-                            <div class="chart-title" style="font-size:10px;">RÉPARTITION MENSUELLE DE LA CONSOMMATION — 12 DERNIERS MOIS</div>
-                            <div class="row items-center gap-6" style="font-size:9px;">
-                                <span class="icon-circle sm ic-navy" style="width:18px; height:18px;"><svg><use href="#i-info" /></svg></span>
-                                <span>Données GRDF</span>
+                            <div class="row items-center gap-12" style="margin-bottom:16px;">
+                                <span class="icon-circle lg" style="background:var(--amber-500); color:#fff; width:44px; height:44px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-sun" /></svg></span>
+                                <div>
+                                    <div class="kicker" style="font-size:10px; color:#8a6315;">ÉTÉ (AVR → OCT)</div>
+                                    <div class="h-mid" style="font-size:26px;">{{ data.gas_info.summer_pct|default:"30" }} %</div>
+                                    <div class="sub" style="font-size:10px; color:var(--gray-500);">de la consommation annuelle</div>
+                                </div>
+                            </div>
+                            <div class="row items-start gap-10" style="margin-top:auto; background:#fff; border:1px solid var(--gray-200); border-radius:8px; padding:11px 12px;">
+                                <span class="icon-circle sm" style="background:var(--navy-800); color:#fff; width:26px; height:26px; flex-shrink:0;"><svg style="width:14px;"><use href="#i-info" /></svg></span>
+                                <span style="font-size:11px; color:var(--gray-600); line-height:1.4;">Les besoins de chauffage en hiver représentent l'essentiel de votre consommation et rendent votre budget très sensible aux variations de prix.</span>
                             </div>
                         </div>
-                        {% if data.imageOne.gas_chart %}
-                        <img src="{{ data.imageOne.gas_chart }}" alt="Consommation Mensuelle GRDF" style="width:100%; height:auto; margin-top:6px; max-height:150px;">
-                        {% else %}
-                        <div style="text-align:center; padding:20px; color:#999; font-size:11px;">Aucune donnée de consommation disponible</div>
-                        {% endif %}
                     </div>
 
                     <!-- Market conditions strip - in normal flow, below the bar chart -->
-                    <div class="row gap-0" style="align-items: stretch; margin-top:8px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden; height: 66px;">
-                        <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
-                            <span class="icon-circle md" style="background:#fff1e6; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-bulb" /></svg></span>
-                            <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Les conditions de marché évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
+                    <div class="row gap-0" style="align-items: stretch; margin-top:12px; border: 1px solid var(--gray-200); border-radius: 12px; overflow: hidden;">
+                        <div class="row items-center gap-12" style="flex: 1; padding: 16px 22px; background: #ffffff;">
+                            <span class="icon-circle md" style="background:#fff1e6; width:34px; height:34px; flex-shrink: 0;"><svg><use href="#i-bulb" /></svg></span>
+                            <div style="font-size:13px; color: var(--gray-700); line-height: 1.45;">Les conditions de marché évoluent rapidement.<br /><strong style="color: var(--navy-900);">Sécuriser votre prix aujourd'hui, c'est maîtriser votre budget demain.</strong></div>
                         </div>
                         <div style="display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 12px;">
-                            <div style="width: 1px; background: var(--teal-900); height: 50px;"></div>
+                            <div style="width: 1px; background: var(--teal-900); height: 60px;"></div>
                         </div>
-                        <div class="row items-center gap-10" style="flex: 1; padding: 16px 20px; background: #ffffff;">
-                            <span class="icon-circle md" style="background:#fff3df; width:36px; height:36px; flex-shrink: 0;"><svg><use href="#i-calendar" /></svg></span>
-                            <div style="font-size:12px; color: var(--gray-700); line-height: 1.4;">Offre valable à l'instant T<br />et susceptible d'évoluer rapidement.</div>
+                        <div class="row items-center gap-12" style="flex: 1; padding: 16px 22px; background: #ffffff;">
+                            <span class="icon-circle md" style="background:#fff3df; width:34px; height:34px; flex-shrink: 0;"><svg><use href="#i-calendar" /></svg></span>
+                            <div style="font-size:13px; color: var(--gray-700); line-height: 1.45;">Offre valable à l'instant T<br />et susceptible d'évoluer rapidement.</div>
                         </div>
                     </div>
                 </div>
@@ -2246,9 +2241,12 @@
                                 <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
                             </div>
                         </div>
-                        <div class="row items-center gap-8" style="margin-top:14px; background: #eef2f7; padding:8px 10px; border-radius:6px;">
-                            <span class="icon-circle md" style="background: #d1dbe8; width:26px; height:26px;"><svg><use href="#i-arrow-right" style="color: var(--navy-700);" /></svg></span>
-                            <span style="font-size:9px; color: var(--gray-700); font-weight: 500;">Cette analyse a servi de base à la construction de notre recommandation présentée précédemment.</span>
+                        <div class="row items-start gap-10" style="margin-top:14px; background: var(--accent-700); padding:10px 12px; border-radius:8px;">
+                            <span class="icon-circle md" style="background: rgba(255,255,255,0.2); width:30px; height:30px; flex-shrink:0;"><svg><use href="#i-target" style="color:#fff;" /></svg></span>
+                            <div>
+                                <div class="kicker" style="color:#fff; font-size:10px;">NOTRE RECOMMANDATION</div>
+                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color:#fff;">Dans ce contexte incertain, sécuriser votre contrat dès maintenant permet de vous protéger contre les hausses à venir.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2289,7 +2287,7 @@
                         </div>
                         <div class="info-pill" style="padding:4px 6px;">
                             <span class="icon-circle md ic-navy" style="width: 20px; height: 20px;"><svg><use href="#i-pie" /></svg></span>
-                            <div><span class="label" style="font-size:8px;">Segment</span><div class="value" style="font-size:11px;">{{ data.gas_info.segmentation }}</div></div>
+                            <div><span class="label" style="font-size:8px;">Segment</span><div class="value" style="font-size:11px;">{{ data.gas_info.routing_rate }}</div></div>
                         </div>
                         <div class="info-pill" style="padding:4px 6px;">
                             <span class="icon-circle md ic-accent" style="width: 20px; height: 20px;"><svg><use href="#i-flame" /></svg></span>
