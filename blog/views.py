@@ -2663,6 +2663,7 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
             "pce": comparatif_dto.get("pce"),
             "contract_start_date": comparatif_dto.get("contractStartDate"),
             "segmentation": comparatif_dto.get("segmentation"),
+            "routing_rate": comparatif_dto.get("routingRate"),
             "profile": comparatif_dto.get("gasProfile"),
             "profile_threshold": comparatif_dto.get("routingRate"),
             "total_annual_mwh": comparatif_dto.get("volumeAnnual"),
