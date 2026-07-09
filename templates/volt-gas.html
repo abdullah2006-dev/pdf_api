@@ -2042,9 +2042,9 @@
                         <div class="chart-sub" style="font-size:8px; margin-top:3px;">Prix spot PEG (€/MWh) — ({{ data.chart_date_ranges.all_data }})</div>
                         {% endif %}
                         {% if data.image.chart %}
-                        <img src="{{ data.image.chart }}" alt="Évolution du prix du gaz" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
+                        <img src="{{ data.image.chart }}" alt="Évolution du prix du gaz" style="width:100%; height:168px; object-fit:contain; display:block; margin-top:6px;">
                         {% else %}
-                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        <div style="width:100%; height:168px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
                         {% endif %}
                     </div>
 
@@ -2054,44 +2054,48 @@
                         <div class="chart-sub" style="font-size:8px; margin-top:3px;">(PEG Cal — {{ data.chart_date_ranges.last_12m }})</div>
                         {% endif %}
                         {% if data.imageTwo.chart_12m %}
-                        <img src="{{ data.imageTwo.chart_12m }}" alt="Évolution des prix 12 derniers mois" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
+                        <img src="{{ data.imageTwo.chart_12m }}" alt="Évolution des prix 12 derniers mois" style="width:100%; height:168px; object-fit:contain; display:block; margin-top:6px;">
                         {% else %}
-                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        <div style="width:100%; height:168px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
                         {% endif %}
                     </div>
 
-                    <div class="row items-center" style="background:#fff1e6; border:1px solid #fbd4b6; border-radius:8px; padding:12px 16px;">
+                    <div class="row items-center" style="background:#fff1e6; border:1px solid #fbd4b6; border-radius:8px; padding:12px 16px; margin-top:auto;">
                         <span class="icon-circle sm" style="background:var(--accent-600); width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-clock" /></svg></span>
                         <span style="font-size:12px; color:var(--accent-900); line-height:1.4; margin-left:10px;">Le marché du gaz peut évoluer rapidement à la hausse comme à la baisse. <br /><strong>Agir aujourd'hui, c'est sécuriser votre budget demain.</strong></span>
                     </div>
                 </div>
 
                 <!-- Right column -->
-                <div class="col" style="display: flex; flex-direction: column; gap: 14px;">
-                    <div class="card dark" style="padding:14px 14px; flex: 1;">
-                        <div class="card-title" style="font-size:12px; margin-bottom:10px; text-align: center;">CE QU'IL FAUT RETENIR</div>
-                        <div class="col" style="font-size:12px; line-height:1.45;">
-                            <div class="row items-center gap-10" style="padding-bottom:8px;"><span class="icon-circle sm" style="background:#1d4d77; width:20px; height:20px;"><svg><use href="#i-chart-line" /></svg></span><span>Les prix du gaz peuvent varier fortement en quelques jours.</span></div>
-                            <div style="height:1px; background: rgba(255,255,255,0.15); margin: 4px 0 8px 0;"></div>
-                            <div class="row items-center gap-10" style="padding-bottom:8px;"><span class="icon-circle sm" style="background:#1d4d77; width:20px; height:20px;"><svg><use href="#i-globe" /></svg></span><span>Le marché dépend directement des tensions géopolitiques et des approvisionnements.</span></div>
-                            <div style="height:1px; background: rgba(255,255,255,0.15); margin: 4px 0 8px 0;"></div>
+                <div class="col" style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="card dark" style="padding:10px 12px; flex: 1;">
+                        <div class="card-title" style="font-size:11px; margin-bottom:7px; text-align: center;">CE QU'IL FAUT RETENIR</div>
+                        <div class="col" style="font-size:11px; line-height:1.35;">
+                            <div class="row items-center gap-10" style="padding-bottom:5px;"><span class="icon-circle sm" style="background:#1d4d77; width:20px; height:20px;"><svg><use href="#i-chart-line" /></svg></span><span>Les prix du gaz peuvent varier fortement en quelques jours.</span></div>
+                            <div style="height:1px; background: rgba(255,255,255,0.15); margin: 2px 0 5px 0;"></div>
+                            <div class="row items-center gap-10" style="padding-bottom:5px;"><span class="icon-circle sm" style="background:#1d4d77; width:20px; height:20px;"><svg><use href="#i-globe" /></svg></span><span>Le marché dépend directement des tensions géopolitiques et des approvisionnements.</span></div>
+                            <div style="height:1px; background: rgba(255,255,255,0.15); margin: 2px 0 5px 0;"></div>
                             <div class="row items-center gap-10"><span class="icon-circle sm" style="background:#1d4d77; width:20px; height:20px;"><svg><use href="#i-alert" /></svg></span><span>Les hausses sont souvent rapides, brutales et imprévisibles.</span></div>
                         </div>
                     </div>
 
-                    <div class="card" style="padding:14px 14px; flex: 1; background-color: var(--teal-900); border-color: var(--teal-900);">
-                        <div class="card-title" style="font-size:12px; color: #fff; margin-bottom:8px;"><span class="icon-circle sm" style="background: rgba(255,255,255,0.2); color: #fff; width:26px; height:26px;"><svg><use href="#i-search" /></svg></span>NOTRE ANALYSE</div>
-                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0; color: #fff;">Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.</p>
+                    <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--teal-900); border-color: var(--teal-900);">
+                        <div class="card-title" style="font-size:11px; color: #fff; margin-bottom:6px;"><span class="icon-circle sm" style="background: rgba(255,255,255,0.2); color: #fff; width:24px; height:24px;"><svg><use href="#i-search" /></svg></span>NOTRE ANALYSE</div>
+                        <!-- EDIT:start:slide3.analyse -->
+                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.</p>
+                        <!-- EDIT:end:slide3.analyse -->
                     </div>
 
-                    <div class="card" style="padding:14px 14px; flex: 1; background-color: var(--accent-700); border-color: var(--accent-700);">
-                        <div class="card-title" style="font-size:12px; margin-bottom:8px;"><span class="icon-circle sm" style="background:#fff; color:var(--accent-700); width:26px; height:26px;"><svg><use href="#i-target" /></svg></span>NOTRE RECOMMANDATION</div>
-                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0;">Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.</p>
+                    <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--accent-700); border-color: var(--accent-700);">
+                        <div class="card-title" style="font-size:11px; margin-bottom:6px;"><span class="icon-circle sm" style="background:#fff; color:var(--accent-700); width:24px; height:24px;"><svg><use href="#i-target" /></svg></span>NOTRE RECOMMANDATION</div>
+                        <!-- EDIT:start:slide3.recommandation -->
+                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.</p>
+                        <!-- EDIT:end:slide3.recommandation -->
                     </div>
 
-                    <div class="row items-center" style="background:#fff7ea; border:1px solid #f3dba2; border-radius:8px; padding:12px 14px;">
+                    <div class="row items-center" style="background:#fff7ea; border:1px solid #f3dba2; border-radius:8px; padding:9px 12px;">
                         <span class="icon-circle sm" style="background:#f7c042; width:20px; height:20px; flex-shrink:0;"><svg><use href="#i-alert" /></svg></span>
-                        <span style="font-size:11px; color:#8a6315; line-height:1.35; margin-left:8px;">Les conditions tarifaires sont valables à l'instant T et peuvent évoluer ou disparaître rapidement.</span>
+                        <span style="font-size:10px; color:#8a6315; line-height:1.3; margin-left:8px;">Les conditions tarifaires sont valables à l'instant T et peuvent évoluer ou disparaître rapidement.</span>
                     </div>
                 </div>
             </div>
@@ -2222,7 +2226,9 @@
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--accent-700);" /></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Votre consommation présente des variations saisonnières marquées, avec des pics importants en période hivernale.</p>
+                                <!-- EDIT:start:slide4.profil -->
+                                <p contenteditable="true" data-edit-key="slide4.profil" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Votre consommation présente des variations saisonnières marquées, avec des pics importants en période hivernale.</p>
+                                <!-- EDIT:end:slide4.profil -->
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2230,7 +2236,9 @@
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-globe" style="color: var(--accent-700);" /></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Ce profil {{ data.gas_info.profile }}, typique des copropriétés résidentielles, vous expose fortement aux fluctuations du marché du gaz, notamment en période hivernale.</p>
+                                <!-- EDIT:start:slide4.exposition -->
+                                <p contenteditable="true" data-edit-key="slide4.exposition" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Ce profil {{ data.gas_info.profile }}, typique des copropriétés résidentielles, vous expose fortement aux fluctuations du marché du gaz, notamment en période hivernale.</p>
+                                <!-- EDIT:end:slide4.exposition -->
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2238,14 +2246,18 @@
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--accent-700);" /></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
+                                <!-- EDIT:start:slide4.strategie -->
+                                <p contenteditable="true" data-edit-key="slide4.strategie" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
+                                <!-- EDIT:end:slide4.strategie -->
                             </div>
                         </div>
                         <div class="row items-start gap-10" style="margin-top:14px; background: var(--accent-700); padding:10px 12px; border-radius:8px;">
                             <span class="icon-circle md" style="background: rgba(255,255,255,0.2); width:30px; height:30px; flex-shrink:0;"><svg><use href="#i-target" style="color:#fff;" /></svg></span>
                             <div>
                                 <div class="kicker" style="color:#fff; font-size:10px;">NOTRE RECOMMANDATION</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color:#fff;">Dans ce contexte incertain, sécuriser votre contrat dès maintenant permet de vous protéger contre les hausses à venir.</p>
+                                <!-- EDIT:start:slide4.recommandation -->
+                                <p contenteditable="true" data-edit-key="slide4.recommandation" style="margin:4px 0 0; font-size:11px; line-height:1.4; color:#fff;">Dans ce contexte incertain, sécuriser votre contrat dès maintenant permet de vous protéger contre les hausses à venir.</p>
+                                <!-- EDIT:end:slide4.recommandation -->
                             </div>
                         </div>
                     </div>
@@ -4874,6 +4886,160 @@
             if (!customElements.get('image-slot')) {
                 customElements.define('image-slot', ImageSlot);
             }
+        })();
+    </script>
+
+    <script>
+        // Inline editor for contenteditable regions — floating "Enregistrer" button
+        // that POSTs the edited fragment to /editor/save-file/ (mirrors volt-electricity.html).
+        (function () {
+            function getCookie(name) {
+                const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+                return v ? v.pop() : '';
+            }
+
+            // Inject styles for the floating editor button (pill + spinner + hover).
+            const editorStyle = document.createElement('style');
+            editorStyle.textContent =
+                '@keyframes vh-spin{to{transform:rotate(360deg)}}' +
+                '.vh-save-btn{display:none;align-items:center;gap:5px;position:absolute;z-index:2147483600;' +
+                'padding:4px 9px;border:none;border-radius:999px;cursor:pointer;color:#fff;' +
+                "font:600 10px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.01em;white-space:nowrap;" +
+                'box-shadow:0 4px 12px rgba(0,0,0,.22);transition:background .15s ease,transform .1s ease,opacity .15s ease;}' +
+                '.vh-save-btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.06);}' +
+                '.vh-save-btn:active:not(:disabled){transform:translateY(0);}' +
+                '.vh-save-btn:disabled{cursor:default;}' +
+                '.vh-save-btn svg{display:block;flex-shrink:0;}';
+            document.head.appendChild(editorStyle);
+
+            const ICONS = {
+                save: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>',
+                spin: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="animation:vh-spin .7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>',
+                check: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+                error: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+            };
+
+            function createSaveButton() {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'vh-save-btn';
+                btn.setAttribute('aria-label', 'Enregistrer les modifications');
+                document.body.appendChild(btn);
+                return btn;
+            }
+
+            const saveBtn = createSaveButton();
+            let currentEl = null;
+            let originalHTML = '';
+
+            // Disable the browser's native spellcheck (red squiggles) on the
+            // editable fields — the content is French and shouldn't be flagged.
+            document.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
+                el.setAttribute('spellcheck', 'false');
+            });
+
+            function setState(state) {
+                const map = {
+                    idle:   { icon: ICONS.save,  label: 'Enregistrer',     bg: '#c96442', dis: true,  op: '.55' },
+                    dirty:  { icon: ICONS.save,  label: 'Enregistrer',     bg: '#c96442', dis: false, op: '1' },
+                    saving: { icon: ICONS.spin,  label: 'Enregistrement…', bg: '#a94f31', dis: true,  op: '1' },
+                    saved:  { icon: ICONS.check, label: 'Enregistré',      bg: '#1f8a5b', dis: true,  op: '1' },
+                    error:  { icon: ICONS.error, label: 'Erreur',          bg: '#c0392b', dis: true,  op: '1' }
+                };
+                const s = map[state] || map.idle;
+                saveBtn.innerHTML = s.icon + '<span>' + s.label + '</span>';
+                saveBtn.style.background = s.bg;
+                saveBtn.style.opacity = s.op;
+                saveBtn.disabled = s.dis;
+            }
+
+            function positionBtnFor(el) {
+                const r = el.getBoundingClientRect();
+                const bw = saveBtn.offsetWidth || 110;
+                // Sit just below the box, right-aligned, so it's clear of the text.
+                const top = window.scrollY + r.bottom + 5;
+                const left = Math.max(8, window.scrollX + r.right - bw);
+                saveBtn.style.top = top + 'px';
+                saveBtn.style.left = left + 'px';
+            }
+
+            function showFor(el) {
+                currentEl = el;
+                originalHTML = el.innerHTML;
+                setState('idle');
+                saveBtn.style.display = 'inline-flex';
+                positionBtnFor(el);
+            }
+
+            function hideBtn() {
+                saveBtn.style.display = 'none';
+                currentEl = null;
+            }
+
+            document.addEventListener('focusin', (e) => {
+                const el = e.target;
+                if (el && el.isContentEditable) {
+                    showFor(el);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!currentEl) return;
+                if (e.target === saveBtn || saveBtn.contains(e.target)) return;
+                if (currentEl && !currentEl.contains(e.target) && !e.target.isContentEditable) {
+                    hideBtn();
+                }
+            }, true);
+
+            document.addEventListener('input', (e) => {
+                if (!currentEl) return;
+                if (e.target === currentEl || currentEl.contains(e.target)) {
+                    const changed = currentEl.innerHTML !== originalHTML;
+                    setState(changed ? 'dirty' : 'idle');
+                    positionBtnFor(currentEl);
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (currentEl) positionBtnFor(currentEl);
+            });
+
+            saveBtn.addEventListener('click', () => {
+                if (!currentEl) return;
+                const rawPath = decodeURIComponent((window.location.pathname || '').replace(/^\/+/, ''));
+                // Prefer the exact target the server embedded into this generated deck;
+                // fall back to deriving it from the URL (template preview / local dev).
+                const payloadPath = window.__VOLT_EDIT_TARGET__
+                    || (rawPath.startsWith('media/')
+                        ? rawPath.slice('media/'.length).replace(/\\/g, '/')
+                        : 'templates/volt-gas.html');
+                const payload = {
+                    path: payloadPath,
+                    key: currentEl.getAttribute('data-edit-key') || null,
+                    html: currentEl.outerHTML,
+                };
+                setState('saving');
+                positionBtnFor(currentEl);
+                fetch('/editor/save-file/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify(payload),
+                    credentials: 'same-origin',
+                }).then((r) => {
+                    if (!r.ok) throw new Error('Network');
+                    return r.json().catch(() => ({}));
+                }).then((json) => {
+                    const ok = json && (json.ok === true || json.status === 'ok');
+                    setState(ok ? 'saved' : 'error');
+                    if (ok) originalHTML = currentEl.innerHTML;
+                }).catch(() => { setState('error'); })
+                  .finally(() => {
+                      setTimeout(() => { if (saveBtn) { setState('idle'); if (currentEl) positionBtnFor(currentEl); } }, 1300);
+                  });
+            });
         })();
     </script>
 

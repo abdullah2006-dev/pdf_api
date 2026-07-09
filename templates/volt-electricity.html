@@ -2619,7 +2619,9 @@
                                 style="background: rgba(255,255,255,0.2); color: #fff; width:26px; height:26px;"><svg>
                                     <use href="#i-search" />
                                 </svg></span>NOTRE ANALYSE</div>
-                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
+                        <!-- EDIT:start:slide3.analyse -->
+                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:12px; line-height:1.45; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
+                        <!-- EDIT:end:slide3.analyse -->
                     </div>
 
                     <div class="card red" style="padding:14px 14px; flex: 1;">
@@ -2627,7 +2629,9 @@
                                 style="background:#fff; color:var(--red-600); width:26px; height:26px;"><svg>
                                     <use href="#i-target" />
                                 </svg></span>NOTRE RECOMMANDATION</div>
-                        <p contenteditable="true" style="font-size:12px; line-height:1.45; margin:0;">{{ data.market_analysis.recommandation }}</p>
+                        <!-- EDIT:start:slide3.recommandation -->
+                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:12px; line-height:1.45; margin:0;">{{ data.market_analysis.recommandation }}</p>
+                        <!-- EDIT:end:slide3.recommandation -->
                     </div>
 
                     <!-- Warning box -->
@@ -2856,7 +2860,9 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.profil }}</p>
+                                <!-- EDIT:start:slide4.profil -->
+                                <p contenteditable="true" data-edit-key="slide4.profil" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.profil }}</p>
+                                <!-- EDIT:end:slide4.profil -->
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2864,7 +2870,9 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-calendar" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.exposition }}</p>
+                                <!-- EDIT:start:slide4.exposition -->
+                                <p contenteditable="true" data-edit-key="slide4.exposition" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.exposition }}</p>
+                                <!-- EDIT:end:slide4.exposition -->
                             </div>
                         </div>
                         <div style="height: 1px; background: var(--gray-200); margin: 12px 0;"></div>
@@ -2872,7 +2880,9 @@
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--navy-600);"/></svg></span>
                             <div>
                                 <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
-                                <p contenteditable="true" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.strategie }}</p>
+                                <!-- EDIT:start:slide4.strategie -->
+                                <p contenteditable="true" data-edit-key="slide4.strategie" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.strategie }}</p>
+                                <!-- EDIT:end:slide4.strategie -->
                             </div>
                         </div>
                         <div class="row items-center gap-8" style="margin-top:14px; background: #eef2f7; padding:8px 10px; border-radius:6px;">
@@ -6350,6 +6360,159 @@
                     }
                 }
             }, 150);
+        })();
+    </script>
+
+    <script>
+        // Small unobtrusive editor: floating Save button for contenteditable regions.
+        (function () {
+            function getCookie(name) {
+                const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+                return v ? v.pop() : '';
+            }
+
+            // Inject styles for the floating editor button (pill + spinner + hover).
+            const editorStyle = document.createElement('style');
+            editorStyle.textContent =
+                '@keyframes vh-spin{to{transform:rotate(360deg)}}' +
+                '.vh-save-btn{display:none;align-items:center;gap:5px;position:absolute;z-index:2147483600;' +
+                'padding:4px 9px;border:none;border-radius:999px;cursor:pointer;color:#fff;' +
+                "font:600 10px/1 system-ui,-apple-system,'Segoe UI',sans-serif;letter-spacing:.01em;white-space:nowrap;" +
+                'box-shadow:0 4px 12px rgba(0,0,0,.22);transition:background .15s ease,transform .1s ease,opacity .15s ease;}' +
+                '.vh-save-btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.06);}' +
+                '.vh-save-btn:active:not(:disabled){transform:translateY(0);}' +
+                '.vh-save-btn:disabled{cursor:default;}' +
+                '.vh-save-btn svg{display:block;flex-shrink:0;}';
+            document.head.appendChild(editorStyle);
+
+            const ICONS = {
+                save: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>',
+                spin: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="animation:vh-spin .7s linear infinite"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>',
+                check: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+                error: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'
+            };
+
+            function createSaveButton() {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'vh-save-btn';
+                btn.setAttribute('aria-label', 'Enregistrer les modifications');
+                document.body.appendChild(btn);
+                return btn;
+            }
+
+            const saveBtn = createSaveButton();
+            let currentEl = null;
+            let originalHTML = '';
+
+            // Disable the browser's native spellcheck (red squiggles) on the
+            // editable fields — the content is French and shouldn't be flagged.
+            document.querySelectorAll('[contenteditable="true"]').forEach(function (el) {
+                el.setAttribute('spellcheck', 'false');
+            });
+
+            function setState(state) {
+                const map = {
+                    idle:   { icon: ICONS.save,  label: 'Enregistrer',     bg: '#c96442', dis: true,  op: '.55' },
+                    dirty:  { icon: ICONS.save,  label: 'Enregistrer',     bg: '#c96442', dis: false, op: '1' },
+                    saving: { icon: ICONS.spin,  label: 'Enregistrement…', bg: '#a94f31', dis: true,  op: '1' },
+                    saved:  { icon: ICONS.check, label: 'Enregistré',      bg: '#1f8a5b', dis: true,  op: '1' },
+                    error:  { icon: ICONS.error, label: 'Erreur',          bg: '#c0392b', dis: true,  op: '1' }
+                };
+                const s = map[state] || map.idle;
+                saveBtn.innerHTML = s.icon + '<span>' + s.label + '</span>';
+                saveBtn.style.background = s.bg;
+                saveBtn.style.opacity = s.op;
+                saveBtn.disabled = s.dis;
+            }
+
+            function positionBtnFor(el) {
+                const r = el.getBoundingClientRect();
+                const bw = saveBtn.offsetWidth || 110;
+                // Sit just below the box, right-aligned, so it's clear of the text.
+                const top = window.scrollY + r.bottom + 5;
+                const left = Math.max(8, window.scrollX + r.right - bw);
+                saveBtn.style.top = top + 'px';
+                saveBtn.style.left = left + 'px';
+            }
+
+            function showFor(el) {
+                currentEl = el;
+                originalHTML = el.innerHTML;
+                setState('idle');
+                saveBtn.style.display = 'inline-flex';
+                positionBtnFor(el);
+            }
+
+            function hideBtn() {
+                saveBtn.style.display = 'none';
+                currentEl = null;
+            }
+
+            document.addEventListener('focusin', (e) => {
+                const el = e.target;
+                if (el && el.isContentEditable) {
+                    showFor(el);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!currentEl) return;
+                if (e.target === saveBtn || saveBtn.contains(e.target)) return;
+                if (currentEl && !currentEl.contains(e.target) && !e.target.isContentEditable) {
+                    hideBtn();
+                }
+            }, true);
+
+            document.addEventListener('input', (e) => {
+                if (!currentEl) return;
+                if (e.target === currentEl || currentEl.contains(e.target)) {
+                    const changed = currentEl.innerHTML !== originalHTML;
+                    setState(changed ? 'dirty' : 'idle');
+                    positionBtnFor(currentEl);
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (currentEl) positionBtnFor(currentEl);
+            });
+
+            saveBtn.addEventListener('click', () => {
+                if (!currentEl) return;
+                const rawPath = decodeURIComponent((window.location.pathname || '').replace(/^\/+/, ''));
+                // Prefer the exact target the server embedded into this generated deck;
+                // fall back to deriving it from the URL (template preview / local dev).
+                const payloadPath = window.__VOLT_EDIT_TARGET__
+                    || (rawPath.startsWith('media/')
+                        ? rawPath.slice('media/'.length).replace(/\\/g, '/')
+                        : 'templates/volt-electricity.html');
+                const payload = {
+                    path: payloadPath,
+                    key: currentEl.getAttribute('data-edit-key') || null,
+                    html: currentEl.outerHTML,
+                };
+                setState('saving');
+                positionBtnFor(currentEl);
+                fetch('/editor/save-file/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify(payload),
+                    credentials: 'same-origin',
+                }).then((r) => {
+                    if (!r.ok) throw new Error('Network');
+                    return r.json().catch(() => ({}));
+                }).then((json) => {
+                    const ok = json && (json.ok === true || json.status === 'ok');
+                    setState(ok ? 'saved' : 'error');
+                    if (ok) originalHTML = currentEl.innerHTML;
+                }).catch(() => { setState('error'); })
+                  .finally(() => {
+                      setTimeout(() => { if (saveBtn) { setState('idle'); if (currentEl) positionBtnFor(currentEl); } }, 1300);
+                  });
+            });
         })();
     </script>
 

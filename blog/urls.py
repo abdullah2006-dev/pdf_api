@@ -10,4 +10,5 @@ urlpatterns = [
 
     path('api/generate-market-analysis/', views.generate_market_analysis, name='generate_market_analysis'),
     path('api/generate-consumption-analysis/', views.generate_consumption_analysis, name='generate_consumption_analysis'),
+    path('editor/save-file/', views.save_file_edit, name='save_file_edit'),
 ]

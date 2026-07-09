@@ -6,3 +6,4 @@ pdfkit>=1.0.0
 weasyprint>=59.0
 djangorestframework==3.15.2
 PyPDF2==3.0.1
+bleach>=6.0

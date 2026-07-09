@@ -20,6 +20,15 @@ import json
 import os
 from django.conf import settings
 from django.http import JsonResponse
+import tempfile
+import shutil
+import time
+import logging
+from django.contrib.auth.decorators import login_required
+try:
+    import bleach
+except Exception:
+    bleach = None
 from weasyprint import HTML, CSS
 from datetime import datetime
 from django.templatetags.static import static
@@ -1673,6 +1682,19 @@ def save_html_file(html_content, request, data, comparatif):
     )
     html_path = os.path.join(html_dir, html_filename)
 
+    # Embed the exact edit-target so the inline editor writes back to *this*
+    # file in every environment (local media, staging, production) instead of
+    # guessing it from the browser URL.
+    edit_marker = (
+        "<script>window.__VOLT_EDIT_TARGET__ = "
+        + json.dumps(html_path.replace("\\", "/"))
+        + ";</script>"
+    )
+    if "</head>" in html_content:
+        html_content = html_content.replace("</head>", edit_marker + "\n</head>", 1)
+    else:
+        html_content = edit_marker + "\n" + html_content
+
     # Save HTML file
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
@@ -2900,3 +2922,138 @@ def generate_consumption_analysis(request):
         return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def save_file_edit(request):
+    """Receive a JSON payload with {path, key, html} and atomically replace
+    the region between <!-- EDIT:start:{key} --> and <!-- EDIT:end:{key} -->
+    in an allowlisted template file. Requires authenticated staff user.
+    """
+    try:
+        # Require an authenticated staff user in production (DEBUG off); allow open
+        # editing only during local development so the workflow isn't blocked there.
+        if not settings.DEBUG and not getattr(request.user, 'is_staff', False):
+            return JsonResponse({'ok': False, 'error': 'permission'}, status=403)
+
+        data = json.loads(request.body.decode('utf-8') if isinstance(request.body, (bytes, bytearray)) else request.body)
+        rel_path = data.get('path')
+        key = data.get('key')
+        html_fragment = data.get('html', '')
+
+        if not rel_path or not key:
+            return JsonResponse({'ok': False, 'error': 'missing parameters'}, status=400)
+
+        # The key is interpolated into the EDIT markers/regex, so restrict it to a
+        # simple token (letters, digits, dot, dash, underscore).
+        if not re.match(r'^[\w.\-]+$', str(key)):
+            return JsonResponse({'ok': False, 'error': 'invalid key'}, status=400)
+
+        # Resolve the target path. Generated decks embed their own absolute target
+        # (window.__VOLT_EDIT_TARGET__); the template preview sends a path relative
+        # to BASE_DIR. A leading "media/" (local dev URL) is dropped.
+        raw = str(rel_path).replace('\\', '/').strip()
+        if raw.startswith('media/'):
+            raw = raw[len('media/'):]
+        if os.path.isabs(raw):
+            abs_path = os.path.abspath(raw)
+        else:
+            abs_path = os.path.abspath(os.path.join(settings.BASE_DIR, raw.lstrip('/')))
+
+        # Allowlisted roots the editor may write within: project templates, the
+        # generated-decks dir, and the media/upload roots used in prod & staging.
+        allowed_roots = [
+            os.path.abspath(os.path.join(settings.BASE_DIR, 'templates')),
+            os.path.abspath(os.path.join(settings.BASE_DIR, 'clients')),
+        ]
+        for attr in ('BASE_UPLOAD_DIR', 'MEDIA_ROOT', 'STAGING_MEDIA_ROOT', 'PRODUCTION_MEDIA_ROOT'):
+            val = getattr(settings, attr, None)
+            if val:
+                allowed_roots.append(os.path.abspath(str(val)))
+
+        within_allowed = any(
+            abs_path == root or abs_path.startswith(root + os.sep)
+            for root in allowed_roots
+        )
+        if not within_allowed or not abs_path.lower().endswith('.html'):
+            return JsonResponse({'ok': False, 'error': 'invalid path'}, status=400)
+
+        print(f"[save_file_edit] key={key!r} abs_path={abs_path!r}")
+
+        # Sanitize fragment. Keep the editing hooks (contenteditable / data-edit-key /
+        # spellcheck) on every element so the saved field stays editable and re-savable
+        # on the next render — otherwise bleach strips them and the field "locks".
+        if bleach:
+            allowed_tags = ['p', 'br', 'b', 'i', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'span']
+            allowed_attrs = {
+                '*': ['style', 'class', 'contenteditable', 'data-edit-key', 'spellcheck'],
+                'a': ['href', 'title', 'rel', 'target'],
+            }
+            clean_html = bleach.clean(html_fragment, tags=allowed_tags, attributes=allowed_attrs, strip=True)
+        else:
+            print('[save_file_edit] WARNING: bleach not installed, preserving HTML tags for saved fragment')
+            clean_html = html_fragment
+            # Remove dangerous elements if bleach is unavailable.
+            clean_html = re.sub(r'(?is)<(script|style|iframe|object|embed|link|meta)[^>]*>.*?</\1>', '', clean_html)
+            clean_html = re.sub(r'(?is)on\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)', '', clean_html)
+
+        # Guarantee the saved wrapper keeps its editing hooks even if the sanitizer
+        # dropped them (some bleach versions strip contenteditable / data-* attrs).
+        # Without this the field re-renders as a plain <p> and can no longer be edited.
+        def _reattach_edit_attrs(fragment):
+            m = re.match(r'(\s*)<([A-Za-z][\w-]*)([^>]*)>', fragment)
+            if not m:
+                return fragment
+            lead, tag, attrs = m.group(1), m.group(2), m.group(3)
+            if 'contenteditable' not in attrs:
+                attrs += ' contenteditable="true"'
+            if 'data-edit-key' not in attrs:
+                attrs += ' data-edit-key="{}"'.format(key)
+            if 'spellcheck' not in attrs:
+                attrs += ' spellcheck="false"'
+            return '{}<{}{}>'.format(lead, tag, attrs) + fragment[m.end():]
+
+        clean_html = _reattach_edit_attrs(clean_html)
+
+        start = f'<!-- EDIT:start:{key} -->'
+        end = f'<!-- EDIT:end:{key} -->'
+
+        with open(abs_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        if start not in content or end not in content:
+            return JsonResponse({'ok': False, 'error': 'markers not found'}, status=400)
+
+        pattern = re.compile(re.escape(start) + r'(.*?)' + re.escape(end), re.S)
+        replacement = start + '\n' + clean_html + '\n' + end
+        new_content, n = pattern.subn(replacement, content)
+        if n == 0:
+            return JsonResponse({'ok': False, 'error': 'replace failed'}, status=500)
+
+        # Backup
+        try:
+            bak = abs_path + f'.bak.{int(time.time())}'
+            shutil.copy2(abs_path, bak)
+        except Exception:
+            logging.exception('backup failed')
+
+        # Atomic write
+        fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(abs_path), prefix='.tmp-', suffix='.html')
+        os.close(fd)
+        try:
+            with open(tmp_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+            os.replace(tmp_path, abs_path)
+        finally:
+            try:
+                if os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+            except Exception:
+                pass
+
+        return JsonResponse({'ok': True})
+    except json.JSONDecodeError:
+        return JsonResponse({'ok': False, 'error': 'invalid json'}, status=400)
+    except Exception as e:
+        logging.exception('save_file_edit failed')
+        return JsonResponse({'ok': False, 'error': str(e)}, status=500)
