@@ -2990,12 +2990,32 @@ def save_file_edit(request):
         # spellcheck) on every element so the saved field stays editable and re-savable
         # on the next render — otherwise bleach strips them and the field "locks".
         if bleach:
-            allowed_tags = ['p', 'br', 'b', 'i', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'span']
+            allowed_tags = ['div', 'p', 'br', 'b', 'i', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'span']
             allowed_attrs = {
                 '*': ['style', 'class', 'contenteditable', 'data-edit-key', 'spellcheck'],
                 'a': ['href', 'title', 'rel', 'target'],
             }
-            clean_html = bleach.clean(html_fragment, tags=allowed_tags, attributes=allowed_attrs, strip=True)
+            css_sanitizer = None
+            try:
+                from bleach.css_sanitizer import CSSSanitizer
+                css_sanitizer = CSSSanitizer(allowed_css_properties=[
+                    'color', 'font-size', 'line-height', 'text-align', 'margin', 'padding',
+                    'background', 'background-color', 'border', 'border-radius', 'font-weight',
+                    'font-style', 'font-family', 'letter-spacing'
+                ])
+            except Exception:
+                css_sanitizer = None
+
+            if css_sanitizer:
+                clean_html = bleach.clean(
+                    html_fragment,
+                    tags=allowed_tags,
+                    attributes=allowed_attrs,
+                    css_sanitizer=css_sanitizer,
+                    strip=True,
+                )
+            else:
+                clean_html = bleach.clean(html_fragment, tags=allowed_tags, attributes=allowed_attrs, strip=True)
         else:
             print('[save_file_edit] WARNING: bleach not installed, preserving HTML tags for saved fragment')
             clean_html = html_fragment
@@ -3031,6 +3051,36 @@ def save_file_edit(request):
             return JsonResponse({'ok': False, 'error': 'markers not found'}, status=400)
 
         pattern = re.compile(re.escape(start) + r'(.*?)' + re.escape(end), re.S)
+        orig_match = pattern.search(content)
+        orig_fragment = orig_match.group(1) if orig_match else ''
+
+        def _merge_style_attrs(new_fragment, old_fragment):
+            m_new = re.match(r'(\s*)<([A-Za-z][\w-]*)([^>]*)>', new_fragment)
+            m_old = re.match(r'(\s*)<([A-Za-z][\w-]*)([^>]*)>', old_fragment)
+            if not m_new or not m_old:
+                return new_fragment
+
+            lead_new, tag_new, attrs_new = m_new.group(1), m_new.group(2), m_new.group(3)
+            attrs_old = m_old.group(3)
+
+            def _get_attr_string(attrs, name):
+                m = re.search(r'\b' + re.escape(name) + r'\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)', attrs)
+                return m.group(1) if m else ''
+
+            for attr in ['style', 'class']:
+                if attr not in attrs_new and attr in attrs_old:
+                    attrs_new += ' ' + attr + '=' + _get_attr_string(attrs_old, attr)
+
+            if 'contenteditable' not in attrs_new:
+                attrs_new += ' contenteditable="true"'
+            if 'data-edit-key' not in attrs_new:
+                attrs_new += ' data-edit-key="{}"'.format(key)
+            if 'spellcheck' not in attrs_new:
+                attrs_new += ' spellcheck="false"'
+
+            return '{}<{}{}>'.format(lead_new, tag_new, attrs_new) + new_fragment[m_new.end():]
+
+        clean_html = _merge_style_attrs(clean_html, orig_fragment)
         replacement = start + '\n' + clean_html + '\n' + end
         new_content, n = pattern.subn(replacement, content)
         if n == 0:
