@@ -2316,6 +2316,25 @@ def _build_slide6_data(comparatif_dto):
     tva_amount = (rec_cout_htva * 0.20) if rec_cout_htva is not None else None
     total_ttc = (rec_cout_htva + tva_amount) if (rec_cout_htva is not None and tva_amount is not None) else None
 
+    # "DÉTAIL DU BUDGET RECOMMANDÉ (HT)" sub-table: amounts come from the
+    # recommended offer, the total HT is their sum, and each row's share is
+    # (amount / total) × 100.
+    _parts = [rec_fourniture, rec_turpe, rec_taxes]
+    breakdown_total_ht = sum(_parts) if all(p is not None for p in _parts) else None
+
+    def _pct(val):
+        return round(val / breakdown_total_ht * 100, 1) if (val is not None and breakdown_total_ht) else None
+
+    breakdown = {
+        "fourniture": rec_fourniture,
+        "turpe": rec_turpe,
+        "taxes": rec_taxes,
+        "total_ht": breakdown_total_ht,
+        "fourniture_pct": _pct(rec_fourniture),
+        "turpe_pct": _pct(rec_turpe),
+        "taxes_pct": _pct(rec_taxes),
+    }
+
     return {
         "current": current,
         "recommended": recommended,
@@ -2328,6 +2347,7 @@ def _build_slide6_data(comparatif_dto):
         "total_ht_economy": total_ht_economy,
         "tva_amount": tva_amount,
         "total_ttc": total_ttc,
+        "breakdown": breakdown,
         "economy_pct": comparatif_dto.get("ratioHTVA"),
         "economy_eur": comparatif_dto.get("differenceHTVA"),
     }
@@ -2742,6 +2762,7 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         "clientContactName": client_contact_name,
         "clientFirstName": client_first_name,
         "clientLastName": client_last_name,
+        "clientPhoneNumber": safe_value(data.get("clientPhoneNumber")),
         "clientBusinessAddress": data.get("clientBusinessAddress", {}),
         "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "gas_info": {

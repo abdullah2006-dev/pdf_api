@@ -1456,6 +1456,7 @@
 
         section[data-slide="resultat-offre"] .cmp-table tbody td {
             font-size: 14px !important;
+            vertical-align: middle;
         }
 
         /* Fixed, equal height on every body row so they don't vary with content.
@@ -2554,7 +2555,7 @@
                                 <td style="text-align:left; padding-left:16px;">
                                     <div class="row items-center gap-12">
                                         <span class="icon-circle md ic-accent" style="width:32px; height:32px;"><svg><use href="#i-flame" /></svg></span>
-                                        <div><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">FOURNITURE GAZ</strong><br /><span style="font-size:11px; color:var(--gray-500);">Prix négocié auprès du fournisseur.</span></div>
+                                        <div style="position:relative;"><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">FOURNITURE GAZ</strong><span style="position:absolute; top:100%; left:0; font-size:11px; color:var(--gray-500);">Prix négocié auprès du fournisseur.</span></div>
                                     </div>
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.fourniture|default:"-" }} €</td>
@@ -2565,7 +2566,7 @@
                                 <td style="text-align:left; padding-left:16px;">
                                     <div class="row items-center gap-12">
                                         <span class="icon-circle md ic-navy" style="width:32px; height:32px;"><svg><use href="#i-check-circle" /></svg></span>
-                                        <div><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">CEE</strong><br /><span style="font-size:11px; color:var(--gray-500);">Certificats d'économies d'énergie</span></div>
+                                        <div style="position:relative;"><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">CEE</strong><span style="position:absolute; top:100%; left:0; font-size:11px; color:var(--gray-500);">Certificats d'économies d'énergie</span></div>
                                     </div>
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.cee|floatformat:2|default:"-" }} €</td>
@@ -2576,7 +2577,7 @@
                                 <td style="text-align:left; padding-left:16px;">
                                     <div class="row items-center gap-12">
                                         <span class="icon-circle md ic-navy" style="width:32px; height:32px;"><svg><use href="#i-globe" /></svg></span>
-                                        <div><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">DISTRIBUTION GRDF</strong><br /><span style="font-size:11px; color:var(--gray-500);">Acheminement réglementé</span></div>
+                                        <div style="position:relative;"><strong style="font-family:var(--font-display); color:var(--navy-900); font-size:12px;">DISTRIBUTION GRDF</strong><span style="position:absolute; top:100%; left:0; font-size:11px; color:var(--gray-500);">Acheminement réglementé</span></div>
                                     </div>
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.distribution|default:"-" }} €</td>
@@ -2603,7 +2604,7 @@
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.cta|default:"-" }} €</td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.cta|default:"-" }} €</td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">0,00 €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">{{ data.slide6.cta_economy|floatformat:2|default:"0,00" }} €</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -2614,7 +2615,7 @@
                                 </td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.current.accise|default:"-" }} €</td>
                                 <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.accise|default:"-" }} €</td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">0,00 €</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">{{ data.slide6.accise_economy|floatformat:2|default:"0,00" }} €</td>
                             </tr>
                             <tr style="background:#f6f8fb;">
                                 <td style="text-align:left; padding-left:16px;">
@@ -2657,7 +2658,7 @@
                         <div class="row items-start gap-10">
                             <span class="icon-circle md ic-accent" style="width:30px; height:30px; flex-shrink:0;"><svg><use href="#i-droplet" /></svg></span>
                             <div style="flex:1;">
-                                <strong style="font-size:11px; color:var(--accent-700);">CPB (BIOMÉTHANE)</strong>
+                                <strong style="font-size:13px; color:var(--accent-700);">CPB (BIOMÉTHANE)</strong>
                                 <div style="font-size:9px; color:var(--gray-600); line-height:1.35; margin:3px 0 8px;">Contribution mise en place au 01/01/2026. À intégrer dans votre budget :</div>
                                 <div class="row gap-6">
                                     <div style="flex:1; text-align:center; background:#fff; border:1px solid #fbd4b6; border-radius:6px; padding:5px 2px;"><div style="font-size:8px; color:var(--gray-500);">2026</div><div style="font-size:11px; font-weight:800; color:var(--navy-900);">{{ data.gas_info.cpb_2026|default:"0,41" }} €<span style="font-size:7px; color:var(--gray-500);">/MWh</span></div></div>
@@ -2672,7 +2673,7 @@
                     <div class="card" style="padding:10px 14px; background:#fff7f0; border:1px solid #fbd4b6;">
                         <div class="row items-start gap-10">
                             <span class="icon-circle md ic-accent" style="width:30px; height:30px; flex-shrink:0;"><svg><use href="#i-target" /></svg></span>
-                            <div><strong style="font-size:11px; color:var(--accent-700);">À RETENIR</strong>
+                            <div><strong style="font-size:13px; color:var(--accent-700);">À RETENIR</strong>
                                 <div style="font-size:10px; color:var(--navy-900); line-height:1.35;">Seule la partie « Fourniture gaz » peut être optimisée. Les autres postes sont réglementés et identiques pour l'ensemble des fournisseurs.</div>
                             </div>
                         </div>
@@ -2683,7 +2684,7 @@
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px; margin-top:10px; margin-bottom:12px;">
                 <div class="row items-center gap-12">
                     <span class="icon-circle md ic-navy" style="width:36px; height:36px;"><svg><use href="#i-shield" /></svg></span>
-                    <div><strong style="font-size:12px;">Sécurisation du budget</strong><div style="font-size:11px; color:var(--gray-600);">Prix fixe pendant 36 mois</div></div>
+                    <div><strong style="font-size:12px;">Sécurisation du budget</strong><div style="font-size:11px; color:var(--gray-600);">Prix fixe pendant {{ data.slide6.recommended.duration|default:"36" }} mois</div></div>
                 </div>
                 <div class="row items-center gap-12">
                     <span class="icon-circle md ic-navy" style="width:36px; height:36px;"><svg><use href="#i-chart-line" /></svg></span>
