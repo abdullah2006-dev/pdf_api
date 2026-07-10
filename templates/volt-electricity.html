@@ -2557,21 +2557,21 @@
                         <div class="chart-sub" style="font-size:8px; margin-top:3px;">({{ data.chart_date_ranges.all_data }})</div>
                         {% endif %}
                         {% if data.image.chart %}
-                        <img src="{{ data.image.chart }}" alt="Évolution des prix de l'électricité" style="width:100%; height:150px; object-fit:contain; display:block; margin-top:6px;">
+                        <img src="{{ data.image.chart }}" alt="Évolution des prix de l'électricité" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
                         {% else %}
-                        <div style="width:100%; height:150px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
                         {% endif %}
                     </div>
 
-                    <div class="chart" style="padding:12px 14px;">
+                    <div class="chart" style="padding:16px 18px;">
                         <div class="chart-title" style="font-size:12px;">ÉVOLUTION DES PRIX SUR LES 12 DERNIERS MOIS</div>
                         {% if data.chart_date_ranges.last_12m %}
                         <div class="chart-sub" style="font-size:8px; margin-top:3px;">({{ data.chart_date_ranges.last_12m }})</div>
                         {% endif %}
                         {% if data.imageTwo.chart_12m %}
-                        <img src="{{ data.imageTwo.chart_12m }}" alt="Évolution des prix 12 derniers mois" style="width:100%; height:150px; object-fit:contain; display:block; margin-top:6px;">
+                        <img src="{{ data.imageTwo.chart_12m }}" alt="Évolution des prix 12 derniers mois" style="width:100%; height:170px; object-fit:contain; display:block; margin-top:6px;">
                         {% else %}
-                        <div style="width:100%; height:150px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
+                        <div style="width:100%; height:170px; background:#f8f9fa; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:11px; margin-top:6px;">Données non disponibles</div>
                         {% endif %}
                     </div>
 

@@ -1913,6 +1913,15 @@ def _generate_market_analysis(chart_data_dto):
 # calculates a percentage itself. Output is checked against the summary
 # (_validate_consumption_text) and falls back to a plain, guaranteed-correct
 # template (_fallback_consumption_analysis) if it drifts.
+#
+# NOTE (fix): STRATEGIE is now explicitly constrained to always recommend a
+# FIXED-price contract, since Volt's actual sales position (see
+# build_tender_results: "Nous privilégions les prix fixes.") is fixed-price
+# only. Previously the open-ended prompt let the model freely invent
+# variable-rate / prepaid-block recommendations that contradict this policy.
+# _validate_consumption_text now also rejects any such banned terms and caps
+# each field at ~40 words so a single run-on sentence can't blow past the
+# "30 mots maximum" instruction unnoticed.
 
 _FRENCH_MONTHS = {
     "janvier": "01", "février": "02", "fevrier": "02", "mars": "03",
@@ -1920,6 +1929,17 @@ _FRENCH_MONTHS = {
     "août": "08", "aout": "08", "septembre": "09", "octobre": "10",
     "novembre": "11", "décembre": "12", "decembre": "12",
 }
+
+# Terms that contradict Volt's fixed-price-only sales policy, or that
+# describe products/offers not present anywhere in the summarized data.
+# If the LLM's STRATEGIE (or any field) uses one of these, the response is
+# rejected and the deterministic fallback template is used instead.
+_BANNED_STRATEGY_TERMS = [
+    "taux variable", "prix variable", "tarif variable",
+    "indexé", "indexée", "indexés", "indexées",
+    "spot", "prépayé", "prépayés", "prépayée", "prépayées",
+    "bloc d'achat", "blocs d'achat", "blocs d'achats",
+]
 
 
 def _summarize_enedis_data(enedis_data_past_year):
@@ -2061,7 +2081,17 @@ def _validate_consumption_text(text, summary):
     not present in the precomputed summary. Catches both numeric ('12/2025')
     and French-prose ('décembre 2025') month references, and tolerates small
     rounding differences in percentages instead of requiring exact string
-    matches."""
+    matches.
+
+    Also rejects (fix):
+      - any use of a banned strategy term (variable-rate, indexed, spot,
+        prepaid blocks, etc.) that contradicts Volt's fixed-price-only
+        sales policy or invents a product not present in the data, and
+      - responses whose combined text is implausibly long, as a lightweight
+        signal that the "30 mots maximum" per-field constraint was ignored.
+        (Per-field word counts are checked separately in
+        _generate_consumption_analysis before this function is even called.)
+    """
     if not text:
         return False
 
@@ -2085,6 +2115,14 @@ def _validate_consumption_text(text, summary):
         if not any(abs(val - allowed) < 0.15 for allowed in allowed_pcts):
             print(f"Rejected: unlisted percentage {val}")
             return False
+
+    # NEW: reject any recommendation that contradicts fixed-price policy or
+    # invents a product/offer type not present in the data model.
+    lowered = text.lower()
+    hit_terms = [term for term in _BANNED_STRATEGY_TERMS if term in lowered]
+    if hit_terms:
+        print(f"Rejected: banned strategy term(s) found: {hit_terms}")
+        return False
 
     return True
 
@@ -2127,7 +2165,14 @@ def _generate_consumption_analysis(enedis_data_past_year):
     """All facts are computed in _summarize_enedis_data. The LLM's only job
     is to phrase those facts fluently — it is explicitly told not to compute,
     rank, or invent anything. Output is validated against the summary and
-    falls back to a plain template on any mismatch."""
+    falls back to a plain template on any mismatch.
+
+    Fix: STRATEGIE is now explicitly pinned to Volt's fixed-price-only sales
+    policy (see build_tender_results), instead of leaving the recommendation
+    open-ended. A word-count guard is also applied per field before running
+    the fact/banned-term validation, since the LLM has been observed ignoring
+    the "30 mots maximum" instruction on the PROFIL field.
+    """
     summary = _summarize_enedis_data(enedis_data_past_year)
     print("DEBUG summary:", json.dumps(summary, ensure_ascii=False, indent=2))
     if not summary:
@@ -2146,13 +2191,18 @@ def _generate_consumption_analysis(enedis_data_past_year):
         "- peak_to_average_ratio : à utiliser pour juger de l'exposition au marché.\n"
         "- no_data_months : mois SANS données (futurs) — ne jamais les présenter comme "
         "une consommation nulle ou un creux saisonnier.\n\n"
-        "Rédige trois phrases courtes (30 mots maximum chacune), pour un client "
-        "professionnel :\n"
+        "Rédige trois phrases courtes (30 mots maximum chacune — respecte STRICTEMENT "
+        "cette limite, une seule phrase par champ, pas de double proposition reliée par "
+        "un point-virgule), pour un client professionnel :\n"
         "1) PROFIL: reformule peak_months[0], lowest_months[0], dominant_period, "
         "et season_split (si présent) en une phrase naturelle.\n"
         "2) EXPOSITION: l'exposition de ce profil aux fluctuations du marché, en "
         "t'appuyant sur peak_to_average_ratio et dominant_period.\n"
-        "3) STRATEGIE: une stratégie d'achat concrète adaptée à ce profil.\n"
+        "3) STRATEGIE: recommande TOUJOURS un contrat à PRIX FIXE — jamais un taux "
+        "variable, un tarif indexé, une offre spot, ou des blocs d'achat prépayés, et "
+        "jamais un produit non mentionné dans les données ci-dessus. Explique en une "
+        "phrase pourquoi la stabilité du prix fixe convient à ce profil de consommation "
+        "précis (pic hivernal, exposition au marché).\n"
         "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
         "PROFIL: <texte>\n"
         "EXPOSITION: <texte>\n"
@@ -2163,6 +2213,13 @@ def _generate_consumption_analysis(enedis_data_past_year):
     fields = _parse_llm_fields(text, ["PROFIL", "EXPOSITION", "STRATEGIE"])
 
     if not fields:
+        return _fallback_consumption_analysis(summary)
+
+    # NEW: per-field word-count guard — catches run-on sentences (e.g. two
+    # clauses joined by a semicolon) that blow past "30 mots maximum" even
+    # though the LLM produced well-formed, on-topic text otherwise.
+    if any(len(v.split()) > 40 for v in fields.values()):
+        print("Rejected: a field exceeded the 40-word safety cap")
         return _fallback_consumption_analysis(summary)
 
     combined_text = " ".join(fields.values())
