@@ -1781,28 +1781,28 @@
                     <div class="client-card" style="padding: 12px 16px;">
                         <div class="head" style="margin-bottom: 8px;"><span class="icon-circle sm ic-navy" style="width: 24px; height: 24px;"><svg><use href="#i-user" /></svg></span> INFORMATIONS CLIENT</div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px 20px;">
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft" style="width: 20px; height: 20px; flex-shrink: 0;"><svg><use href="#i-building" /></svg></span>
                                 <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 66px; white-space: nowrap;">Société :</span>
-                                <span style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{ data.clientSociety }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientSociety }}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft" style="width: 20px; height: 20px; flex-shrink: 0;"><svg><use href="#i-user" /></svg></span>
                                 <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 116px; white-space: nowrap;">Nom &amp; prénom :</span>
-                                <span style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{ data.clientLastName }} {{ data.clientFirstName }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientLastName }} {{ data.clientFirstName }}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft" style="width: 20px; height: 20px; flex-shrink: 0;"><svg><use href="#i-pin" /></svg></span>
                                 <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 66px; white-space: nowrap;">Site :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.client_site_address }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700); position: relative; top: 5px;">{{ data.client_site_address }}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft" style="width: 20px; height: 20px; flex-shrink: 0;"><svg><use href="#i-phone" /></svg></span>
                                 <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 116px; white-space: nowrap;">Téléphone :</span>
-                                <span style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{ data.clientPhoneNumber }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientPhoneNumber }}</span>
                             </div>
                             <!-- PCE replaces elec's PDL — gas metering point reference -->
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft" style="width: 20px; height: 20px; flex-shrink: 0;"><svg><use href="#i-meter" /></svg></span>
                                 <span style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 66px; white-space: nowrap;">PCE :</span>
                                 <span style="font-size: 11px; color: var(--gray-700);">{{ data.gas_info.pce }}</span>
@@ -2274,6 +2274,8 @@
             </div>
         </section>
 
+        {# Slides 5 & 6 depend on provider offers; skip both when comparatifRates is empty/null #}
+        {% if data.comparatifClientHistoryPdfDto.comparatifRates %}
         <!-- ════════════════════ SLIDE 5 — COMPARATIF FOURNISSEURS (looped) ════════════════════ -->
         {% for page_providers in data.provider_page_chunks %}
         <section data-screen-label="05 Détail de notre analyse marché — gaz" data-slide="comparatif">
@@ -2705,6 +2707,7 @@
                 <span class="strong" style="font-weight:500; font-size:11px; text-align: center;">Les montants présentés sont basés sur votre consommation des 12 derniers mois et sont donnés à titre indicatif.</span>
             </div>
         </section>
+        {% endif %}
 
         <!-- ════════════════════ SLIDE 7 — MISE EN PLACE DU CONTRAT ════════════════════ -->
         <section data-screen-label="07 Mise en place de votre contrat gaz" style="position: relative; padding-bottom: 0 !important;">

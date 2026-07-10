@@ -2142,7 +2142,7 @@
                                     <use href="#i-user" />
                                 </svg></span> INFORMATIONS CLIENT</div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 6px 20px;">
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-building" />
@@ -2151,9 +2151,9 @@
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 66px; white-space: nowrap;">Société
                                     :</span>
                                 <span
-                                    style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{data.clientSociety}}</span>
+                                    style="font-size: 11px; color: var(--gray-700);">{{data.clientSociety}}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-user" />
@@ -2162,10 +2162,10 @@
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 116px; white-space: nowrap;">Nom
                                     &amp; prénom :</span>
                                 <span
-                                    style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{data.clientLastName}}
+                                    style="font-size: 11px; color: var(--gray-700);">{{data.clientLastName}}
                                     {{data.clientFirstName}}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-pin" />
@@ -2173,9 +2173,9 @@
                                 <span
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 66px; white-space: nowrap;">Site
                                     :</span>
-                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.client_site_address }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700); position: relative; top: 5px;">{{ data.client_site_address }}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-phone" />
@@ -2183,9 +2183,9 @@
                                 <span
                                     style="font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-600); font-weight: 700; flex-shrink: 0; width: 116px; white-space: nowrap;">Téléphone
                                     :</span>
-                                <span style="font-size: 11px; color: var(--navy-900); font-weight: 500;">{{ data.clientPhoneNumber }}</span>
+                                <span style="font-size: 11px; color: var(--gray-700);">{{ data.clientPhoneNumber }}</span>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 6px; padding: 2px 0;">
+                            <div style="display: flex; align-items: center; gap: 6px; padding: 2px 0;">
                                 <span class="icon-circle sm ic-navy-soft"
                                     style="width: 20px; height: 20px; flex-shrink: 0;"><svg>
                                         <use href="#i-meter" />
@@ -2202,7 +2202,7 @@
             </div>
 
             <!-- Footer warning -->
-            <div class="footer-bar warn" style="padding: 8px 44px !important; font-size: 12px !important; gap: 14px;">
+            <div class="footer-bar" style="padding: 8px 44px !important; font-size: 12px !important; gap: 14px;">
                 <span class="lock" style="text-wrap: balance;"><svg width="13" height="13" stroke="currentColor" stroke-width="2.2" fill="none"
                         viewBox="0 0 24 24">
                         <path d="M12 3 2 21h20L12 3z" />
@@ -2211,7 +2211,7 @@
                     </svg> LES PRIX ÉVOLUENT CHAQUE JOUR</span>
                 <span class="strong" style="font-weight:500; font-size: 11px; text-wrap: balance;">Cette recommandation peut ne plus être valable demain.</span>
                 <div style="flex:1"></div>
-                <span class="lock" style="color:#fff;"><svg width="13" height="13" stroke="currentColor"
+                <span class="lock"><svg width="13" height="13" stroke="currentColor"
                         stroke-width="2.2" fill="none" viewBox="0 0 24 24">
                         <rect x="4" y="10" width="16" height="11" rx="2" />
                         <path d="M8 10V7a4 4 0 0 1 8 0v3" />
@@ -2902,6 +2902,8 @@
             </div>
         </section>
 
+        {# Slides 5 & 6 depend on provider offers; skip both when comparatifRates is empty/null #}
+        {% if data.comparatifClientHistoryPdfDto.comparatifRates %}
         <!-- Slide 5 -->
         {% for page_providers in data.provider_page_chunks %}
         <section data-screen-label="05 Détail de notre analyse marché" data-slide="comparatif">
@@ -3568,6 +3570,7 @@
                 <span class="strong" style="font-weight:500; font-size:11px; text-align: center;">Les montants présentés sont basés sur votre consommation des 12 derniers mois et sont donnés à titre indicatif.</span>
             </div>
         </section>
+        {% endif %}
 
         <!-- ════════════════════ SLIDE 7 ════════════════════ -->
         <section data-screen-label="07 Mise en place de votre contrat"
