@@ -2538,13 +2538,15 @@ def build_comparatif_dto_Gas(comparatif, request, data):
     comparatif_rates = comparatif.get("comparatifRates", [])
 
     # Alias gas-specific cost fields so both the comparison table
-    # (acheminementGrdf / acciseGaz) and the summary slide (distribution /
-    # accise) read from the same raw provider values.
+    # (acheminementGrdf / acciseGaz / abonnementAnswer) and the summary slide
+    # (distribution / accise / abonnementAnnual) read from the same raw provider values.
     for provider in comparatif_rates:
         if provider.get("acheminementGrdf") is None:
             provider["acheminementGrdf"] = provider.get("distribution")
         if provider.get("acciseGaz") is None:
             provider["acciseGaz"] = provider.get("ticgn")
+        if provider.get("abonnementAnswer") is None:
+            provider["abonnementAnswer"] = provider.get("abonnementAnnual")
 
     current_providers = [p for p in comparatif_rates if p.get("typeFournisseur") == "CURRENT"]
     regular_providers = [p for p in comparatif_rates if p.get("typeFournisseur") != "CURRENT"]
