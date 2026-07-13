@@ -83,6 +83,28 @@
             background: rgba(59, 130, 246, 0.08);
         }
 
+        /* Light marker shown next to an editable field's heading only when it is
+           rendering a default (no data sent for it). Inherits the heading color via
+           currentColor; removed once the field is edited & saved. Informational. */
+        .deftag {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 6px;
+            padding: 1px 5px;
+            font-size: 6.5px;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: currentColor;
+            background: transparent;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            opacity: 0.32;
+            user-select: none;
+            transition: opacity 0.2s ease;
+        }
+
         deck-stage {
             --slide-width: 1123px;
             --slide-height: 794px;
@@ -2618,9 +2640,9 @@
                                 class="icon-circle sm"
                                 style="background: rgba(255,255,255,0.2); color: #fff; width:24px; height:24px;"><svg>
                                     <use href="#i-search" />
-                                </svg></span>NOTRE ANALYSE</div>
+                                </svg></span>NOTRE ANALYSE{% if not data.market_analysis.analyse %}<span class="deftag" data-for="slide3.analyse">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.analyse -->
-                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">{{ data.market_analysis.analyse }}</p>
+                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">{% if data.market_analysis.analyse %}{{ data.market_analysis.analyse }}{% else %}Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.{% endif %}</p>
                         <!-- EDIT:end:slide3.analyse -->
                     </div>
 
@@ -2628,9 +2650,9 @@
                         <div class="card-title" style="font-size:11px; margin-bottom:6px;"><span class="icon-circle sm"
                                 style="background:#fff; color:var(--red-600); width:24px; height:24px;"><svg>
                                     <use href="#i-target" />
-                                </svg></span>NOTRE RECOMMANDATION</div>
+                                </svg></span>NOTRE RECOMMANDATION{% if not data.market_analysis.recommandation %}<span class="deftag" data-for="slide3.recommandation">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.recommandation -->
-                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">{{ data.market_analysis.recommandation }}</p>
+                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">{% if data.market_analysis.recommandation %}{{ data.market_analysis.recommandation }}{% else %}Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.{% endif %}</p>
                         <!-- EDIT:end:slide3.recommandation -->
                     </div>
 
@@ -2859,7 +2881,7 @@
                         <div class="row items-start gap-10" style="margin-top:4px;">
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">VOTRE PROFIL DE CONSOMMATION{% if not data.consumption_analysis.profil %}<span class="deftag" data-for="slide4.profil" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.profil -->
                                 <p contenteditable="true" data-edit-key="slide4.profil" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.profil }}</p>
                                 <!-- EDIT:end:slide4.profil -->
@@ -2869,7 +2891,7 @@
                         <div class="row items-start gap-10">
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-calendar" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">EXPOSITION AUX FLUCTUATIONS{% if not data.consumption_analysis.exposition %}<span class="deftag" data-for="slide4.exposition" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.exposition -->
                                 <p contenteditable="true" data-edit-key="slide4.exposition" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.exposition }}</p>
                                 <!-- EDIT:end:slide4.exposition -->
@@ -2879,7 +2901,7 @@
                         <div class="row items-start gap-10">
                             <span class="icon-circle md" style="background: #e6edf4; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--navy-600);"/></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">STRATÉGIE ADAPTÉE{% if not data.consumption_analysis.strategie %}<span class="deftag" data-for="slide4.strategie" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.strategie -->
                                 <p contenteditable="true" data-edit-key="slide4.strategie" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{{ data.consumption_analysis.strategie }}</p>
                                 <!-- EDIT:end:slide4.strategie -->
@@ -3017,10 +3039,10 @@
                             </tr>
                             <tr>
                                 {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                <th class="sub" style="font-size:7px; padding:3px 2px;">{{ col }}</th>
                                 {% endfor %}
                                 {% for col in data.tender_table.columns6 %}
-                                <th class="sub" style="font-size:6px; padding:3px 2px;">{{ col }}</th>
+                                <th class="sub" style="font-size:7px; padding:3px 2px;">{{ col }}</th>
                                 {% endfor %}
                             </tr>
                         </thead>
@@ -3258,7 +3280,7 @@
                             contractuels.</strong></p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect"
-                    style="height: 68px;"></image-slot>
+                    fit="contain" style="height: 52px; width: 163px; flex-shrink: 0;"></image-slot>
                 <div class="savings-badge" style="padding: 10px 18px;">
                     {% if data.slide6.has_current %}
                     <div class="label" style="font-size:11px;">ÉCONOMIE ESTIMÉE</div>
@@ -6510,7 +6532,12 @@
                 }).then((json) => {
                     const ok = json && (json.ok === true || json.status === 'ok');
                     setState(ok ? 'saved' : 'error');
-                    if (ok) originalHTML = currentEl.innerHTML;
+                    if (ok) {
+                        originalHTML = currentEl.innerHTML;
+                        // A saved field is no longer showing a default — fade out its "défaut" tag.
+                        var _k = currentEl.getAttribute('data-edit-key');
+                        if (_k) document.querySelectorAll('.deftag[data-for="' + _k + '"]').forEach(function (t) { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 220); });
+                    }
                 }).catch(() => { setState('error'); })
                   .finally(() => {
                       setTimeout(() => { if (saveBtn) { setState('idle'); if (currentEl) positionBtnFor(currentEl); } }, 1300);

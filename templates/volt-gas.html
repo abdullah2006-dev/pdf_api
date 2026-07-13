@@ -94,6 +94,27 @@
             background: rgba(59, 130, 246, 0.08);
         }
 
+        /* Light marker shown next to an editable field only when it is rendering a
+           default (no data was sent in the payload for it). Purely informational. */
+        .deftag {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 6px;
+            padding: 1px 5px;
+            font-size: 6.5px;
+            font-weight: 600;
+            line-height: 1.4;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: currentColor;
+            background: transparent;
+            border: 1px solid currentColor;
+            border-radius: 999px;
+            opacity: 0.32;
+            user-select: none;
+            transition: opacity 0.2s ease;
+        }
+
         deck-stage {
             --slide-width: 1123px;
             --slide-height: 794px;
@@ -2081,16 +2102,16 @@
                     </div>
 
                     <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--teal-900); border-color: var(--teal-900);">
-                        <div class="card-title" style="font-size:11px; color: #fff; margin-bottom:6px;"><span class="icon-circle sm" style="background: rgba(255,255,255,0.2); color: #fff; width:24px; height:24px;"><svg><use href="#i-search" /></svg></span>NOTRE ANALYSE</div>
+                        <div class="card-title" style="font-size:11px; color: #fff; margin-bottom:6px;"><span class="icon-circle sm" style="background: rgba(255,255,255,0.2); color: #fff; width:24px; height:24px;"><svg><use href="#i-search" /></svg></span>NOTRE ANALYSE{% if not data.market_analysis.analyse %}<span class="deftag" data-for="slide3.analyse">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.analyse -->
-                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.</p>
+                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">{% if data.market_analysis.analyse %}{{ data.market_analysis.analyse }}{% else %}Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.{% endif %}</p>
                         <!-- EDIT:end:slide3.analyse -->
                     </div>
 
                     <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--accent-700); border-color: var(--accent-700);">
-                        <div class="card-title" style="font-size:11px; margin-bottom:6px;"><span class="icon-circle sm" style="background:#fff; color:var(--accent-700); width:24px; height:24px;"><svg><use href="#i-target" /></svg></span>NOTRE RECOMMANDATION</div>
+                        <div class="card-title" style="font-size:11px; margin-bottom:6px;"><span class="icon-circle sm" style="background:#fff; color:var(--accent-700); width:24px; height:24px;"><svg><use href="#i-target" /></svg></span>NOTRE RECOMMANDATION{% if not data.market_analysis.recommandation %}<span class="deftag" data-for="slide3.recommandation">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.recommandation -->
-                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.</p>
+                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">{% if data.market_analysis.recommandation %}{{ data.market_analysis.recommandation }}{% else %}Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.{% endif %}</p>
                         <!-- EDIT:end:slide3.recommandation -->
                     </div>
 
@@ -2116,7 +2137,7 @@
                 <div>
                     <h1 class="page-title" style="font-size:38px;">VOTRE CONSOMMATION GAZ</h1>
                     <h2 class="page-subtitle" style="font-size:26px;">RELEVÉE PAR GRDF</h2>
-                    <p class="lede" style="margin-top:6px; font-size:13px;">Données issues du compteur communicant GRDF — Base de calcul de votre appel d'offres</p>
+                    <p class="lede" style="margin-top:2px; font-size:12px;">Données issues du compteur communicant GRDF — Base de calcul de votre appel d'offres</p>
                 </div>
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect" style="height: 68px;"></image-slot>
             </div>
@@ -2125,7 +2146,7 @@
 
                 <div style="display:flex; flex-direction:column; height:100%;">
                     <!-- Top info pills: PCE, contract start, segment, profile -->
-                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0px; margin-bottom:14px;">
+                    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:0px; margin-bottom:8px;">
                         <div class="info-pill" style="padding:10px 8px; border:1px solid var(--gray-200); border-right:none; border-radius:8px 0 0 8px; margin:0;">
                             <span class="icon-circle md ic-accent" style="width: 28px; height: 28px;"><svg><use href="#i-meter" /></svg></span>
                             <div class="col gap-1"><span class="label" style="font-size:8px;">Compteur (PCE)</span><span class="value" style="font-size:13px;">{{ data.gas_info.pce }}</span></div>
@@ -2146,11 +2167,11 @@
 
                     <!-- Profile identity card + seasonal repartition card, side by side
                          (bar chart removed; layout matches the PDF's slide-4 design). -->
-                    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:14px; margin-bottom:14px; align-items:stretch; flex:1;">
+                    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:14px; margin-bottom:8px; align-items:stretch; flex:1;">
 
                         <!-- VOTRE PROFIL DE CONSOMMATION -->
-                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:16px 18px; background:#fff; display:flex; flex-direction:column;">
-                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:16px;">VOTRE PROFIL DE CONSOMMATION</div>
+                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:12px 14px; background:#fff; display:flex; flex-direction:column;">
+                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:10px;">VOTRE PROFIL DE CONSOMMATION</div>
                             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; align-items:center;">
                                 <div style="display:flex; align-items:center; gap:12px; min-width:0;">
                                     <span class="icon-circle xl" style="background:var(--teal-900); color:#fff; width:46px; height:46px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-building" /></svg></span>
@@ -2161,13 +2182,13 @@
                                     </div>
                                 </div>
                                 <div class="col gap-10" style="min-width:0;">
-                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-chart-bar" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Profil {{ data.gas_info.profile }} : consommation à débit {{ data.gas_info.debit_label|default:"élevé (&gt; 5 GWh/an)" }}</span></div>
-                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-building" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Typologie : {{ data.gas_info.typology_detail|default:"chaufferies collectives habitat résidentiel" }}</span></div>
-                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-snow" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Saisonnalité marquée : consommation plus élevée en période hivernale</span></div>
-                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-users" /></svg></span><span style="font-size:11px; color:var(--gray-700);">Usage : {{ data.gas_info.usage|default:"chauffage et eau chaude sanitaire" }}</span></div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-chart-bar" /></svg></span><!-- EDIT:start:slide4.point1 --><span contenteditable="true" data-edit-key="slide4.point1" spellcheck="false" style="font-size:11px; color:var(--gray-700);">Profil {{ data.gas_info.profile }} : consommation à débit {{ data.gas_info.debit_label|default:"élevé (&gt; 5 GWh/an)" }}</span><!-- EDIT:end:slide4.point1 -->{% if not data.gas_info.debit_label %}<span class="deftag" data-for="slide4.point1">défaut</span>{% endif %}</div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-building" /></svg></span><!-- EDIT:start:slide4.point2 --><span contenteditable="true" data-edit-key="slide4.point2" spellcheck="false" style="font-size:11px; color:var(--gray-700);">Typologie : {{ data.gas_info.typology_detail|default:"chaufferies collectives habitat résidentiel" }}</span><!-- EDIT:end:slide4.point2 -->{% if not data.gas_info.typology_detail %}<span class="deftag" data-for="slide4.point2">défaut</span>{% endif %}</div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-snow" /></svg></span><!-- EDIT:start:slide4.point3 --><span contenteditable="true" data-edit-key="slide4.point3" spellcheck="false" style="font-size:11px; color:var(--gray-700);">Saisonnalité marquée : consommation plus élevée en période hivernale</span><!-- EDIT:end:slide4.point3 --><span class="deftag" data-for="slide4.point3">défaut</span></div>
+                                    <div class="row items-center gap-8"><span class="icon-circle sm ic-navy-soft" style="width:22px; height:22px; flex-shrink:0;"><svg><use href="#i-users" /></svg></span><!-- EDIT:start:slide4.point4 --><span contenteditable="true" data-edit-key="slide4.point4" spellcheck="false" style="font-size:11px; color:var(--gray-700);">Usage : {{ data.gas_info.usage|default:"chauffage et eau chaude sanitaire" }}</span><!-- EDIT:end:slide4.point4 -->{% if not data.gas_info.usage %}<span class="deftag" data-for="slide4.point4">défaut</span>{% endif %}</div>
                                 </div>
                             </div>
-                            <div class="row items-center gap-8" style="margin-top:auto; padding-top:16px;">
+                            <div class="row items-center gap-8" style="margin-top:auto; padding-top:10px;">
                                 <div class="row items-center gap-10" style="background:#eef4f6; border:1px solid #cfe0e4; border-radius:8px; padding:11px 12px; width:100%;">
                                     <span class="icon-circle sm" style="background:var(--teal-900); color:#fff; width:28px; height:28px; flex-shrink:0;"><svg style="width:14px;"><use href="#i-info" /></svg></span>
                                     <span style="font-size:11px; color:var(--gray-700);"><strong style="color:var(--teal-900);">POINT CLÉ</strong> — Votre consommation est fortement exposée aux prix du gaz en période hivernale.</span>
@@ -2176,13 +2197,13 @@
                         </div>
 
                         <!-- RÉPARTITION SAISONNIÈRE -->
-                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:16px 18px; background:#f8f9fa; display:flex; flex-direction:column;">
-                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:16px;">RÉPARTITION SAISONNIÈRE</div>
+                        <div style="border:1px solid var(--gray-200); border-radius:10px; padding:12px 14px; background:#f8f9fa; display:flex; flex-direction:column;">
+                            <div class="kicker" style="font-size:11px; color:var(--teal-900); margin-bottom:10px;">RÉPARTITION SAISONNIÈRE</div>
                             <div class="row items-center gap-12" style="margin-bottom:16px;">
                                 <span class="icon-circle lg" style="background:var(--navy-800); color:#fff; width:44px; height:44px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-snow" /></svg></span>
                                 <div>
                                     <div class="kicker" style="font-size:10px; color:var(--navy-700);">HIVER (NOV → MARS)</div>
-                                    <div class="h-mid" style="font-size:26px;">{{ data.gas_info.winter_pct|default:"70" }} %</div>
+                                    <div class="h-mid" style="font-size:26px;"><!-- EDIT:start:slide4.winter_pct --><span contenteditable="true" data-edit-key="slide4.winter_pct" spellcheck="false">{{ data.gas_info.winter_pct|default:"70" }}</span><!-- EDIT:end:slide4.winter_pct --> %{% if not data.gas_info.winter_pct %}<span class="deftag" data-for="slide4.winter_pct">défaut</span>{% endif %}</div>
                                     <div class="sub" style="font-size:10px; color:var(--gray-500);">de la consommation annuelle</div>
                                 </div>
                             </div>
@@ -2190,7 +2211,7 @@
                                 <span class="icon-circle lg" style="background:var(--amber-500); color:#fff; width:44px; height:44px; flex-shrink:0;"><svg width="22" height="22"><use href="#i-sun" /></svg></span>
                                 <div>
                                     <div class="kicker" style="font-size:10px; color:#8a6315;">ÉTÉ (AVR → OCT)</div>
-                                    <div class="h-mid" style="font-size:26px;">{{ data.gas_info.summer_pct|default:"30" }} %</div>
+                                    <div class="h-mid" style="font-size:26px;"><!-- EDIT:start:slide4.summer_pct --><span contenteditable="true" data-edit-key="slide4.summer_pct" spellcheck="false">{{ data.gas_info.summer_pct|default:"30" }}</span><!-- EDIT:end:slide4.summer_pct --> %{% if not data.gas_info.summer_pct %}<span class="deftag" data-for="slide4.summer_pct">défaut</span>{% endif %}</div>
                                     <div class="sub" style="font-size:10px; color:var(--gray-500);">de la consommation annuelle</div>
                                 </div>
                             </div>
@@ -2219,16 +2240,16 @@
 
                 <!-- RIGHT COLUMN: NOTRE ANALYSE -->
                 <div class="card" style="padding:0; display: flex; flex-direction: column; height: 100%; background: transparent; border: none; box-shadow: none;">
-                    <div style="background: var(--teal-900); padding: 14px 16px; border-radius: 9px 9px 0 0; height: 3.5rem;">
+                    <div style="background: var(--teal-900); padding: 10px 16px; border-radius: 9px 9px 0 0; height: 3rem;">
                         <div class="kicker" style="color:#fff; font-size:10px; margin:0;">NOTRE ANALYSE</div>
                     </div>
-                    <div style="background: #ffffff; padding: 14px 16px; border-radius: 14px; display: flex; flex-direction: column; flex: 1; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; bottom: 13px;">
+                    <div style="background: #ffffff; padding: 10px 16px; border-radius: 14px; display: flex; flex-direction: column; flex: 1; border: 1px solid var(--gray-200); box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; bottom: 13px;">
                         <div class="row items-start gap-10" style="margin-top:4px;">
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-chart-bar" style="color: var(--accent-700);" /></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">VOTRE PROFIL DE CONSOMMATION</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">VOTRE PROFIL DE CONSOMMATION{% if not data.consumption_analysis.profil %}<span class="deftag" data-for="slide4.profil" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.profil -->
-                                <p contenteditable="true" data-edit-key="slide4.profil" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Votre consommation présente des variations saisonnières marquées, avec des pics importants en période hivernale.</p>
+                                <p contenteditable="true" data-edit-key="slide4.profil" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{% if data.consumption_analysis.profil %}{{ data.consumption_analysis.profil }}{% else %}Votre consommation présente des variations saisonnières marquées, avec des pics importants en période hivernale.{% endif %}</p>
                                 <!-- EDIT:end:slide4.profil -->
                             </div>
                         </div>
@@ -2236,9 +2257,9 @@
                         <div class="row items-start gap-10">
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-globe" style="color: var(--accent-700);" /></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">EXPOSITION AUX FLUCTUATIONS</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">EXPOSITION AUX FLUCTUATIONS{% if not data.consumption_analysis.exposition %}<span class="deftag" data-for="slide4.exposition" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.exposition -->
-                                <p contenteditable="true" data-edit-key="slide4.exposition" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Ce profil {{ data.gas_info.profile }}, typique des copropriétés résidentielles, vous expose fortement aux fluctuations du marché du gaz, notamment en période hivernale.</p>
+                                <p contenteditable="true" data-edit-key="slide4.exposition" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{% if data.consumption_analysis.exposition %}{{ data.consumption_analysis.exposition }}{% else %}Ce profil {{ data.gas_info.profile }}, typique des copropriétés résidentielles, vous expose fortement aux fluctuations du marché du gaz, notamment en période hivernale.{% endif %}</p>
                                 <!-- EDIT:end:slide4.exposition -->
                             </div>
                         </div>
@@ -2246,18 +2267,18 @@
                         <div class="row items-start gap-10">
                             <span class="icon-circle md" style="background: #fff1e6; width:32px; height:32px;"><svg><use href="#i-shield" style="color: var(--accent-700);" /></svg></span>
                             <div>
-                                <div class="kicker" style="color: var(--navy-900); font-size:10px;">STRATÉGIE ADAPTÉE</div>
+                                <div class="kicker" style="color: var(--navy-900); font-size:10px; display:flex; align-items:center;">STRATÉGIE ADAPTÉE{% if not data.consumption_analysis.strategie %}<span class="deftag" data-for="slide4.strategie" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.strategie -->
-                                <p contenteditable="true" data-edit-key="slide4.strategie" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.</p>
+                                <p contenteditable="true" data-edit-key="slide4.strategie" style="margin:4px 0 0; font-size:11px; line-height:1.4; color: var(--gray-600); text-align: justify;">{% if data.consumption_analysis.strategie %}{{ data.consumption_analysis.strategie }}{% else %}Une stratégie d'achat adaptée permet de sécuriser votre budget dans la durée et de limiter l'impact des variations de prix.{% endif %}</p>
                                 <!-- EDIT:end:slide4.strategie -->
                             </div>
                         </div>
-                        <div class="row items-start gap-10" style="margin-top:14px; background: var(--accent-700); padding:10px 12px; border-radius:8px;">
+                        <div class="row items-start gap-10" style="margin-top:8px; background: var(--accent-700); padding:10px 12px; border-radius:8px;">
                             <span class="icon-circle md" style="background: rgba(255,255,255,0.2); width:30px; height:30px; flex-shrink:0;"><svg><use href="#i-target" style="color:#fff;" /></svg></span>
                             <div>
-                                <div class="kicker" style="color:#fff; font-size:10px;">NOTRE RECOMMANDATION</div>
+                                <div class="kicker" style="color:#fff; font-size:10px; display:flex; align-items:center;">NOTRE RECOMMANDATION{% if not data.consumption_analysis.recommandation %}<span class="deftag" data-for="slide4.recommandation" style="margin-left:auto;">défaut</span>{% endif %}</div>
                                 <!-- EDIT:start:slide4.recommandation -->
-                                <p contenteditable="true" data-edit-key="slide4.recommandation" style="margin:4px 0 0; font-size:11px; line-height:1.4; color:#fff;">Dans ce contexte incertain, sécuriser votre contrat dès maintenant permet de vous protéger contre les hausses à venir.</p>
+                                <p contenteditable="true" data-edit-key="slide4.recommandation" style="margin:4px 0 0; font-size:11px; line-height:1.4; color:#fff;">{% if data.consumption_analysis.recommandation %}{{ data.consumption_analysis.recommandation }}{% else %}Dans ce contexte incertain, sécuriser votre contrat dès maintenant permet de vous protéger contre les hausses à venir.{% endif %}</p>
                                 <!-- EDIT:end:slide4.recommandation -->
                             </div>
                         </div>
@@ -2498,7 +2519,7 @@
                         <span class="kicker" style="font-size:12px; color:var(--accent-700);">{% with rec=data.gas_providers.recommended %}{{ rec.partnerName|default:rec.newPartnerName|default:"—" }}{% endwith %}</span>
                     </div>
                 </div>
-                <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect" style="height: 68px;"></image-slot>
+                <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect" fit="contain" style="height: 52px; width: 163px; flex-shrink: 0;"></image-slot>
                 <div class="savings-badge" style="padding: 10px 18px;">
                     <div class="label" style="font-size:11px;">ÉCONOMIE ESTIMÉE</div>
                     <div class="pct" style="font-size:30px;">{{ data.slide6.economy_pct|default:"-" }} %</div>
@@ -5038,7 +5059,12 @@
                 }).then((json) => {
                     const ok = json && (json.ok === true || json.status === 'ok');
                     setState(ok ? 'saved' : 'error');
-                    if (ok) originalHTML = currentEl.innerHTML;
+                    if (ok) {
+                        originalHTML = currentEl.innerHTML;
+                        // A saved field is no longer showing a default — fade out its "défaut" tag.
+                        var _k = currentEl.getAttribute('data-edit-key');
+                        if (_k) document.querySelectorAll('.deftag[data-for="' + _k + '"]').forEach(function (t) { t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 220); });
+                    }
                 }).catch(() => { setState('error'); })
                   .finally(() => {
                       setTimeout(() => { if (saveBtn) { setState('idle'); if (currentEl) positionBtnFor(currentEl); } }, 1300);

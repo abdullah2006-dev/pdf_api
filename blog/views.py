@@ -1,6 +1,8 @@
 import re, io, base64
 import urllib.request
 import urllib.error
+import urllib.parse
+import ipaddress
 from concurrent.futures import ThreadPoolExecutor
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
@@ -2405,48 +2407,31 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
     if black != "" and black1 != "":
         black3 = "économisé/an"
 
-    # ── Market analysis: prefer precomputed (daily cache), else LLM ──
+    # ── Market analysis (slide 3): precomputed ONLY — no LLM. If nothing is sent,
+    #    the template falls back to its static default text (same as the gas deck). ──
     precomputed_analyse = data.get("precomputedAnalyse")
     precomputed_recommandation = data.get("precomputedRecommandation")
-    has_market = bool(precomputed_analyse or precomputed_recommandation)
+    market_analysis = {
+        "analyse": precomputed_analyse or "",
+        "recommandation": precomputed_recommandation or "",
+    }
+    if not any(market_analysis.values()):
+        market_analysis = data.get("marketAnalysis") or data.get("market_analysis") or {}
 
-    # ── Consumption analysis: prefer precomputed (async save-side job), else LLM ──
+    # ── Consumption analysis (slide 4): prefer precomputed, else fall back to LLM. ──
     precomputed_profil = data.get("precomputedProfil")
     precomputed_exposition = data.get("precomputedExposition")
     precomputed_strategie = data.get("precomputedStrategie")
-    has_consumption = bool(precomputed_profil or precomputed_exposition or precomputed_strategie)
-
-    market_analysis = None
-    consumption_analysis = None
-
-    if has_market:
-        market_analysis = {
-            "analyse": precomputed_analyse or "",
-            "recommandation": precomputed_recommandation or "",
-        }
-    if has_consumption:
+    if precomputed_profil or precomputed_exposition or precomputed_strategie:
         consumption_analysis = {
             "profil": precomputed_profil or "",
             "exposition": precomputed_exposition or "",
             "strategie": precomputed_strategie or "",
         }
-
-    # Only call the LLM for whichever half is still missing.
-    if not has_market and not has_consumption:
-        # neither precomputed -> run both in parallel (full fallback)
-        market_analysis, consumption_analysis = _generate_analyses_parallel(
-            data.get("chartDataDto"),
-            data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear"),
-        )
-    elif not has_market:
-        # consumption ready, market missing -> only market LLM
-        market_analysis = _generate_market_analysis(data.get("chartDataDto"))
-    elif not has_consumption:
-        # market ready, consumption missing -> only consumption LLM
+    else:
         consumption_analysis = _generate_consumption_analysis(
             data.get("comparatifClientHistoryPdfDto", {}).get("enedisDataPastYear")
         )
-    # else: both precomputed -> no LLM call at all
 
     return {
         "title": data.get("title", "VOLT CONSULTING - Energy Services Presentation"),
@@ -2732,6 +2717,20 @@ def _build_slide6_data_gas(comparatif_dto):
     }
 
 
+def _format_contract_date(ts):
+    """Format a contractStartDate timestamp (seconds or milliseconds) to
+    dd/mm/yyyy, matching the electricity deck (enedis_Chart). Returns '-' if
+    the value is missing or not a usable timestamp."""
+    if not ts:
+        return "-"
+    try:
+        if ts > 1e12:  # likely milliseconds
+            ts = ts / 1000
+        return datetime.fromtimestamp(ts).strftime("%d/%m/%Y")
+    except (ValueError, TypeError, OSError):
+        return "-"
+
+
 def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_base64, comparatif_dto, request):
     """
     Build presentation data for the gas (GAZ) comparatif page.
@@ -2756,6 +2755,42 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         data.get("clientContactName") or f"{client_first_name} {client_last_name}".strip()
     )
 
+    # Contract start date: format the timestamp to dd/mm/yyyy like the electricity
+    # deck, instead of showing the raw epoch value.
+    contract_start_date = _format_contract_date(comparatif_dto.get("contractStartDate"))
+
+    # Seasonal split (winter/summer %): prefer what the Java backend now sends at
+    # the top level (from /api/analyze-gas-invoice/), fall back to the DTO, then
+    # the template's 70/30 default.
+    winter_pct = data.get("winterPct")
+    if winter_pct is None:
+        winter_pct = comparatif_dto.get("winterPct")
+    summer_pct = data.get("summerPct")
+    if summer_pct is None:
+        summer_pct = comparatif_dto.get("summerPct")
+
+    # Slide-4 analysis: prefer the precomputed texts (same convention as the
+    # electricity deck's precomputedProfil/…), then a consumptionAnalysis object,
+    # else {} so the template keeps its static fallback.
+    _ca_obj = data.get("consumptionAnalysis") or data.get("consumption_analysis") or {}
+    consumption_analysis = {
+        "profil": data.get("precomputedProfil") or _ca_obj.get("profil") or "",
+        "exposition": data.get("precomputedExposition") or _ca_obj.get("exposition") or "",
+        "strategie": data.get("precomputedStrategie") or _ca_obj.get("strategie") or "",
+        "recommandation": data.get("precomputedGasInvoiceRecommandation") or _ca_obj.get("recommandation") or "",
+    }
+    if not any(consumption_analysis.values()):
+        consumption_analysis = {}
+
+    # Slide-3 market analysis: same precomputed convention as the electricity deck
+    # (precomputedAnalyse / precomputedRecommandation). Absent → static fallback.
+    market_analysis = {
+        "analyse": data.get("precomputedAnalyse") or "",
+        "recommandation": data.get("precomputedRecommandation") or "",
+    }
+    if not any(market_analysis.values()):
+        market_analysis = data.get("marketAnalysis") or data.get("market_analysis") or {}
+
     return {
         "title": data.get("title", "VOLT CONSULTING - Gas Services Presentation"),
         "clientSociety": safe_value(data.get("clientSociety")),
@@ -2767,7 +2802,7 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "gas_info": {
             "pce": comparatif_dto.get("pce"),
-            "contract_start_date": comparatif_dto.get("contractStartDate"),
+            "contract_start_date": contract_start_date,
             "segmentation": comparatif_dto.get("segmentation"),
             "routing_rate": comparatif_dto.get("routingRate"),
             "profile": comparatif_dto.get("gasProfile"),
@@ -2777,12 +2812,17 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
             "debit_label": comparatif_dto.get("debitLabel"),
             "typology_detail": comparatif_dto.get("typologyDetail"),
             "usage": comparatif_dto.get("usage"),
-            "winter_pct": comparatif_dto.get("winterPct"),
-            "summer_pct": comparatif_dto.get("summerPct"),
+            "winter_pct": winter_pct,
+            "summer_pct": summer_pct,
             "cpb_2026": comparatif_dto.get("cpb2026"),
             "cpb_2027": comparatif_dto.get("cpb2027"),
             "cpb_2028": comparatif_dto.get("cpb2028"),
         },
+        # LLM-generated slide-4 texts (profil/exposition/stratégie): the Java
+        # backend sends them as precomputedProfil/Exposition/Strategie (resolved
+        # into consumption_analysis above). Absent → template keeps static text.
+        "consumption_analysis": consumption_analysis,
+        "market_analysis": market_analysis,
         "images": build_images(data, request, True),
         "comparatifClientHistoryPdfDto": comparatif_dto,
         "image": build_image_section(data, chart_base64),
@@ -3007,6 +3047,604 @@ def generate_consumption_analysis(request):
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Gas invoice → seasonal (winter/summer) consumption split
+#
+# Standalone endpoint, deliberately OUTSIDE the HTML-generation flow (a sibling
+# to generate_market_analysis / generate_consumption_analysis). The Java backend
+# holds the per-PCE gas invoices; it POSTs {pce, invoiceUrl} here. We download
+# the PDF, pull its text (PyPDF2), let the LLM LOCATE the monthly-consumption
+# history (layouts differ per supplier), then compute the Nov→Mar vs Apr→Oct
+# split IN PYTHON — the model never does the arithmetic. Returns winterPct /
+# summerPct, ready to drop onto comparatifClientHistoryPdfDto so gas_info.
+# winter_pct / summer_pct become dynamic on slide 4.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Winter = November → March (heating season); everything else counts as summer.
+_GAS_WINTER_MONTHS = {11, 12, 1, 2, 3}
+
+
+def _fr_month_to_num(label):
+    """Best-effort French month label → 1..12. Handles full names and the
+    abbreviations invoices use ('Mar', 'Avr', 'Juin', 'Juil', 'Aou', 'Fev',
+    'Dec', 'Sept'...). Returns None if no month can be identified."""
+    if not label:
+        return None
+    m = re.match(r"[a-zàâäéèêëîïôöûüç]+", str(label).strip().lower())
+    if not m:
+        return None
+    w = m.group(0)
+    # Order matters: 'juil' before 'juin' (both start 'jui'); 'mars' before 'mai'.
+    if w.startswith("janv") or w == "jan":
+        return 1
+    if w.startswith("fév") or w.startswith("fev"):
+        return 2
+    if w.startswith("mars") or w == "mar":
+        return 3
+    if w.startswith("avr"):
+        return 4
+    if w == "mai":
+        return 5
+    if w.startswith("juil"):
+        return 7
+    if w.startswith("juin") or w == "jun":
+        return 6
+    if w.startswith("aou") or w.startswith("août"):
+        return 8
+    if w.startswith("sep"):
+        return 9
+    if w.startswith("oct"):
+        return 10
+    if w.startswith("nov"):
+        return 11
+    if w.startswith("déc") or w.startswith("dec"):
+        return 12
+    return None
+
+
+def _is_safe_fetch_url(url):
+    """Light SSRF guard: allow only http(s) and reject obvious internal/loopback
+    IP literals. Hostnames are allowed (this endpoint is for trusted
+    server-to-server use by the Java backend)."""
+    try:
+        p = urllib.parse.urlparse(url)
+    except Exception:
+        return False
+    if p.scheme not in ("http", "https") or not p.hostname:
+        return False
+    try:
+        ip = ipaddress.ip_address(p.hostname)
+        if (ip.is_private or ip.is_loopback or ip.is_link_local
+                or ip.is_reserved or ip.is_multicast):
+            return False
+    except ValueError:
+        pass  # not an IP literal → a hostname, allowed
+    return True
+
+
+def _download_pdf_bytes(url, max_bytes=20 * 1024 * 1024, timeout=45):
+    """Download a PDF from url. Returns bytes; raises ValueError on any problem."""
+    if not _is_safe_fetch_url(url):
+        raise ValueError("Invalid or disallowed invoice URL")
+    req = urllib.request.Request(url, headers={"User-Agent": "volt-pdf-service/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        status = getattr(resp, "status", 200)
+        if status not in (200, None):
+            raise ValueError(f"Invoice download failed (HTTP {status})")
+        data = resp.read(max_bytes + 1)
+    if not data:
+        raise ValueError("Empty invoice download")
+    if len(data) > max_bytes:
+        raise ValueError("Invoice PDF exceeds size limit")
+    return data
+
+
+def _extract_pdf_text(pdf_bytes):
+    """Extract all text from a PDF (PyPDF2). Returns a string ('' if none)."""
+    try:
+        reader = PdfReader(io.BytesIO(pdf_bytes))
+    except Exception as e:
+        raise ValueError(f"Could not read PDF: {e}")
+    parts = []
+    for page in reader.pages:
+        try:
+            parts.append(page.extract_text() or "")
+        except Exception:
+            continue
+    return "\n".join(parts).strip()
+
+
+_MONTH_RE = re.compile(
+    r"^(jan|f[ée]v|mars?|avr|mai|juin|juil|ao[uû]|sept?|oct|nov|d[ée]c)", re.IGNORECASE
+)
+
+
+def _extract_monthly_from_chart(pdf_bytes):
+    """Reconstruct the monthly-consumption series from the invoice's bar chart
+    using text COORDINATES (PyPDF2 visitor_text). Plain extract_text() mashes the
+    chart's month labels and value labels into an unusable blob, so instead we
+    keep each fragment's (x, y): find the row of month labels, collect the numeric
+    value labels sitting above it (bounded to a window so page headers/totals
+    don't leak in), and pair them left-to-right by x. Only returns a series when
+    there is exactly one value per month — otherwise returns [] and lets the
+    caller fall back to the LLM. Returns [{"month","kwh"}, ...] or []."""
+    try:
+        reader = PdfReader(io.BytesIO(pdf_bytes))
+    except Exception:
+        return []
+    for page in reader.pages:
+        frags = []
+
+        def _visit(text, cm, tm, font, size, _f=frags):
+            t = (text or "").strip()
+            if t:
+                _f.append((round(tm[5], 1), round(tm[4], 1), t))  # (y, x, text)
+
+        try:
+            page.extract_text(visitor_text=_visit)
+        except Exception:
+            continue
+        if not frags:
+            continue
+
+        # Month row = the y-row containing the most month-like labels.
+        rows = {}
+        for y, x, t in frags:
+            rows.setdefault(y, []).append((x, t))
+        month_y = max(rows, key=lambda yy: sum(1 for _, t in rows[yy] if _MONTH_RE.match(t)))
+        months = sorted((x, t) for x, t in rows[month_y] if _MONTH_RE.match(t))
+        if len(months) < 6:  # need a proper ~year-long monthly axis
+            continue
+
+        # Numeric value labels sitting above the axis (the bar-value labels).
+        vals = sorted(
+            (x, t) for y, x, t in frags
+            if month_y + 5 < y < month_y + 700
+            and re.fullmatch(r"[0-9]{1,6}([.,][0-9]{1,3})?", t)
+        )
+        # Confident only with exactly one value per month → pair by x order.
+        if len(vals) != len(months):
+            continue
+        return [{"month": ml, "kwh": vt} for (_, ml), (_, vt) in zip(months, vals)]
+    return []
+
+
+def _extract_json_array(text):
+    """Pull the first top-level JSON array out of an LLM response (tolerating
+    ```json fences and surrounding prose). Returns a list, or None."""
+    if not text:
+        return None
+    t = re.sub(r"```(?:json)?|```", "", text).strip()
+    start = t.find("[")
+    if start == -1:
+        return None
+    depth = 0
+    for i in range(start, len(t)):
+        if t[i] == "[":
+            depth += 1
+        elif t[i] == "]":
+            depth -= 1
+            if depth == 0:
+                try:
+                    val = json.loads(t[start:i + 1])
+                except Exception:
+                    return None
+                return val if isinstance(val, list) else None
+    return None
+
+
+def _llm_extract_monthly_consumption(invoice_text):
+    """Ask the LLM to locate the monthly gas-consumption history and return it as
+    [{"month": <label>, "kwh": <number>}, ...]. Returns a list (possibly empty),
+    or None if the LLM call itself failed."""
+    text = (invoice_text or "")[:12000]
+    prompt = (
+        "Tu extrais des données d'une facture de GAZ d'un fournisseur français.\n"
+        "Dans le texte ci-dessous, trouve UNIQUEMENT l'historique de consommation "
+        "MENSUELLE en kWh (souvent intitulé « Évolution de la consommation », "
+        "« Historique de consommation », ou affiché comme un graphique avec une "
+        "valeur par mois sur ~12 mois).\n\n"
+        "Réponds STRICTEMENT avec un tableau JSON, un objet par mois, dans l'ordre "
+        "chronologique :\n"
+        '[{"month": "<libellé du mois tel qu\'imprimé, ex: Nov 25>", "kwh": <nombre>}, ...]\n\n'
+        "Règles :\n"
+        "- kwh = la consommation du mois en kWh (nombre seul, sans unité ni "
+        "séparateur de milliers, point pour les décimales).\n"
+        "- Il doit y avoir autant de valeurs que de libellés de mois ; aligne-les "
+        "dans l'ordre chronologique.\n"
+        "- N'inclus PAS les totaux, la Consommation Annuelle de Référence (CAR), "
+        "les prix, ni les montants en euros.\n"
+        "- Si aucun historique mensuel n'est présent, réponds exactement [].\n"
+        "- Réponds avec le tableau JSON uniquement, sans texte ni balises markdown.\n\n"
+        "TEXTE DE LA FACTURE :\n"
+        f"{text}"
+    )
+    raw = _call_market_llm(prompt)
+    if raw is None:
+        return None
+    arr = _extract_json_array(raw)
+    return arr if isinstance(arr, list) else []
+
+
+def _compute_gas_season_split(pairs):
+    """From [{"month","kwh"}, ...] compute the winter (Nov–Mar) vs summer
+    (Apr–Oct) share. Normalizes to the most recent 12 usable months (invoices
+    often print 13, e.g. Mar→Mar). Returns a result dict, or None if there is
+    not enough usable data."""
+    if not isinstance(pairs, list) or not pairs:
+        return None
+
+    def _num(v):
+        if isinstance(v, bool):
+            return None
+        if isinstance(v, (int, float)):
+            return float(v)
+        if isinstance(v, str):
+            try:
+                return float(v.replace(" ", "").replace(" ", "").replace(",", "."))
+            except ValueError:
+                return None
+        return None
+
+    parsed = []
+    for item in pairs:
+        if not isinstance(item, dict):
+            continue
+        mnum = _fr_month_to_num(item.get("month"))
+        kwh = _num(item.get("kwh"))
+        if mnum is None or kwh is None:
+            continue
+        parsed.append((item.get("month"), mnum, kwh))
+
+    if not parsed:
+        return None
+
+    used = parsed[-12:]  # most recent 12 months
+    winter = round(sum(k for _, m, k in used if m in _GAS_WINTER_MONTHS), 1)
+    summer = round(sum(k for _, m, k in used if m not in _GAS_WINTER_MONTHS), 1)
+    total = round(winter + summer, 1)
+    if total <= 0:
+        return None
+
+    winter_pct = round(winter / total * 100)
+    summer_pct = 100 - winter_pct  # force the two shares to add up to 100
+    both_seasons = winter > 0 and summer > 0
+    return {
+        "winterPct": winter_pct,
+        "summerPct": summer_pct,
+        "winterKwh": winter,
+        "summerKwh": summer,
+        "totalKwh": total,
+        "monthsUsed": len(used),
+        "monthly": {
+            "months": [lbl for lbl, _, _ in used],
+            "values": [k for _, _, k in used],
+        },
+        "confidence": "high" if (both_seasons and len(used) >= 12) else "low",
+    }
+
+
+def _to_float(v):
+    """Parse a value into float, tolerating French formatting (thin/regular
+    spaces as thousands separators, comma decimals). Returns None if not numeric."""
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        s = v.replace(" ", "").replace("\xa0", "").replace(" ", "").replace(",", ".")
+        try:
+            return float(s)
+        except ValueError:
+            return None
+    return None
+
+
+def _extract_gas_monthly_pairs(pdf_bytes):
+    """Get the monthly gas-consumption series from an invoice PDF as
+    [{"month","kwh"}, ...]. Tries chart-coordinate reconstruction first, then the
+    LLM on plain text (for table-style invoices). Returns (pairs, source):
+      - source 'chart' | 'llm' with a list (possibly empty),
+      - source 'empty' when the PDF has no extractable text (likely scanned),
+      - source 'llm_unavailable' when the LLM fallback was needed but failed."""
+    pairs = _extract_monthly_from_chart(pdf_bytes)
+    if pairs:
+        return pairs, "chart"
+    text = _extract_pdf_text(pdf_bytes)
+    if not text:
+        return [], "empty"
+    llm_pairs = _llm_extract_monthly_consumption(text)
+    if llm_pairs is None:
+        return None, "llm_unavailable"
+    return (llm_pairs or []), "llm"
+
+
+def _pairs_from_curve(curve):
+    """Convert an enedis/grdf-style {months, consumptionData} dict into
+    [{month, kwh}] by summing all series at each month index."""
+    if not isinstance(curve, dict):
+        return []
+    months = curve.get("months") or []
+    series = curve.get("consumptionData") or {}
+    if not months or not isinstance(series, dict):
+        return []
+    out = []
+    for i, label in enumerate(months):
+        total = 0.0
+        seen = False
+        for vals in series.values():
+            if isinstance(vals, list) and i < len(vals):
+                f = _to_float(vals[i])
+                if f is not None:
+                    total += f
+                    seen = True
+        if seen:
+            out.append({"month": label, "kwh": total})
+    return out
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def analyze_gas_invoice(request):
+    """One-shot gas invoice analysis — NOT part of deck generation.
+
+    POST JSON: {"invoiceUrl": "https://.../facture.pdf", "pce": "<optional>"}
+      (or skip the download with a pre-extracted curve:
+       {"monthly": [{"month","kwh"}, ...]} or {"gasData": {"months","consumptionData"}}.)
+
+    Downloads the invoice ONCE, extracts the monthly consumption curve (chart-
+    coordinate reconstruction, with an LLM-on-text fallback), then returns BOTH
+    in a single response:
+      - winterPct / summerPct — the Nov→Mar vs Apr→Oct split, computed in Python;
+      - consumptionAnalysis {profil, exposition, strategie} — slide-4 text from
+        the LLM, validated against the same facts, with a deterministic fallback.
+    Map winterPct/summerPct onto comparatifClientHistoryPdfDto and
+    consumptionAnalysis onto the comparatif-gas payload."""
+    try:
+        try:
+            body = json.loads(request.body) if request.body else {}
+        except (ValueError, TypeError):
+            return JsonResponse({"status": "error", "message": "Invalid JSON"}, status=400)
+
+        pce = body.get("pce")
+        source = "provided"
+
+        # Data source: a pre-extracted curve, else download + extract the invoice.
+        pairs = body.get("monthly") if isinstance(body.get("monthly"), list) else None
+        if not pairs:
+            curve = body.get("gasData") or body.get("grdfDataPastYear") or body.get("enedisDataPastYear")
+            if isinstance(curve, dict):
+                pairs = _pairs_from_curve(curve)
+        if not pairs:
+            url = body.get("invoiceUrl") or body.get("invoice_url") or body.get("url")
+            if not url:
+                return JsonResponse({"status": "error", "pce": pce,
+                                     "message": "Provide one of: invoiceUrl, monthly, or gasData"}, status=400)
+            try:
+                pdf_bytes = _download_pdf_bytes(url)
+            except ValueError as e:
+                return JsonResponse({"status": "error", "pce": pce, "message": str(e)}, status=400)
+            except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
+                return JsonResponse({"status": "error", "pce": pce, "message": f"Download failed: {e}"}, status=502)
+            pairs, xsource = _extract_gas_monthly_pairs(pdf_bytes)
+            if xsource == "empty":
+                return JsonResponse({"status": "no_data", "pce": pce,
+                                     "message": "No extractable text in the PDF (likely a scanned image; OCR is not enabled)."}, status=200)
+            if xsource == "llm_unavailable":
+                return JsonResponse({"status": "error", "pce": pce, "message": "LLM extraction unavailable"}, status=502)
+            source = "invoice:" + xsource
+
+        if not pairs:
+            return JsonResponse({"status": "no_data", "pce": pce,
+                                 "message": "No monthly consumption history available."}, status=200)
+
+        # Both outputs from the SAME extracted curve — no second download/parse.
+        split = _compute_gas_season_split(pairs)
+        if not split:
+            return JsonResponse({"status": "no_data", "pce": pce,
+                                 "message": "Could not compute the seasonal split."}, status=200)
+        analysis = _generate_consumption_analysis_gas(pairs)
+
+        return JsonResponse({
+            "status": "success",
+            "pce": pce,
+            "source": source,
+            "winterPct": split["winterPct"],
+            "summerPct": split["summerPct"],
+            "winterKwh": split["winterKwh"],
+            "summerKwh": split["summerKwh"],
+            "totalKwh": split["totalKwh"],
+            "monthsUsed": split["monthsUsed"],
+            "confidence": split["confidence"],
+            "monthly": split["monthly"],
+            "consumptionAnalysis": analysis or {},
+        })
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Gas slide-4 consumption analysis (profil / exposition / stratégie)
+#
+# Gas counterpart of _generate_consumption_analysis (electricity). Same contract:
+# every fact is computed in Python (_summarize_gas_data); the LLM only phrases
+# them and is validated against the summary, with a deterministic fallback. The
+# difference is the data source — gas curves come from the invoice, so the
+# endpoint can take an invoiceUrl (reusing the same extractor as the seasonal
+# split) or a pre-extracted curve. Kept OUT of deck generation: the Java backend
+# calls this, then injects the returned texts into the comparatif-gas payload as
+# `consumptionAnalysis`, where build_presentation_data_gas passes them through to
+# data.consumption_analysis on slide 4.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _norm_month_mmyyyy(label):
+    """Normalize an invoice month label ('Nov 25', 'janvier 2026') to 'MM/YYYY'
+    so peak/low months match what _validate_consumption_text / _extract_mentioned_months
+    expect (they normalize the LLM's month references the same way). Returns the
+    original label unchanged if the month or year can't be parsed."""
+    mnum = _fr_month_to_num(label)
+    ym = re.search(r"(\d{2,4})", str(label or ""))
+    if mnum is None or not ym:
+        return label
+    year = ym.group(1)
+    if len(year) == 2:
+        year = "20" + year
+    return f"{mnum:02d}/{year}"
+
+
+def _summarize_gas_data(pairs):
+    """Gas counterpart of _summarize_enedis_data. A gas curve is a single monthly
+    series, so the meaningful facts are peak/low months, peak-to-average ratio,
+    and the winter (Nov→Mar) vs summer (Apr→Oct) split — all computed HERE. Shape
+    matches what _validate_consumption_text and the prompt expect. Uses the most
+    recent 12 usable months. Returns a summary dict, or None."""
+    parsed = []
+    for item in pairs or []:
+        if not isinstance(item, dict):
+            continue
+        mnum = _fr_month_to_num(item.get("month"))
+        kwh = _to_float(item.get("kwh"))
+        if mnum is None or kwh is None:
+            continue
+        parsed.append((item.get("month"), mnum, kwh))
+    if not parsed:
+        return None
+
+    used = parsed[-12:]
+    total = round(sum(k for _, _, k in used), 1)
+    if total <= 0:
+        return None
+    avg = round(total / len(used), 1)
+
+    ranked = sorted(used, key=lambda t: t[2], reverse=True)
+    peak_months = [{"month": _norm_month_mmyyyy(l), "value": k} for l, _, k in ranked[:3]]
+    lowest_months = [{"month": _norm_month_mmyyyy(l), "value": k} for l, _, k in ranked[-3:]][::-1]
+    peak_to_average_ratio = round(ranked[0][2] / avg, 2) if avg else None
+
+    winter = round(sum(k for _, m, k in used if m in _GAS_WINTER_MONTHS), 1)
+    summer = round(total - winter, 1)
+    winter_pct = round(winter / total * 100)
+    season_split = {
+        "winter_total": winter,
+        "summer_total": summer,
+        "winter_share_pct": winter_pct,
+        "summer_share_pct": 100 - winter_pct,
+        "dominant_season": "hiver" if winter >= summer else "été",
+    }
+
+    return {
+        "period": {"from": _norm_month_mmyyyy(used[0][0]), "to": _norm_month_mmyyyy(used[-1][0])},
+        "total_annual_kwh": total,
+        "avg_monthly_kwh": avg,
+        "peak_months": peak_months,
+        "lowest_months": lowest_months,
+        "peak_to_average_ratio": peak_to_average_ratio,
+        "consumption_by_period": [],  # gas is a single series — no tariff periods
+        "season_split": season_split,
+    }
+
+
+def _fallback_consumption_analysis_gas(summary):
+    """Plain templated output, used only if the LLM output fails validation.
+    Guaranteed numerically correct since it is built directly from summary."""
+    peak = summary["peak_months"][0]
+    low = summary["lowest_months"][0]
+    season = summary.get("season_split")
+
+    profil = (
+        f"Consommation maximale en {peak['month']} ({peak['value']} kWh), "
+        f"minimale en {low['month']} ({low['value']} kWh)"
+    )
+    if season:
+        profil += (
+            f", avec {season['winter_share_pct']}% de la consommation concentrée "
+            "en hiver (novembre à mars)"
+        )
+    profil += "."
+
+    return {
+        "profil": profil,
+        "exposition": (
+            f"Avec un pic à {summary['peak_to_average_ratio']}x la consommation moyenne "
+            "concentré en hiver, votre budget gaz est fortement exposé aux variations "
+            "de prix pendant la saison de chauffe."
+        ),
+        "strategie": (
+            "Un contrat à prix fixe sécurise votre budget gaz sur toute la période "
+            "hivernale et vous protège des hausses au moment où vous consommez le plus."
+        ),
+        "recommandation": (
+            "Dans ce contexte, sécuriser dès maintenant votre contrat à prix fixe "
+            "protège votre budget contre les hausses, en particulier sur votre forte "
+            "consommation hivernale."
+        ),
+    }
+
+
+def _generate_consumption_analysis_gas(pairs):
+    """All facts are computed in _summarize_gas_data. The LLM only phrases them
+    (GAS-specific: seasonality, winter exposure, fixed-price strategy). Output is
+    validated against the summary and falls back to a plain template on mismatch.
+    Returns {profil, exposition, strategie}, or None if there's no usable data."""
+    summary = _summarize_gas_data(pairs)
+    if not summary:
+        return None
+
+    prompt = (
+        "Tu es un rédacteur pour Volt Consulting. Voici un JSON contenant DÉJÀ TOUS "
+        "les calculs sur la consommation de GAZ d'un client — ne recalcule rien, ne "
+        "classe rien, n'invente aucun chiffre ni mois : reformule ces faits en "
+        "français fluide.\n\n"
+        f"{json.dumps(summary, ensure_ascii=False)}\n\n"
+        "Champs à utiliser :\n"
+        "- peak_months[0] et lowest_months[0] : mois de plus forte/faible consommation.\n"
+        "- season_split : dominant_season et les deux share_pct (part hiver "
+        "novembre→mars / part été avril→octobre).\n"
+        "- peak_to_average_ratio : pour juger de l'exposition au marché.\n\n"
+        "Rédige quatre phrases courtes (30 mots maximum chacune — respecte STRICTEMENT "
+        "cette limite, une seule phrase par champ) pour un client professionnel, sur "
+        "sa consommation de GAZ :\n"
+        "1) PROFIL: le profil de consommation (saisonnalité), en t'appuyant sur "
+        "peak_months[0], lowest_months[0] et season_split.\n"
+        "2) EXPOSITION: l'exposition du budget gaz aux fluctuations de prix, surtout "
+        "en hiver, en t'appuyant sur peak_to_average_ratio et la part hivernale.\n"
+        "3) STRATEGIE: recommande TOUJOURS un contrat à PRIX FIXE — jamais un taux "
+        "variable, un tarif indexé, une offre spot, ou des blocs d'achat prépayés, et "
+        "jamais un produit non mentionné dans les données. Explique en une phrase "
+        "pourquoi la stabilité du prix fixe protège ce profil (forte consommation "
+        "hivernale).\n"
+        "4) RECOMMANDATION: une recommandation d'action concrète et incitative — "
+        "sécuriser dès maintenant le contrat à PRIX FIXE pour protéger le budget, "
+        "compte tenu de l'exposition hivernale (toujours prix fixe, jamais variable).\n"
+        "Réponds STRICTEMENT selon ce format, sans aucun autre texte :\n"
+        "PROFIL: <texte>\n"
+        "EXPOSITION: <texte>\n"
+        "STRATEGIE: <texte>\n"
+        "RECOMMANDATION: <texte>"
+    )
+
+    text = _call_market_llm(prompt)
+    fields = _parse_llm_fields(text, ["PROFIL", "EXPOSITION", "STRATEGIE", "RECOMMANDATION"])
+    if not fields:
+        return _fallback_consumption_analysis_gas(summary)
+    if any(len(v.split()) > 40 for v in fields.values()):
+        print("Rejected (gas): a field exceeded the 40-word safety cap")
+        return _fallback_consumption_analysis_gas(summary)
+    if not _validate_consumption_text(" ".join(fields.values()), summary):
+        return _fallback_consumption_analysis_gas(summary)
+
+    return {
+        "profil": fields.get("profil", ""),
+        "exposition": fields.get("exposition", ""),
+        "strategie": fields.get("strategie", ""),
+        "recommandation": fields.get("recommandation", ""),
+    }
+
+
+# The gas invoice endpoint (seasonal split + slide-4 analysis, in one call) is
+# analyze_gas_invoice, defined above — it reuses the helpers in this section.
+
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def save_file_edit(request):
@@ -3163,6 +3801,14 @@ def save_file_edit(request):
         new_content, n = pattern.subn(replacement, content)
         if n == 0:
             return JsonResponse({'ok': False, 'error': 'replace failed'}, status=500)
+
+        # A field that was just saved is no longer showing a default — drop its
+        # "défaut" marker (span.deftag with data-for=key) so it doesn't reappear
+        # when this saved deck is re-rendered/reopened. (deftags are the only
+        # elements using data-for, so this can't hit an editable field.)
+        new_content = re.sub(
+            r'<span\b[^>]*\bdata-for="' + re.escape(key) + r'"[^>]*>.*?</span>',
+            '', new_content, flags=re.S)
 
         # Atomic write
         fd, tmp_path = tempfile.mkstemp(dir=os.path.dirname(abs_path), prefix='.tmp-', suffix='.html')
