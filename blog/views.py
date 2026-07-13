@@ -2705,6 +2705,9 @@ def _build_slide6_data_gas(comparatif_dto):
     return {
         "current": current,
         "recommended": recommended,
+        # True only when the payload actually carries a CURRENT (incumbent) provider.
+        # When False, the whole "offre actuelle" comparison isn't meaningful.
+        "has_current": bool(current_raw),
         "fourniture_economy": _diff("fourniture"),
         "cee_economy": _diff("cee"),
         "distribution_economy": _diff("distribution"),
