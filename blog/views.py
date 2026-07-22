@@ -2829,6 +2829,7 @@ def build_presentation_data_gas(data, chart_base64, chart_12m_base64, gas_chart_
         # into consumption_analysis above). Absent → template keeps static text.
         "consumption_analysis": consumption_analysis,
         "market_analysis": market_analysis,
+        "has_chart_data": bool(data.get("chartDataDto")),
         "images": build_images(data, request, True),
         "comparatifClientHistoryPdfDto": comparatif_dto,
         "image": build_image_section(data, chart_base64),

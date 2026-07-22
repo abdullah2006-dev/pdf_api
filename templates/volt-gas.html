@@ -1998,6 +1998,7 @@
         </section>
 
         <!-- ════════════════════ SLIDE 3 — MARCHÉ DU GAZ ════════════════════ -->
+        {% if data.has_chart_data %}
         <section data-screen-label="03 Évolution du marché du gaz" data-slide="market">
             <div class="row items-start gap-20" style="margin-bottom:10px;">
                 <image-slot id="volt-logo" src="{{ data.images.logo }}" placeholder="VOLT CONSULTING Logo" shape="rect" style="height: 72px;"></image-slot>
@@ -2130,6 +2131,7 @@
                 <span class="strong" style="font-weight:500; text-wrap: balance;">Document strictement confidentiel — Destiné exclusivement à son destinataire.</span>
             </div>
         </section>
+        {% endif %}
 
         <!-- ════════════════════ SLIDE 4 — CONSOMMATION ════════════════════ -->
         <section data-screen-label="04 Votre consommation relevée par GRDF" data-slide="consumption">
