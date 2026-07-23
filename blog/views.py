@@ -1789,7 +1789,7 @@ def _call_market_llm(prompt):
         "model": "qwen2.5vl:7b",
         "prompt": prompt,
         "stream": False,
-        "think": "low",
+        # "think": "low",
         # Keep the model resident in memory so back-to-back / subsequent
         # generations skip the ~40s cold-load cost (load_duration).
         "keep_alive": "30m",
@@ -1903,8 +1903,9 @@ def _generate_market_analysis(chart_data_dto):
         "ANALYSE: <texte>\n"
         "RECOMMANDATION: <texte>"
     )
-
+    print(f"DEBUG: Sending prompt to market LLM:\n{prompt}")
     text = _call_market_llm(prompt)
+    print(f"DEBUG: Received response from market LLM:\n{text}")
     fields = _parse_llm_fields(text, ["ANALYSE", "RECOMMANDATION"])
     return fields or None
 
@@ -3017,7 +3018,7 @@ def generate_enedis_bar_chart(chart_data):
 def generate_market_analysis(request):
     try:
         data = parse_request_data(request)
-        analysis = _generate_market_analysis(data.get("chartDataDto"))  # {analyse, recommandation} or None
+        analysis = _generate_market_analysis(data.get("chartDataDto"))  # {analyse, recommandation} or None        
         if not analysis:
             return JsonResponse({"status": "error", "message": "No analysis generated"}, status=200)
         return JsonResponse({
