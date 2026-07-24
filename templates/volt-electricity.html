@@ -3080,15 +3080,15 @@
                                 {% for col in data.tender_table.columns6 %}<td style="padding:3px 2px;">inclus</td>{% endfor %}
                                 {% else %}
                                 {% for col in data.tender_table.columns6 %}
-                                {% if col == "HPH" %}<td style="padding:3px 2px;">{{ r.capaHph|default:"-" }}</td>
-                                {% elif col == "HCH" %}<td style="padding:3px 2px;">{{ r.capaHch|default:"-" }}</td>
-                                {% elif col == "HPE" %}<td style="padding:3px 2px;">{{ r.capaHpe|default:"-" }}</td>
-                                {% elif col == "HCE" %}<td style="padding:3px 2px;">{{ r.capaHce|default:"-" }}</td>
-                                {% elif col == "POINTE" %}<td style="padding:3px 2px;">{{ r.capaPointe|default:"-" }}</td>
-                                {% elif col == "HP" %}<td style="padding:3px 2px;">{{ r.capaHp|default:"-" }}</td>
-                                {% elif col == "HC" %}<td style="padding:3px 2px;">{{ r.capaHc|default:"-" }}</td>
-                                {% elif col == "BASE" %}<td style="padding:3px 2px;">{{ r.capaBase|default:"-" }}</td>
-                                {% else %}<td style="padding:3px 2px;">-</td>
+                                {% if col == "HPH" %}<td style="padding:3px 2px;">{{ r.capaHph|default:"0.0" }}</td>
+                                {% elif col == "HCH" %}<td style="padding:3px 2px;">{{ r.capaHch|default:"0.0" }}</td>
+                                {% elif col == "HPE" %}<td style="padding:3px 2px;">{{ r.capaHpe|default:"0.0" }}</td>
+                                {% elif col == "HCE" %}<td style="padding:3px 2px;">{{ r.capaHce|default:"0.0" }}</td>
+                                {% elif col == "POINTE" %}<td style="padding:3px 2px;">{{ r.capaPointe|default:"0.0" }}</td>
+                                {% elif col == "HP" %}<td style="padding:3px 2px;">{{ r.capaHp|default:"0.0" }}</td>
+                                {% elif col == "HC" %}<td style="padding:3px 2px;">{{ r.capaHc|default:"0.0" }}</td>
+                                {% elif col == "BASE" %}<td style="padding:3px 2px;">{{ r.capaBase|default:"0.0" }}</td>
+                                {% else %}<td style="padding:3px 2px;">0.0</td>
                                 {% endif %}
                                 {% endfor %}
                                 {% endif %}
