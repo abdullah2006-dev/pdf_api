@@ -2991,7 +2991,7 @@
                                 <use href="#i-target" />
                             </svg></span>
                         <span style="font-size:11px; font-weight:800; letter-spacing:0.02em;">NOTRE RECOMMANDATION :
-                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"—" }}{% else %}—{% endif %}{% endwith %}</span></span>
+                            <span style="color:var(--green-600);">{% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}{% if rec %}{% firstof rec.0.partnerName rec.0.newPartnerName "—" %}{% else %}—{% endif %}{% endwith %}</span></span>
                         <span style="flex:1; font-size:9px; color:var(--gray-600); font-weight:400;">L'offre la plus
                             compétitive dans les conditions actuelles du marché.</span>
                     </div>
@@ -3056,10 +3056,10 @@
                                          style="max-height:28px; max-width:100%; width:auto; display:block; margin:0 auto;">
                                     {% elif r.newPartnerLogoName %}
                                     <img src="{{ data.volt_logo_base_url }}{{ r.newPartnerLogoName }}"
-                                         alt="{{ r.partnerName|default:r.newPartnerName|default:'-' }}"
+                                         alt="{% firstof r.partnerName r.newPartnerName '-' %}"
                                          style="max-height:28px; max-width:100%; width:auto; display:block; margin:0 auto;">
                                     {% else %}
-                                    <strong>{{ r.partnerName|default:r.newPartnerName|default:"-" }}</strong>
+                                    <strong>{% firstof r.partnerName r.newPartnerName "-" %}</strong>
                                     {% endif %}
                                     {% if r.is_green_row %}<br><span class="badge-rec" style="font-size:6px;">RECOMMANDÉ</span>{% endif %}
                                     {% if r.typeFournisseur == "CURRENT" %}<br><span style="font-size:6px; color:var(--gray-500);">ACTUEL</span>{% endif %}
@@ -3137,7 +3137,7 @@
                                 </svg></span>
                             {% with rec=data.comparatifClientHistoryPdfDto.allRegularProviders %}
                                 <div style="line-height:0.95;"><strong style="font-size:10px; color:var(--green-600);">À retenir</strong><br><span
-                                        style="font-size:9px;">{% if rec %}L'offre <strong>{{ rec.0.partnerName|default:rec.0.newPartnerName|default:"recommandée" }}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
+                                        style="font-size:9px;">{% if rec %}L'offre <strong>{% firstof rec.0.partnerName rec.0.newPartnerName "recommandée" %}</strong> représente la meilleure opportunité du marché{% if rec.0.economiePercent %} avec une économie de <strong>{{ rec.0.economiePercent }}</strong>{% endif %}.{% else %}Consultez nos recommandations ci-dessus.{% endif %}</span></div>
                                 {% endwith %}
                         </div>
                     </div>
@@ -3319,10 +3319,10 @@
                                              style="max-height:40px; width:80px; object-fit:contain; display:block; margin:auto;">
                                         {% elif data.slide6.recommended.newPartnerLogoName %}
                                         <img src="{{ data.volt_logo_base_url }}{{ data.slide6.recommended.newPartnerLogoName }}"
-                                             alt="{{ data.slide6.recommended.partnerName|default:data.slide6.recommended.newPartnerName|default:'-' }}"
+                                             alt="{% firstof data.slide6.recommended.partnerName data.slide6.recommended.newPartnerName '-' %}"
                                              style="max-height:40px; width:80px; object-fit:contain; display:block; margin:auto;">
                                         {% else %}
-                                        <strong style="font-size:13px; color:#003db8;">{{ data.slide6.recommended.partnerName|default:data.slide6.recommended.newPartnerName|default:"-" }}</strong>
+                                        <strong style="font-size:13px; color:#003db8;">{% firstof data.slide6.recommended.partnerName data.slide6.recommended.newPartnerName "-" %}</strong>
                                         {% endif %}
                                     </div>
                                 </th>
