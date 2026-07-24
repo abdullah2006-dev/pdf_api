@@ -33,6 +33,12 @@ except Exception:
     bleach = None
 from weasyprint import HTML, CSS
 from datetime import datetime
+from zoneinfo import ZoneInfo
+
+# Timestamps from the CRM are absolute instants (epoch ms); datetime.fromtimestamp()
+# without a tz uses the server OS's local timezone, which on prod is UTC — always
+# convert to Paris time explicitly so displayed dates/times match the client's clock.
+PARIS_TZ = ZoneInfo("Europe/Paris")
 from django.templatetags.static import static
 from PyPDF2 import PdfReader, PdfWriter
 from PIL import Image
@@ -309,7 +315,7 @@ def build_comparatif_dto(comparatif, request, data):
         raise ValueError("Missing required field: createdOn")
 
     try:
-        dt = datetime.fromtimestamp(created_on_raw / 1000.0)  # convert ms → seconds
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0, tz=PARIS_TZ)  # convert ms → seconds
         created_on = dt.strftime("%d/%m/%Y")
     except Exception as e:
         raise ValueError(f"Invalid createdOn value: {e}")
@@ -709,7 +715,7 @@ def build_presentation_data(data, chart_base64, comparatif_dto, request):
         "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
         "currentContractExpiryDate": (
-            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
+            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000, tz=PARIS_TZ).strftime("%d/%m/%Y")
             if comparatif_dto.get("currentContractExpiryDate") else ""
         ),
         "black": black,
@@ -1112,7 +1118,7 @@ def build_comparatif_dto_Electricity(comparatif, request, data):
         raise ValueError("Missing required field: createdOn")
 
     try:
-        dt = datetime.fromtimestamp(created_on_raw / 1000.0)
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0, tz=PARIS_TZ)
         created_on = dt.strftime("%d/%m/%Y")
         created_on_time = dt.strftime("%Hh%M")
     except Exception as e:
@@ -1480,7 +1486,7 @@ def enedis_Chart(comparatif_dto):
             # Handle both milliseconds and seconds timestamp
             if contract_start_date > 1e12:  # Likely in milliseconds
                 contract_start_date = contract_start_date / 1000
-            dt = datetime.fromtimestamp(contract_start_date)
+            dt = datetime.fromtimestamp(contract_start_date, tz=PARIS_TZ)
             formatted_date = dt.strftime("%d/%m/%Y")
         except (ValueError, TypeError, OSError):
             formatted_date = "-"
@@ -2448,7 +2454,7 @@ def build_presentation_data_energy_offer(data, enedis_chart_base64, chart_base64
         "client_site_address": _format_site_address(data.get("clientBusinessAddress")),
         "currentSupplierName": safe_value(comparatif_dto.get("currentSupplierName")),
         "currentContractExpiryDate": (
-            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000).strftime("%d/%m/%Y")
+            datetime.fromtimestamp(comparatif_dto.get("currentContractExpiryDate") / 1000, tz=PARIS_TZ).strftime("%d/%m/%Y")
             if comparatif_dto.get("currentContractExpiryDate") else ""
         ),
         "black": black,
@@ -2496,7 +2502,7 @@ def build_comparatif_dto_Gas(comparatif, request, data):
         raise ValueError("Missing required field: createdOn")
 
     try:
-        dt = datetime.fromtimestamp(created_on_raw / 1000.0)
+        dt = datetime.fromtimestamp(created_on_raw / 1000.0, tz=PARIS_TZ)
         created_on = dt.strftime("%d/%m/%Y")
         created_on_time = dt.strftime("%Hh%M")
     except Exception as e:
@@ -2733,7 +2739,7 @@ def _format_contract_date(ts):
     try:
         if ts > 1e12:  # likely milliseconds
             ts = ts / 1000
-        return datetime.fromtimestamp(ts).strftime("%d/%m/%Y")
+        return datetime.fromtimestamp(ts, tz=PARIS_TZ).strftime("%d/%m/%Y")
     except (ValueError, TypeError, OSError):
         return "-"
 
