@@ -2105,14 +2105,14 @@
                     <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--teal-900); border-color: var(--teal-900);">
                         <div class="card-title" style="font-size:11px; color: #fff; margin-bottom:6px;"><span class="icon-circle sm" style="background: rgba(255,255,255,0.2); color: #fff; width:24px; height:24px;"><svg><use href="#i-search" /></svg></span>NOTRE ANALYSE{% if not data.market_analysis.analyse %}<span class="deftag" data-for="slide3.analyse">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.analyse -->
-                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff;">{% if data.market_analysis.analyse %}{{ data.market_analysis.analyse }}{% else %}Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.{% endif %}</p>
+                        <p contenteditable="true" data-edit-key="slide3.analyse" style="font-size:11px; line-height:1.35; margin:0; color: #fff; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:5; overflow:hidden;">{% if data.market_analysis.analyse %}{{ data.market_analysis.analyse }}{% else %}Après un point bas début 2026, le marché repart à la hausse. Les tensions internationales et les incertitudes d'approvisionnement confirment un retour de la volatilité.{% endif %}</p>
                         <!-- EDIT:end:slide3.analyse -->
                     </div>
 
                     <div class="card" style="padding:10px 12px; flex: 1; background-color: var(--accent-700); border-color: var(--accent-700);">
                         <div class="card-title" style="font-size:11px; margin-bottom:6px;"><span class="icon-circle sm" style="background:#fff; color:var(--accent-700); width:24px; height:24px;"><svg><use href="#i-target" /></svg></span>NOTRE RECOMMANDATION{% if not data.market_analysis.recommandation %}<span class="deftag" data-for="slide3.recommandation">défaut</span>{% endif %}</div>
                         <!-- EDIT:start:slide3.recommandation -->
-                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0;">{% if data.market_analysis.recommandation %}{{ data.market_analysis.recommandation }}{% else %}Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.{% endif %}</p>
+                        <p contenteditable="true" data-edit-key="slide3.recommandation" style="font-size:11px; line-height:1.35; margin:0; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:5; overflow:hidden;">{% if data.market_analysis.recommandation %}{{ data.market_analysis.recommandation }}{% else %}Dans un contexte incertain, <strong>nous recommandons de sécuriser votre contrat dès maintenant</strong> pour vous protéger contre les hausses à venir.{% endif %}</p>
                         <!-- EDIT:end:slide3.recommandation -->
                     </div>
 
