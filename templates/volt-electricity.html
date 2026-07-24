@@ -3284,8 +3284,8 @@
                 <div class="savings-badge" style="padding: 10px 18px;">
                     {% if data.slide6.has_current %}
                     <div class="label" style="font-size:11px;">ÉCONOMIE ESTIMÉE</div>
-                    <div class="pct" style="font-size:30px;">{{ data.slide6.economy_pct|default:"-" }} %</div>
-                    <div class="eur" style="font-size:22px;">{{ data.slide6.economy_eur|default:"-" }} €</div>
+                    <div class="pct" style="font-size:30px;">{% if data.slide6.economy_pct %}{{ data.slide6.economy_pct }} %{% else %}-{% endif %}</div>
+                    <div class="eur" style="font-size:22px;">{% if data.slide6.economy_eur %}{{ data.slide6.economy_eur }} €{% else %}-{% endif %}</div>
                     <div class="sub" style="font-size:10px;">économisés / an</div>
                     {% else %}
                     <div class="label" style="font-size:11px;">NOTRE OFFRE</div>
@@ -3344,9 +3344,9 @@
                                                 du fournisseur.</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.fourniture|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.fourniture|default:"-" }} €</td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">{% if data.slide6.has_current %}{{ data.slide6.fourniture_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{% if data.slide6.current.fourniture %}{{ data.slide6.current.fourniture }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{% if data.slide6.recommended.fourniture %}{{ data.slide6.recommended.fourniture }} €{% else %}-{% endif %}</td>
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#f1faf4;">{% if data.slide6.has_current %}{% if data.slide6.fourniture_economy is not None %}{{ data.slide6.fourniture_economy|floatformat:2 }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3361,13 +3361,13 @@
                                                 distribution</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.turpe|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{% if data.slide6.current.turpe %}{{ data.slide6.current.turpe }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.turpe|default:"-" }} €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.recommended.turpe %}{{ data.slide6.recommended.turpe }} €{% else %}-{% endif %}
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    {% if data.slide6.has_current %}{{ data.slide6.turpe_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                    {% if data.slide6.has_current %}{% if data.slide6.turpe_economy is not None %}{{ data.slide6.turpe_economy|floatformat:2 }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr>
                                 <td style="text-align:left; padding-left:16px;">
@@ -3382,13 +3382,13 @@
                                                 Accise/CSPE</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{{ data.slide6.current.taxes|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.has_current %}{% if data.slide6.current.taxes %}{{ data.slide6.current.taxes }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}
                                 </td>
-                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{{ data.slide6.recommended.taxes|default:"-" }} €
+                                <td style="font-size:18px; font-family:var(--font-display); font-weight:700;">{% if data.slide6.recommended.taxes %}{{ data.slide6.recommended.taxes }} €{% else %}-{% endif %}
                                 </td>
                                 <td
                                     style="font-size:18px; font-family:var(--font-display); font-weight:700; color:var(--gray-500); background:#f1faf4;">
-                                    {% if data.slide6.has_current %}{{ data.slide6.taxes_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                    {% if data.slide6.has_current %}{% if data.slide6.taxes_economy is not None %}{{ data.slide6.taxes_economy|floatformat:2 }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                             <tr style="background:#f6f8fb;">
                                 <td style="text-align:left; padding-left:16px;">
@@ -3402,9 +3402,9 @@
                                                 style="font-size:11px; color:var(--gray-500);">(HORS TVA)</span></div>
                                     </div>
                                 </td>
-                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">{% if data.slide6.has_current %}{{ data.slide6.current.coutHTVA|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
-                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{{ data.slide6.recommended.coutHTVA|default:"-" }} €</td>
-                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">{% if data.slide6.has_current %}{{ data.slide6.total_ht_economy|floatformat:2|default:"-" }} €{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--navy-900);">{% if data.slide6.has_current %}{% if data.slide6.current.coutHTVA %}{{ data.slide6.current.coutHTVA }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600);">{% if data.slide6.recommended.coutHTVA %}{{ data.slide6.recommended.coutHTVA }} €{% else %}-{% endif %}</td>
+                                <td style="font-size:22px; font-family:var(--font-display); font-weight:800; color:var(--green-600); background:#e6f4ec;">{% if data.slide6.has_current %}{% if data.slide6.total_ht_economy is not None %}{{ data.slide6.total_ht_economy|floatformat:2 }} €{% else %}-{% endif %}{% else %}<span style="color:var(--gray-400);">—</span>{% endif %}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -3424,23 +3424,23 @@
                                 <tbody>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Fourniture (Énergie)</td>
-                                        <td>{{ data.slide6.breakdown.fourniture|floatformat:2|default:"-" }} €</td>
-                                        <td>{{ data.slide6.breakdown.fourniture_pct|default:"-" }} %</td>
+                                        <td>{% if data.slide6.breakdown.fourniture is not None %}{{ data.slide6.breakdown.fourniture|floatformat:2 }} €{% else %}-{% endif %}</td>
+                                        <td>{% if data.slide6.breakdown.fourniture_pct %}{{ data.slide6.breakdown.fourniture_pct }} %{% else %}-{% endif %}</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Acheminement (ENEDIS / TURPE)
                                         </td>
-                                        <td>{{ data.slide6.breakdown.turpe|floatformat:2|default:"-" }} €</td>
-                                        <td>{{ data.slide6.breakdown.turpe_pct|default:"-" }} %</td>
+                                        <td>{% if data.slide6.breakdown.turpe is not None %}{{ data.slide6.breakdown.turpe|floatformat:2 }} €{% else %}-{% endif %}</td>
+                                        <td>{% if data.slide6.breakdown.turpe_pct %}{{ data.slide6.breakdown.turpe_pct }} %{% else %}-{% endif %}</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Taxes &amp; Contributions</td>
-                                        <td>{{ data.slide6.breakdown.taxes|floatformat:2|default:"-" }} €</td>
-                                        <td>{{ data.slide6.breakdown.taxes_pct|default:"-" }} %</td>
+                                        <td>{% if data.slide6.breakdown.taxes is not None %}{{ data.slide6.breakdown.taxes|floatformat:2 }} €{% else %}-{% endif %}</td>
+                                        <td>{% if data.slide6.breakdown.taxes_pct %}{{ data.slide6.breakdown.taxes_pct }} %{% else %}-{% endif %}</td>
                                     </tr>
                                     <tr style="background:#f6f8fb;">
                                         <td style="text-align:left; padding-left:14px;"><strong>TOTAL HT</strong></td>
-                                        <td><strong>{{ data.slide6.breakdown.total_ht|floatformat:2|default:"-" }} €</strong></td>
+                                        <td><strong>{% if data.slide6.breakdown.total_ht is not None %}{{ data.slide6.breakdown.total_ht|floatformat:2 }} €{% else %}-{% endif %}</strong></td>
                                         <td><strong>100 %</strong></td>
                                     </tr>
                                 </tbody>
@@ -3458,15 +3458,15 @@
                                 <tbody>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">Total HT</td>
-                                        <td>{{ data.slide6.recommended.coutHTVA|floatformat:2|default:"-" }} €</td>
+                                        <td>{% if data.slide6.recommended.coutHTVA is not None %}{{ data.slide6.recommended.coutHTVA|floatformat:2 }} €{% else %}-{% endif %}</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;">TVA (20 %)</td>
-                                        <td>{{ data.slide6.tva_amount|floatformat:2|default:"-" }} €</td>
+                                        <td>{% if data.slide6.tva_amount is not None %}{{ data.slide6.tva_amount|floatformat:2 }} €{% else %}-{% endif %}</td>
                                     </tr>
                                     <tr>
                                         <td style="text-align:left; padding-left:14px;"><strong>TOTAL TTC</strong></td>
-                                        <td><strong style="font-size:18px;">{{ data.slide6.total_ttc|floatformat:2|default:"-" }} €</strong></td>
+                                        <td><strong style="font-size:18px;">{% if data.slide6.total_ttc is not None %}{{ data.slide6.total_ttc|floatformat:2 }} €{% else %}-{% endif %}</strong></td>
                                     </tr>
                                 </tbody>
                             </table>
